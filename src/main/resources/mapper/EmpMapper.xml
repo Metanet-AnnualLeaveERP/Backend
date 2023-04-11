@@ -8,8 +8,9 @@
 			select emp_sq.nextval from dual
 		</selectKey>
 		insert into emp
+		       (emp_id, name, hire_date, position, p_email, c_email, tel, user_id, dept_id)
 		values
-			(#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId}, #{mgrId}, #{deptDto.deptId})
+			(#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId}, #{deptDto.deptId})
 	</insert>
 	
 	

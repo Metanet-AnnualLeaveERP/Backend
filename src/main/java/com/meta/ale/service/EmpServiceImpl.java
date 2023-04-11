@@ -38,6 +38,8 @@ public class EmpServiceImpl implements EmpService{
         empDto.setUserDto(userDto);
 
         empDto.setDeptDto(deptDto);
+
+        System.out.println(empDto.toString());
         empMapper.insertEmp(empDto);
 
     }

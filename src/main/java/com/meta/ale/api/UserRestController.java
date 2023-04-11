@@ -22,17 +22,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/user")
 @CrossOrigin(origins = "*", maxAge = 3600)
 // CORS(Cross-Origin Resource Sharing) 정책을 지원하기 위한 것
 // 기본적으로 브라우저는 보안 상의 이유로 다른 도메인에 대한 HTTP 요청을 제한
 // 이러한 제한을 우회하려면 서버에서 CORS를 지원
 // origins 속성에는 "*"를 지정하였으므로 모든 도메인에서 요청을 허용
 // maxAge 속성에는 3600을 지정하였으므로 프리플라이 요청을 1시간 동안 캐시할 수 있도록 설정한 것
-public class AuthController {
+public class UserRestController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -52,11 +54,11 @@ public class AuthController {
     private RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDto LoginuserDto) {
-
+    public ResponseEntity<?> login(@RequestBody UserDto LoginUserDto) {
+        System.out.println(LoginUserDto.toString());
         // Spring Security의 인증 매니저를 사용하여 로그인 요청을 인증
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(LoginuserDto.getUsername(), LoginuserDto.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(LoginUserDto.getUsername(), LoginUserDto.getPassword()));
 
         // pring Security의 SecurityContextHolder를 사용하여 인증된 사용자 정보를 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -73,6 +75,8 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                .header("role", userDto.getRole())
+                .header("empNum", userDto.getEmpNum())
                 .body(new UserInfoResponse(userDto.getEmpNum(), userDto.getRole()));
     }
 
