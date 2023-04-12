@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.VacationMapper">
+
+	<resultMap type="VcTypeDto"
+		id="VcTypeDto">
+		<id property="typeId" column="type_id" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="pto" column="pto" />
+		<result property="maxGrantedDate" column="max_granted_date" />
+		<result property="startEnableDate" column="start_enable_date" />
+		<result property="endEnableDate" column="end_enable_date" />
+		<result property="creationDate" column="creation_date" />
+		<result property="updateDate" column="update_date" />
+	</resultMap>
+
+	<select id="getVcTypeList" resultMap="VcTypeDto">
+		    SELECT type_id, name, pto, max_granted_date, description
+		    FROM vc_type
+	</select>
+
+	<insert id="insertVcType" parameterType="VcTypeDto">
+		INSERT INTO vc_type VALUES(
+			TYPE_SQ.nextval, #{name}, #{description}, #{pto}, #{maxGrantedDate},
+		    #{startEnableDate}, #{endEnableDate}, #{creationDate})
+	</insert>
+
+<!--	<select id="getListByMember" resultMap="reservationMap" parameterType="HashMap">-->
+<!--		<![CDATA[-->
+<!--		SELECT-->
+<!--			reservation_id, collect_date, reservation_date, request,-->
+<!--			reservation_status-->
+<!--		FROM-->
+<!--			(SELECT ROWNUM RN, r.*-->
+<!--			 FROM-->
+<!--				 (SELECT /*+ INDEX (reservation idx_reservation_date DESC) */ *-->
+<!--				  FROM reservation-->
+<!--				  ORDER BY reservation_date DESC) r-->
+<!--			 WHERE ROWNUM < = #{pageNum} * #{amount}-->
+<!--			   AND member_id = #{memberId})-->
+<!--		WHERE RN > (#{pageNum}-1) * #{amount}-->
+<!--		]]>-->
+<!--	</select>-->
+
+
+</mapper>
