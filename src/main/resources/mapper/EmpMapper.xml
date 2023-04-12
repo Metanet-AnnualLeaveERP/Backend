@@ -4,15 +4,67 @@
 	
 	
 	<insert id="insertEmp">
-		<selectKey resultType="long" order="BEFORE" keyProperty="empId">
-			select emp_sq.nextval from dual
-		</selectKey>
-		insert into emp
-		       (emp_id, name, hire_date, position, p_email, c_email, tel, user_id, dept_id)
-		values
-			(#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId}, #{deptDto.deptId})
-	</insert>
-	
+        <selectKey resultType="long" order="BEFORE" keyProperty="empId">
+            select emp_sq.nextval from dual
+        </selectKey>
+        insert into emp
+        (emp_id, name, hire_date, position, p_email, c_email, tel, user_id,
+        <if test="mgrId != null">
+            mgr_id,
+        </if>
+        dept_id)
+        values
+        (#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId}
+        <if test="mgrId != null">
+            #{mgrId},
+        </if>
+        ,#{deptDto.deptId}
+        )
+    </insert>
+
+    <update id="updateEmp">
+        update emp
+        set
+            dept_id = #{deptDto.deptId},
+            position = #{position}
+        where
+            emp_id = #{empId}
+
+    </update>
+
+    <!--		-->
+    <!--		<if test="#{mgrId} == null">-->
+    <!--			insert into emp-->
+    <!--			(emp_id, name, hire_date, position, p_email, c_email, tel, user_id, dept_id)-->
+    <!--			values-->
+    <!--			(#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId}, #{deptDto.deptId})-->
+    <!--		</if>-->
+	<select id="selectDeptMgr" resultType="Long">
+		select emp_id
+		from emp
+		where position = '팀장' and dept_id = #{deptId}
+	</select>
+
+    <select id="selectByEmpId">
+        select u.*
+        from users u
+        join emp e
+             on e.user_id = u.user_id
+        where
+            e.emp_id = empId
+    </select>
+
+    <select id="selectListByDeptId">
+        select *
+        from emp
+        where dept_id = #{deptId}
+    </select>
+
+    <update id="updateEmpList" parameterType="hashMap">
+        update emp
+        set mgr_id = #{mgrId}
+        where dept_id = #{deptId}
+    </update>
 	
 <!--	<resultMap type="UserDTO" id="user">-->
 <!--		<result column="user_id"		property="userId"/>-->

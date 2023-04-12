@@ -82,17 +82,6 @@ public class UserRestController {
                 .body(new UserInfoResponse(userDto.getEmpNum(), userDto.getRole()));
     }
 
-    @PostMapping("/register/emp")
-    public ResponseEntity<?> register(@RequestBody ObjectNode objectNode) throws Exception{
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserDto userDto = objectMapper.treeToValue(objectNode.get("userDto"), UserDto.class);
-        EmpDto empDto = objectMapper.treeToValue(objectNode.get("empDto"), EmpDto.class);
-        
-        empService.register(userDto, empDto);
-        return ResponseEntity.ok().body(empDto); // body(employeeDto) 바꿔야햐ㅏㅁ. 테스트중
-
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
