@@ -51,6 +51,11 @@
 
     <!--휴가 결재 내역 조회-->
 
+    <!--휴가 신청 상태 변경-->
+    <update id="updateVcReqStatus" parameterType="VcReqDto">
+        UPDATE vc_req SET status = #{status} WHERE req_id = #{reqId}
+    </update>
+
     <!--휴가 신청 개수 (페이징 처리용)-->
     <select id="getVcReqCount" resultType="Long">
         SELECT

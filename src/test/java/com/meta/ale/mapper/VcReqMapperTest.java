@@ -74,6 +74,14 @@ public class VcReqMapperTest {
     }
 
     @Test
+    void updateVcReqStatus() {
+        VcReqDto dto = vcReqMapper.getVcReq(1L);
+        dto.setStatus("취소");
+        System.out.println(vcReqMapper.updateVcReqStatus(dto));
+        System.out.println(dto.toString());
+    }
+
+    @Test
     void getVcReqCount() {
         System.out.println(vcReqMapper.getVcReqCount(1L));
     }

@@ -3,6 +3,7 @@ package com.meta.ale.service;
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.VcReqDto;
+import com.meta.ale.mapper.VcReqMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,9 @@ class VcReqServiceTest {
 
     @Autowired
     VcReqService vcReqService;
+
+    @Autowired
+    VcReqMapper vcReqMapper;
 
     @Test
     void getVcReqList() {
@@ -65,5 +69,12 @@ class VcReqServiceTest {
         dto.setEmpDto(emp);
 
         vcReqService.createVcReq(dto);
+    }
+
+    @Test
+    void updateVcReqStatus() {
+        VcReqDto dto = vcReqMapper.getVcReq(2L);
+        dto.setStatus("취소");
+        System.out.println(vcReqService.updateVcReqStatus(dto));
     }
 }

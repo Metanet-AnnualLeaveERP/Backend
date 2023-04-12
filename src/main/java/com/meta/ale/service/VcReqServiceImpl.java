@@ -51,6 +51,12 @@ public class VcReqServiceImpl implements VcReqService {
         vcReqMapper.insertVcReq(dto);
     }
 
+    /*휴가 신청 상태 변경*/
+    @Override
+    public boolean updateVcReqStatus(VcReqDto dto) {
+        return vcReqMapper.updateVcReqStatus(dto) != 0 ? true : false;
+    }
+
     /*휴가 결재(승인/반려)*/
 
     /*휴가 결재 내역 조회*/
