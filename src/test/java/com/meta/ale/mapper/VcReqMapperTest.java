@@ -1,16 +1,22 @@
 package com.meta.ale.mapper;
 
+import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.VcReqDto;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Log4j2
 public class VcReqMapperTest {
 
     @Autowired
@@ -45,5 +51,30 @@ public class VcReqMapperTest {
 
             vcReqMapper.insertVcReq(dto);
         }
+    }
+
+    @Test
+    void getVcReqList() {
+        // Mapper에 들어갈 파라미터 map으로 변환
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        Criteria cri = new Criteria();
+
+        map.put("pageNum", cri.getPageNum());
+        map.put("amount", cri.getAmount());
+        map.put("empId", 2L);
+
+        /*// 페이징 처리를 위해 map으로 데이터 리턴
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("paymentPaging", new PagenationDTO(cri, getCountToMember(userId)));
+        map.put("paymentRequests", prMapper.getListToMember(vo));*/
+
+        List<VcReqDto> list = vcReqMapper.getVcReqList(map);
+        list.forEach(item -> System.out.println("휴가요청) " + item));
+    }
+
+    @Test
+    void getVcReq() {
+        VcReqDto dto = vcReqMapper.getVcReq(3L);
+        System.out.println(dto.toString());
     }
 }
