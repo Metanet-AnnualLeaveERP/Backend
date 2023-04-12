@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.RefreshTokenMapper">
+
+
+	<resultMap id="userMap" type="UserDto">
+		<result property="userId" column="user_id"/>
+		<result property="empNum" column="emp_num" />
+		<result property="pwd"    column="pwd"/>
+		<result property="role"   column="role"/>
+	</resultMap>
+
+	<resultMap id="RefreshTokenMap" type="RefreshTokenDto">
+		<result property="tokenId"    column="token_id"/>
+		<result property="token"      column="token" />
+		<result property="expiryDate" column="expiry_date"/>
+		<association property="userDto" resultMap="userMap"/>
+	</resultMap>
+
+	<select id="selectByToken" resultMap="RefreshTokenMap">
+		select * from refresh_token where token = #{token}
+	</select>
+
+	<insert id="insertToken">
+		<selectKey keyProperty="tokenId" order="BEFORE" resultType="long">
+			select token_sq.nextval from dual
+		</selectKey>
+		insert into refresh_token
+		values
+		(#{tokenId}, #{token}, #{expiryDate}, #{userDto.userId})
+	</insert>
+
+	<delete id="deleteByUser">
+		delete from refresh_token where user_id = #{userId}
+	</delete>
+
+	<delete id="deleteByTokenId">
+		delete from refresh_token where token_id = #{tokenId}
+	</delete>
+
+
+
+
+<!--	<select id="selectByDeptName" resultType="DepartmentDto">-->
+<!--		select * from department where dept_name = #{deptName}-->
+<!--	</select>-->
+<!--	-->
+	
+<!--	<resultMap type="UserDTO" id="user">-->
+<!--		<result column="user_id"		property="userId"/>-->
+<!--		<result column="email"			property="email"/>-->
+<!--		<result column="password"		property="password"/>-->
+<!--	</resultMap>-->
+<!--	-->
+<!--	<resultMap type="MemberDTO" id="memberInfo">-->
+<!--		<result column="member_id" 		property="memberId"/>-->
+<!--		<result column="member_contact"	property="memberContact"/>-->
+<!--		<result column="member_address"	property="memberAddress"/>-->
+<!--		<result column="nickname"	property="nickname"/>-->
+<!--		<association property="user" resultMap="user" />-->
+<!--	</resultMap>-->
+<!--	-->
+<!--	&lt;!&ndash; userId로 getMember로 수정함 &ndash;&gt;-->
+<!--	<select id="getMember" resultMap="memberInfo">-->
+<!--		SELECT-->
+<!--			m.member_id	     as member_id,-->
+<!--			m.member_contact as member_contact,-->
+<!--			m.member_address as member_address,-->
+<!--			m.nickname 		 as nickname-->
+<!--		FROM -->
+<!--			member m-->
+<!--		WHERE-->
+<!--			m.user_id = #{userId}-->
+<!--	</select>-->
+<!--	-->
+<!-- 	<update id="deleteMember" parameterType="Long">-->
+<!--		update users-->
+<!--		set-->
+<!--			enabled = 0-->
+<!--		where-->
+<!--			user_id = (-->
+<!--						select user_id-->
+<!--						from member-->
+<!--						where member_id = #{memberId}-->
+<!--					  )-->
+<!--	</update>-->
+<!--	-->
+<!--	<update id="updateMember" parameterType="MemberDTO">-->
+<!--		update member-->
+<!--		set-->
+<!--			member_address = #{memberAddress},-->
+<!--			nickname = #{nickname}-->
+<!--		where-->
+<!--			member_id = #{memberId}-->
+<!--	</update>-->
+
+<!--	<select id="getMemberList" parameterType="String" resultMap="memberInfo">-->
+<!--		select-->
+<!--			u.user_id	     as user_id,-->
+<!--			u.email 	     as email,-->
+<!--			u.password       as password,-->
+<!--			m.member_id	     as member_id,-->
+<!--			m.member_contact as member_contact,-->
+<!--			m.member_address as member_address,-->
+<!--			m.nickname 		 as nickname-->
+<!--		from member m-->
+<!--			 join users u-->
+<!--			   on m.user_id = u.user_id-->
+<!--		where-->
+<!--			u.role = #{role}-->
+<!--	</select>-->
+
+<!--	<select id="getMemberContact" resultType="String">-->
+<!--		select -->
+<!--			member_contact -->
+<!--		from -->
+<!--			member -->
+<!--		where -->
+<!--			member_contact = #{memberContact}-->
+<!--	</select>-->
+
+
+</mapper>
