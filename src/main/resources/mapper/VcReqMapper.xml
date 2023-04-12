@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.VcReqMapper">
+
+    <!--휴가 신청 내역 조회-->
+
+    <!--휴가 신청 내역 상세 조회-->
+
+    <!--휴가 신청-->
+    <!-- REQ_SQ, 요청일, 휴가 시작일, 휴가 종료일, 휴가 유형, 상태, 직원 번호 -->
+    <insert id="insertVcReq" parameterType="VcReqDto">
+        INSERT INTO
+            vc_req
+            (REQ_ID, REQ_DATE, START_DATE, END_DATE, VC_TYPE, REQ_DAYS, COMMENTS, STATUS, APRV_DATE, FILE_PATH, EMP_ID)
+        VALUES
+            (REQ_SQ.nextval, SYSDATE, #{startDate}, #{endDate}, #{VcType}, #{reqDays}, #{comments}, #{status}, #{AprvDate}, #{filePath}, #{empDto.empId})
+
+        <selectKey keyProperty="reqId" order="AFTER" resultType="long">
+            SELECT REQ_SQ.currval FROM dual
+        </selectKey>
+    </insert>
+
+
+
+
+
+    <!--휴가 결재(승인/반려)-->
+
+    <!--휴가 결재 내역 조회-->
+
+
+
+</mapper>
