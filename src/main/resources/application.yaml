@@ -26,12 +26,12 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
-#ale:
-#  jwt:
-#    jwtCookieName: ale-jwt
-#    jwtRefreshCookieName: ale-jwt-refresh
-#    jwtSecret: aleSecretKey
-#    #    jwtExpirationMs: 86400000
-#    jwtRefreshExpirationMs: 86400000
-#    jwtExpirationMs: 60000
-##    jwtRefreshExpirationMs: 180000
+ale:
+  jwt:
+    jwtCookieName: ale-jwt
+    jwtRefreshCookieName: ale-jwt-refresh
+    jwtSecret: aleSecretKey
+    #    jwtExpirationMs: 86400000
+    jwtRefreshExpirationMs: 86400000
+    jwtExpirationMs: 60000
+#    jwtRefreshExpirationMs: 180000

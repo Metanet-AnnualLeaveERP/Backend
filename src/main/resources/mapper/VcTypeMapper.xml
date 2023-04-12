@@ -23,10 +23,10 @@
 		UPDATE vc_type
 		SET name = #{name},
 		    description = #{description},
-		    pto = #{[pto},
+		    pto = #{pto},
 		    max_granted_date = #{maxGrantedDate},
-			start_enable_date = #{start_enable_date},
-			end_enable_date = #{end_enable_date},
+			start_enable_date = #{startEnableDate},
+			end_enable_date = #{endEnableDate},
 			update_date = sysdate
 		WHERE type_id = #{typeId}
 	</update>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.GrantedVcMapper">
+
+    <resultMap type="GrantedVcDto" id="grantedVc">
+        <id property="vcId"             column="vc_id"/>
+        <result property="grantedDate"  column="granted_date"/>
+        <result property="expiredDate"  column="expired_date"/>
+        <result property="vcDays"       column="vc_days"/>
+        <result property="remainDays"   column="remain_days"/>
+        <association property="vcTypeDto"  resultMap="vcType" />
+        <association property="empDto"   resultMap="emp"/>
+    </resultMap>
+
+    <resultMap type="VcTypeDto" id="vcType">
+        <id property="typeId"               column="type_id" />
+        <result property="name"             column="name" />
+        <result property="description"      column="description" />
+        <result property="pto"              column="pto" />
+        <result property="maxGrantedDate"   column="max_granted_date" />
+        <result property="startEnableDate"  column="start_enable_date" />
+        <result property="endEnableDate"    column="end_enable_date" />
+        <result property="creationDate"     column="creation_date" />
+        <result property="updateDate"       column="update_date" />
+    </resultMap>
+
+    <resultMap type="EmpDto" id="emp">
+        <id property="empId"            column="emp_id"/>
+        <result property="name"         column="name"/>
+        <result property="hire_date"    column="hireDate"/>
+        <result property="leaveDate"    column="leave_date"/>
+        <result property="position"     column="position"/>
+        <result property="pEmail"       column="p_email"/>
+        <result property="cEmail"       column="c_email"/>
+        <result property="tel"          column="tel"/>
+        <association property="userDto" resultMap="user"/>
+        <association property="mgrId"   resultMap="emp"/>
+        <association property="deptDto" resultMap="dept"/>
+    </resultMap>
+
+    <resultMap type="UserDto" id="user">
+        <id property="userId"          column="user_id"/>
+        <result property="empNum"     column="emp_num"/>
+        <result property="enabled"     column="enabled"/>
+        <result property="role"        column="role"/>
+    </resultMap>
+
+    <select id="getLastDay" resultType="java.util.Date">
+        SELECT ADD_MONTHS(TRUNC(SYSDATE, 'YEAR'), 12) - 1 AS last_day_of_year FROM dual
+    </select>
+
+    <select id="getListGrantedVc" resultMap="grantedVc">
+        SELECT
+            d.dept_name AS dept,
+            e.name AS ename,
+            vt.name AS vcname,
+            gv.granted_date,
+            gv.expired_date,
+            gv.vc_days,
+            gv.remain_days
+        FROM
+            granted_vc gv
+                JOIN emp e ON e.emp_id = gv.emp_id
+                JOIN vc_type vt ON vt.type_id = gv.type_id
+                JOIN dept d ON d.dept_id = e.dept_id
+        ORDER BY
+            dept, ename, granted_date
+    </select>
+
+    <insert id="insertGrantedVc" parameterType="grantedVcDto">
+        INSERT INTO granted_vc VALUES(
+            gv_sq.nextval, #{grantedDate}, #{expiredDate}, #{vcDays},
+            #{remainDays}, #{vcTypeDto.typeId}, #{empDto.empId}
+        )
+    </insert>
+
+
+
+
+</mapper>
