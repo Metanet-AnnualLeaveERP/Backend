@@ -47,26 +47,28 @@ public class CancelServiceImpl implements CancelService {
     /*휴가 취소*/
     @Override
     @Transactional
-    public void createCancel(CancelDto dto) {
-        VcReqDto req = dto.getVcReqDto();
-        Date sysdate = new Date(); // 현재일
+    public void createCancel(CancelDto dto, Long reqId) {
+        // 휴가 요청을 찾아 cancel DTO에 셋 해준다
+        VcReqDto req = vcReqService.getVcReq(reqId);
+        dto.setVcReqDto(req);
 
         // 현재 날짜와 휴가 요청의 시작일을 비교한다.
+        Date sysdate = new Date(); // 현재일
         int compare = req.getStartDate().compareTo(sysdate);
 
         // 시작일이 현재일 이전이라면
         if (compare > 0) {
-            System.out.println("자동 취소 가능");
+//            System.out.println("자동 취소 가능");
             dto.setStatus("자동취소");
         } // 시작일이 현재일이거나 이후라면 (지났다면)
         else if (compare == 0 || compare < 0) {
-            System.out.println("취소 요청 날려야 함");
+//            System.out.println("취소 요청 필요");
             dto.setStatus("대기중");
         }
         req.setStatus("취소");
 
-        vcReqService.updateVcReqStatus(req);
-        cancelMapper.insertCancel(dto);
+        vcReqService.updateVcReqStatus(req); // 해당 휴가 요청의 상태를 '취소'로 변경
+        cancelMapper.insertCancel(dto); // 휴가 취소 테이블에 추가
     }
 
     /*휴가 취소 결재(승인/반려)*/

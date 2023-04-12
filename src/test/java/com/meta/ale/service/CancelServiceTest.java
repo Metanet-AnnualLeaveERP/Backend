@@ -42,11 +42,11 @@ class CancelServiceTest {
     @Test
     void createCancel() {
         CancelDto dto = new CancelDto();
-        VcReqDto req = vcReqMapper.getVcReq(1L);
-        dto.setVcReqDto(req);
+//        VcReqDto req = vcReqMapper.getVcReq(1L);
+//        dto.setVcReqDto(req);
 
-        dto.setReqComm("일정 변경");
+        dto.setReqComm("일정 변경 test");
 
-        cancelService.createCancel(dto);
+        cancelService.createCancel(dto, 1L);
     }
 }

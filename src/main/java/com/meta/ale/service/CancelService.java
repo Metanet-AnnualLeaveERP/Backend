@@ -14,7 +14,7 @@ public interface CancelService {
     public CancelDto getCancel(Long cancelId, Long currUserId);
 
     /*휴가 취소*/
-    public void createCancel(CancelDto dto);
+    public void createCancel(CancelDto dto, Long reqId);
 
     /*휴가 취소 결재(승인/반려)*/
 
