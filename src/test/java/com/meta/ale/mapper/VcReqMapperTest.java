@@ -47,7 +47,6 @@ public class VcReqMapperTest {
             // emp
             EmpDto emp = new EmpDto();
             emp.setEmpId(1L);
-            emp.setUserId(1L);
             dto.setEmpDto(emp);
 
             vcReqMapper.insertVcReq(dto);
@@ -70,7 +69,7 @@ public class VcReqMapperTest {
 
     @Test
     void getVcReq() {
-        VcReqDto dto = vcReqMapper.getVcReq(3L);
+        VcReqDto dto = vcReqMapper.getVcReq(1L);
         System.out.println(dto.toString());
     }
 

@@ -12,7 +12,7 @@ public interface VcReqService {
     public Map<String, Object> getVcReqList(Criteria cri, Long userId);
 
     /*휴가 신청 내역 상세 조회*/
-    public VcReqDto getVcReq(Long reqId);
+    public VcReqDto getVcReq(Long reqId, Long currUserId);
 
     /*휴가 신청*/
     public void createVcReq(VcReqDto dto);

@@ -31,8 +31,11 @@ class VcReqServiceTest {
 
     @Test
     void getVcReq() {
-        VcReqDto dto = vcReqService.getVcReq(4L);
-        System.out.println("휴가 요청 하나)" + dto.toString());
+        VcReqDto dto = vcReqService.getVcReq(5L, 1L);
+        String result;
+        result = dto == null ? "접근 실패" : dto.toString();
+        System.out.println(result);
+//        System.out.println("휴가 요청 하나)" + dto.toString());
     }
 
     @Test

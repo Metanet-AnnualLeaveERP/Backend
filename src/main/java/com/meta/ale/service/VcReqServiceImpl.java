@@ -1,6 +1,7 @@
 package com.meta.ale.service;
 
 import com.meta.ale.domain.Criteria;
+import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.PagenationDTO;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.mapper.VcReqMapper;
@@ -35,8 +36,13 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 신청 내역 상세 조회*/
     @Override
-    public VcReqDto getVcReq(Long reqId) {
-        return vcReqMapper.getVcReq(reqId);
+    public VcReqDto getVcReq(Long reqId, Long currUserId) {
+        // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
+        VcReqDto dto = vcReqMapper.getVcReq(reqId);
+        EmpDto dbEmp = dto.getEmpDto();
+        Long dbUserId = dbEmp.getUserDto().getUserId();
+        return currUserId == dbUserId ? dto : null;
+//        return vcReqMapper.getVcReq(reqId);
     }
 
     /*휴가 신청*/
