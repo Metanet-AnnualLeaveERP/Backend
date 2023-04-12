@@ -15,7 +15,7 @@ public class VcTypeDto {
     private Long typeId;
     private String name;
     private String description;
-    private String pto; // 유급 여부
+    private Long pto; // 유급 여부
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

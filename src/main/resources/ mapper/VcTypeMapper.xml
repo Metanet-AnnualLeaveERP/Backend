@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.meta.ale.mapper.VacationMapper">
+<mapper namespace="com.meta.ale.mapper.VcTypeMapper">
 
 	<resultMap type="VcTypeDto"
 		id="VcTypeDto">
@@ -15,33 +15,33 @@
 		<result property="updateDate" column="update_date" />
 	</resultMap>
 
-	<select id="getVcTypeList" resultMap="VcTypeDto">
+	<select id="getListVcType" resultType="VcTypeDto">
 		    SELECT type_id, name, pto, max_granted_date, description
 		    FROM vc_type
 	</select>
 
 	<insert id="insertVcType" parameterType="VcTypeDto">
-		INSERT INTO vc_type VALUES(
-			TYPE_SQ.nextval, #{name}, #{description}, #{pto}, #{maxGrantedDate},
-		    #{startEnableDate}, #{endEnableDate}, #{creationDate})
+		INSERT INTO vc_type (type_id, name, description, pto, max_granted_date,
+		    start_enable_date, end_enable_date, creation_date) VALUES(
+				TYPE_SQ.nextval, #{name}, #{description}, #{pto}, #{maxGrantedDate},
+				#{startEnableDate}, #{endEnableDate}, sysdate)
 	</insert>
 
-<!--	<select id="getListByMember" resultMap="reservationMap" parameterType="HashMap">-->
-<!--		<![CDATA[-->
-<!--		SELECT-->
-<!--			reservation_id, collect_date, reservation_date, request,-->
-<!--			reservation_status-->
-<!--		FROM-->
-<!--			(SELECT ROWNUM RN, r.*-->
-<!--			 FROM-->
-<!--				 (SELECT /*+ INDEX (reservation idx_reservation_date DESC) */ *-->
-<!--				  FROM reservation-->
-<!--				  ORDER BY reservation_date DESC) r-->
-<!--			 WHERE ROWNUM < = #{pageNum} * #{amount}-->
-<!--			   AND member_id = #{memberId})-->
-<!--		WHERE RN > (#{pageNum}-1) * #{amount}-->
-<!--		]]>-->
-<!--	</select>-->
+	<delete id="deleteVcType" parameterType="Long">
+		DELETE FROM vc_type
+		WHERE type_id = #{typeId}
+	</delete>
 
+	<update id="updateVcType" parameterType="VcTypeDto">
+		UPDATE vc_type
+		SET name = #{name},
+		    description = #{description},
+		    pto = #{[pto},
+		    max_granted_date = #{maxGrantedDate},
+			start_enable_date = #{start_enable_date},
+			end_enable_date = #{end_enable_date},
+			update_date = sysdate
+		WHERE type_id = #{typeId}
+	</update>
 
 </mapper>

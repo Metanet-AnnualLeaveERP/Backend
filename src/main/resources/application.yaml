@@ -1,0 +1,37 @@
+server:
+  port: 8100
+
+#logging:
+#  level:
+#    org.springframework: DEBUG
+
+spring:
+  messages:
+    basename: message
+
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    username: vacation
+    password: 1234
+
+
+  ##자바 직렬화 라이브러리. null인 속성값은 JSON으로 직렬화되지 않음.
+  jackson:
+    default-property-inclusion: NON_NULL
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.meta.ale.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+#ale:
+#  jwt:
+#    jwtCookieName: ale-jwt
+#    jwtRefreshCookieName: ale-jwt-refresh
+#    jwtSecret: aleSecretKey
+#    #    jwtExpirationMs: 86400000
+#    jwtRefreshExpirationMs: 86400000
+#    jwtExpirationMs: 60000
+##    jwtRefreshExpirationMs: 180000
