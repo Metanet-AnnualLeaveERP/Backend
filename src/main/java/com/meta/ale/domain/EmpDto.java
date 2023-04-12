@@ -25,7 +25,7 @@ public class EmpDto {
     @JsonProperty("cEmail")
     private String cEmail;
     private String tel;
-    private UserDto userDto;
+//    private UserDto userDto;
     private Long mgrId;
     private DeptDto deptDto;
 }
