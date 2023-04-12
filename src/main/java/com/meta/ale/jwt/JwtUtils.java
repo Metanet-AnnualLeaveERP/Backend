@@ -39,7 +39,8 @@ public class JwtUtils {
 
     public ResponseCookie generateJwtCookie(UserDto userDto) {
         String jwt = generateTokenFromUsername(userDto.getEmpNum());    // JWT 토큰을 생성
-        return generateCookie(jwtCookie, jwt, "/api");
+//        return generateCookie(jwtCookie, jwt, "/api");
+        return generateCookie(jwtCookie, jwt, "/");
     }
 
 //    public ResponseCookie generateJwtCookie(User user) {
@@ -48,17 +49,21 @@ public class JwtUtils {
 //    }
 
     public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
-        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
+//        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
+        return generateCookie(jwtRefreshCookie, refreshToken, "/");
     }
 
 
+
     public ResponseCookie getCleanJwtCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
+//        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/").build();
         return cookie;
     }
 
     public ResponseCookie getCleanJwtRefreshCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtRefreshCookie, null).path("/api/auth/refreshtoken").build();
+//        ResponseCookie cookie = ResponseCookie.from(jwtRefreshCookie, null).path("/api/auth/refreshtoken").build();
+        ResponseCookie cookie = ResponseCookie.from(jwtRefreshCookie, null).path("/").build();
         return cookie;
     }
 
@@ -73,7 +78,10 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
+            System.out.println("aaaaaaaaaaaaaa");
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+//eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMTExIiwiaWF0IjoxNjgxMjc5NTg5LCJleHAiOjE2ODEyNzk2NDl9.7PuH2sd5XFvQo0_JPYimvrwBsiy8NRzv2UF1
+// u5xQUuBgT0IrbbEeNk1NZqLRnHZWwbNz4AjnmzkU8KqwRFEWGg
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());

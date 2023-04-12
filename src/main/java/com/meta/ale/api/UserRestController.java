@@ -55,7 +55,7 @@ public class UserRestController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDto LoginUserDto) {
-        System.out.println(LoginUserDto.toString());
+
         // Spring Security의 인증 매니저를 사용하여 로그인 요청을 인증
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(LoginUserDto.getUsername(), LoginUserDto.getPassword()));
@@ -65,7 +65,7 @@ public class UserRestController {
 
         // 인증된 사용자 정보를 가져옴
         UserDto userDto = (UserDto) authentication.getPrincipal();
-
+        System.out.println(LoginUserDto.toString());
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDto);
 
         RefreshTokenDto refreshTokenDto = refreshTokenService.createRefreshToken(userDto.getUserId());
@@ -74,6 +74,8 @@ public class UserRestController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+//                .header("accessToken", jwtCookie.getValue())
+//                .header("refreshToken", jwtRefreshCookie.getValue())
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                 .header("role", userDto.getRole())
                 .header("empNum", userDto.getEmpNum())
