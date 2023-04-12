@@ -3,13 +3,18 @@ package com.meta.ale.mapper;
 import com.meta.ale.domain.VcReqDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.HashMap;
+import java.util.List;
+
 /* Vacation Request */
 @Mapper
 public interface VcReqMapper {
 
     /*휴가 신청 내역 조회*/
+    public List<VcReqDto> getVcReqList(HashMap<String, Object> hashMap);
 
     /*휴가 신청 내역 상세 조회*/
+    public VcReqDto getVcReq(Long reqId);
 
     /*휴가 신청*/
     public void insertVcReq(VcReqDto dto);
