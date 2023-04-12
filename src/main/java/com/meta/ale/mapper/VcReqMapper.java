@@ -22,4 +22,7 @@ public interface VcReqMapper {
     /*휴가 결재(승인/반려)*/
 
     /*휴가 결재 내역 조회*/
+
+    /*휴가 신청 개수 (페이징 처리용)*/
+    public Long getVcReqCount(Long empId);
 }

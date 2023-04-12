@@ -63,11 +63,6 @@ public class VcReqMapperTest {
         map.put("amount", cri.getAmount());
         map.put("empId", 2L);
 
-        /*// 페이징 처리를 위해 map으로 데이터 리턴
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("paymentPaging", new PagenationDTO(cri, getCountToMember(userId)));
-        map.put("paymentRequests", prMapper.getListToMember(vo));*/
-
         List<VcReqDto> list = vcReqMapper.getVcReqList(map);
         list.forEach(item -> System.out.println("휴가요청) " + item));
     }
@@ -76,5 +71,10 @@ public class VcReqMapperTest {
     void getVcReq() {
         VcReqDto dto = vcReqMapper.getVcReq(3L);
         System.out.println(dto.toString());
+    }
+
+    @Test
+    void getVcReqCount() {
+        System.out.println(vcReqMapper.getVcReqCount(1L));
     }
 }

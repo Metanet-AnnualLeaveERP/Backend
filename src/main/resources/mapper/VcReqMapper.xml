@@ -46,5 +46,17 @@
 
     <!--휴가 결재 내역 조회-->
 
+    <!--휴가 신청 개수 (페이징 처리용)-->
+    <select id="getVcReqCount" resultType="Long">
+        SELECT
+            COUNT(*)
+        FROM
+            vc_req
+        <where>
+            <if test="empId != 0">
+                emp_id = #{empId}
+            </if>
+        </where>
+    </select>
 
 </mapper>
