@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.CancelMapper">
+    <!-- Vacation Cancel Mapper -->
+
+    <!--휴가 취소 내역 조회-->
+    <select id="getCancelList" resultMap="cancelMap">
+        SELECT
+        *
+        FROM (
+        SELECT
+        ROWNUM RN, cancel_id, cancel_status, cancel_req_date, res_date, req_comm,res_comm,
+        v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+        v.aprv_date,v.file_path, e.*
+        FROM
+        cancel c JOIN vc_req v ON c.req_id = v.req_id
+        JOIN emp e ON v.emp_id = e.emp_id
+        WHERE
+        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+        <if test="user_id != 0">
+            AND e.user_id = #{userId}
+        </if>
+        )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
+
+    <!--휴가 취소 내역 상세 조회-->
+    <select id="getCancel" resultMap="cancelMap">
+        SELECT
+            c.*, v.*, e.*
+        FROM
+            cancel c JOIN vc_req v ON c.req_id = v.req_id
+                     JOIN emp e ON v.emp_id = e.emp_id
+        WHERE
+            cancel_id = #{cancelId}
+    </select>
+
+    <!--휴가 취소-->
+    <insert id="insertCancel" parameterType="CancelDto">
+        INSERT INTO cancel (CANCEL_ID, CANCEL_STATUS, CANCEL_REQ_DATE, RES_DATE, REQ_COMM, RES_COMM, REQ_ID)
+        VALUES (CANCEL_SQ.nextval, #{status}, SYSDATE, null, #{reqComm}, null, #{vcReqDto.reqId})
+
+        <selectKey keyProperty="cancelId" order="AFTER" resultType="long">
+            SELECT CANCEL_SQ.currval FROM dual
+        </selectKey>
+    </insert>
+
+    <!--휴가 취소 결재(승인/반려)-->
+
+    <!--휴가취소 승인 / 휴가취소 반려-->
+
+    <!--휴가 신청 상태 변경-->
+    <update id="updateCancelStatus" parameterType="CancelDto">
+        UPDATE cancel SET cancel_status = #{status} WHERE cancel_id = #{cancelId}
+    </update>
+
+    <!--휴가 취소 개수 (페이징 처리용)-->
+    <select id="getCancelCount" resultType="Long">
+        SELECT
+        COUNT(*)
+        FROM
+        cancel c JOIN vc_req v ON c.req_id = v.req_id
+        JOIN emp e ON v.emp_id = e.emp_id
+        <where>
+            <if test="user_id != 0">
+                AND e.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="cancelMap" type="CancelDto">
+        <id property="cancelId" column="cancel_id"/>
+        <result property="status" column="status"/>
+        <result property="reqDate" column="req_date"/>
+        <result property="resDate" column="res_date"/>
+        <result property="reqComm" column="req_comm"/>
+        <result property="resComm" column="res_comm"/>
+        <association property="vcReqDto" resultMap="reqMap"/>
+    </resultMap>
+
+    <resultMap id="reqMap" type="VcReqDto">
+        <id property="reqId" column="req_id"/>
+        <result property="reqDate" column="req_date"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="VcType" column="vc_type"/>
+        <result property="reqDays" column="req_days"/>
+        <result property="comments" column="comments"/>
+        <result property="status" column="status"/>
+        <result property="AprvDate" column="aprv_date"/>
+        <result property="filePath" column="file_path"/>
+        <association property="empDto" resultMap="empMap"/>
+    </resultMap>
+
+    <resultMap id="empMap" type="EmpDto">
+        <id property="empId" column="emp_id"/>
+        <result property="name" column="name"/>
+        <result property="hireDate" column="hire_date"/>
+        <result property="leaveDate" column="leave_date"/>
+        <result property="position" column="position"/>
+        <result property="pEmail" column="p_email"/>
+        <result property="cEmail" column="c_email"/>
+        <result property="tel" column="tel"/>
+        <result property="mgrId" column="mgr_id"/>
+        <association property="userDto" resultMap="userMap" />
+        <association property="deptDto" resultMap="deptMap" />
+    </resultMap>
+
+    <resultMap id="userMap" type="UserDto">
+        <id property="userId" column="user_id" />
+<!--        <result property="empNum" column="emp_num" />-->
+<!--        <result property="role" column="role" />-->
+    </resultMap>
+
+    <resultMap id="deptMap" type="DeptDto">
+        <id property="deptId" column="dept_id" />
+    </resultMap>
+
+</mapper>
