@@ -12,10 +12,14 @@
                 ROWNUM RN, v.*
             FROM
                 vc_req v
+            JOIN
+                emp e
+            ON
+                v.emp_id = e.emp_id
             WHERE
                 <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-                <if test="empId != 0">
-                    AND emp_id = #{empId}
+                <if test="user_id != 0">
+                    AND e.user_id = #{userId}
                 </if>
         )
         <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>

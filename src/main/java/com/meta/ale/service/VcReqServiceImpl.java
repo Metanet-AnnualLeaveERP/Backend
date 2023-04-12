@@ -15,20 +15,20 @@ import java.util.Map;
 @AllArgsConstructor
 public class VcReqServiceImpl implements VcReqService {
 
-    VcReqMapper vcReqMapper;
+    private VcReqMapper vcReqMapper;
 
     /*휴가 신청 내역 조회*/
     @Override
-    public Map<String, Object> getVcReqList(Criteria cri, Long empId) {
+    public Map<String, Object> getVcReqList(Criteria cri, Long userId) {
         // Mapper에 들어갈 파라미터 map으로 변환
         HashMap<String, Object> vo = new HashMap<String, Object>();
         vo.put("pageNum", cri.getPageNum());
         vo.put("amount", cri.getAmount());
-        vo.put("empId", empId);
+        vo.put("userId", userId);
 
         // 페이징 처리를 위해 map으로 데이터 리턴
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("paging", new PagenationDTO(cri, getVcReqCount(empId)));
+        map.put("paging", new PagenationDTO(cri, getVcReqCount(userId)));
         map.put("vcReqs", vcReqMapper.getVcReqList(vo));
         return map;
     }

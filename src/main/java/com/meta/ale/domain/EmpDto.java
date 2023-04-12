@@ -26,6 +26,7 @@ public class EmpDto {
     private String cEmail;
     private String tel;
 //    private UserDto userDto;
+    private Long userId; // 임시
     private Long mgrId;
     private DeptDto deptDto;
 }

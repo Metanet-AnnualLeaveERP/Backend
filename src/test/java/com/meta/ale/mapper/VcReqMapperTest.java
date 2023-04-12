@@ -47,6 +47,7 @@ public class VcReqMapperTest {
             // emp
             EmpDto emp = new EmpDto();
             emp.setEmpId(1L);
+            emp.setUserId(1L);
             dto.setEmpDto(emp);
 
             vcReqMapper.insertVcReq(dto);
@@ -61,7 +62,7 @@ public class VcReqMapperTest {
 
         map.put("pageNum", cri.getPageNum());
         map.put("amount", cri.getAmount());
-        map.put("empId", 2L);
+        map.put("userId", 2L);
 
         List<VcReqDto> list = vcReqMapper.getVcReqList(map);
         list.forEach(item -> System.out.println("휴가요청) " + item));
