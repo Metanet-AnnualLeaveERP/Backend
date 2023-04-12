@@ -42,7 +42,6 @@ public class VcReqServiceImpl implements VcReqService {
         EmpDto dbEmp = dto.getEmpDto();
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
-//        return vcReqMapper.getVcReq(reqId);
     }
 
     /*휴가 신청*/
@@ -64,7 +63,7 @@ public class VcReqServiceImpl implements VcReqService {
     /* ------------서비스 내부에서 쓸 메소드 -------------- */
 
     /*휴가 신청 개수 (페이징 처리용)*/
-    private int getVcReqCount(Long empId) {
-        return vcReqMapper.getVcReqCount(empId).intValue();
+    private int getVcReqCount(Long userId) {
+        return vcReqMapper.getVcReqCount(userId).intValue();
     }
 }

@@ -27,5 +27,5 @@ public interface VcReqMapper {
     public int updateVcReqStatus(VcReqDto dto);
 
     /*휴가 신청 개수 (페이징 처리용)*/
-    public Long getVcReqCount(Long empId);
+    public Long getVcReqCount(Long userId);
 }

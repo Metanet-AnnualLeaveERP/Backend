@@ -61,10 +61,10 @@
         SELECT
             COUNT(*)
         FROM
-            vc_req
+            vc_req v JOIN emp e ON v.emp_id = e.emp_id
         <where>
-            <if test="empId != 0">
-                emp_id = #{empId}
+            <if test="user_id != 0">
+                AND e.user_id = #{userId}
             </if>
         </where>
     </select>
