@@ -34,15 +34,22 @@ public class VcReqServiceImpl implements VcReqService {
         return map;
     }
 
-    /*휴가 신청 내역 상세 조회*/
+    /*휴가 신청 내역 상세 (user id 비교)*/
     @Override
-    public VcReqDto getVcReq(Long reqId, Long currUserId) {
+    public VcReqDto getVcReqCompared(Long reqId, Long currUserId) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
         EmpDto dbEmp = dto.getEmpDto();
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
     }
+
+    /*휴가 신청 내역 상세*/
+    @Override
+    public VcReqDto getVcReq(Long reqId) {
+        return vcReqMapper.getVcReq(reqId);
+    }
+
 
     /*휴가 신청*/
     @Override

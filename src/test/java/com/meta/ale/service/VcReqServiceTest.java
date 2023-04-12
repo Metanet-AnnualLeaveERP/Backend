@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class VcReqServiceTest {
@@ -35,7 +32,7 @@ class VcReqServiceTest {
 
     @Test
     void getVcReq() {
-        VcReqDto dto = vcReqService.getVcReq(5L, 1L);
+        VcReqDto dto = vcReqService.getVcReqCompared(5L, 1L);
         String result;
         result = dto == null ? "접근 실패" : dto.toString();
         System.out.println(result);
