@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/* 휴가유형관리 Controller */
-@RequestMapping("/vacations/")
+/* 휴가유형관리 RestController */
+@RequestMapping("/admin/vacations/")
 @RestController
 public class VcTypeRestController {
 
