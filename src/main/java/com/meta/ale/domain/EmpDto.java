@@ -25,7 +25,7 @@ public class EmpDto {
     @JsonProperty("cEmail")
     private String cEmail;
     private String tel;
-    private UserDto userDto;
+//    private UserDto userDto; // Security 적용 전까지 비활성화
     private Long mgrId;
     private DeptDto deptDto;
 }
