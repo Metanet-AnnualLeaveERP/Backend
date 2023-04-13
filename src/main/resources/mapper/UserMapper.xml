@@ -30,6 +30,23 @@
 
 	</insert>
 
+	<update id="updateRole">
+		update users
+		set
+		    role = #{role}
+		where
+		    user_id = #{userId}
+	</update>
+
+	<select id="selectByEmpId" resultType="UserDto">
+		select u.*
+		from users u
+				 join emp e
+				        on e.user_id = u.user_id
+		where
+			e.emp_id = #{empId}
+	</select>
+
 <!--	&lt;!&ndash; 계정 비활성화 &ndash;&gt;-->
 <!--	<delete id="deleteUser">-->
 <!--		update users-->

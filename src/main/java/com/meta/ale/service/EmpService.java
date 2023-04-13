@@ -7,4 +7,6 @@ public interface EmpService {
     public boolean register(UserDto userDto, EmpDto empDto) throws Exception;
 
     public boolean modifyEmp(EmpDto empDto) throws Exception;
+
+    public EmpDto getEmpInfo(Long empId) throws Exception;
 }

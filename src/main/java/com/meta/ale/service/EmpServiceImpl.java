@@ -1,5 +1,6 @@
 package com.meta.ale.service;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.meta.ale.domain.DeptDto;
 import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.UserDto;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-public class EmpServiceImpl implements EmpService{
+public class EmpServiceImpl implements EmpService {
 
     @Autowired
     private EmpMapper empMapper;
@@ -38,35 +39,48 @@ public class EmpServiceImpl implements EmpService{
         String position = empDto.getPosition();
 
         if (position.equals("팀장")) {
-            if (deptMgrId != null){
+            if (deptMgrId != null) {
                 return false;   // 팀장이 이미 있으면 팀장 가입 안됨
             }
             userDto.setRole("ROLE_MANAGER");
-            userMapper.insertUser(userDto);
+            if (userMapper.insertUser(userDto) == 0) {
+                return false;
+            }
 
             empDto.setUserDto(userDto);
             empDto.setDeptDto(deptDto);
 
-            empMapper.insertEmp(empDto);
+            if (empMapper.insertEmp(empDto) == 0) {
+                return false;
+            }
 
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("deptId", deptDto.getDeptId());
-            paramMap.put("mgrId", empDto.getEmpId());
+            if (empMapper.selectDeptEmpCnt(deptDto.getDeptId()) > 0) {
+                Map<String, Object> paramMap = new HashMap<>();
+                paramMap.put("deptId", deptDto.getDeptId());
+                paramMap.put("mgrId", empDto.getEmpId());
 
-            return (empMapper.updateEmpList(paramMap) != 0);
-
-        } else {
+                if (empMapper.updateEmpList(paramMap) == 0)
+                    return false;
+                else
+                    return true;
+            }
+            return true;
+        } else if (position.equals("사원")) {
             userDto.setRole("ROLE_EMP");
-            userMapper.insertUser(userDto);
+            if (userMapper.insertUser(userDto) == 0) {
+                return false;
+            }
 
             empDto.setUserDto(userDto);
             empDto.setDeptDto(deptDto);
-
             empDto.setMgrId(deptMgrId);
-
-            return empMapper.insertEmp(empDto) == 1;
-
+            if (empMapper.insertEmp(empDto) == 1) {
+                return true;
+            } else {
+                return false;
+            }
         }
+        return false;
     }
 // register 테스트 해야함
 
@@ -76,44 +90,128 @@ public class EmpServiceImpl implements EmpService{
 
     // 직원이 부서를 바꾸면 부서와 mgrid 변경
 
-    // 직원에서 팀장이 될 경우(그 전에 팀장 자리가 비워져 있어야함)
+    // 사원에서 팀장이 될 경우(그 전에 팀장 자리가 비워져 있어야함)
     // 직책과 role을 변경하고 mgrId를 null
     // 원래 부서에서 팀장이 될 경우 그 부서의 팀원들을 새로운 팀장의 empId로 mgrId설정
     // 새로운 부서로 간다면 원래 있던 부서의 팀원들의 mgrId를 비우고
     // 새로운 부서의 팀원들의 mgrId를 새로운 팀장의 empId로 바꿔
     @Override
     public boolean modifyEmp(EmpDto empDto) throws Exception {
-        DeptDto deptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName());  // 부서정보
-        Long deptMgrId = empMapper.selectDeptMgr(deptDto.getDeptId()); // 팀장아이디
-        UserDto userDto = empMapper.selectByEmpId(empDto.getEmpId());
+        System.out.println(empDto.toString());
+        DeptDto newDeptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName());  // 변경하는 부서정보
+        DeptDto originDeptDto = deptMapper.selectByempId(empDto.getEmpId());    // 기존의 부서 정보
 
-        String position = empDto.getPosition(); // 변경되서 넘어온 직책
-        empDto.setDeptDto(deptDto);
+        Long newDeptMgrId = empMapper.selectDeptMgr(newDeptDto.getDeptId()); // 변경하는 부서의 팀장아이디
+        UserDto userDto = userMapper.selectByEmpId(empDto.getEmpId());
+        String originPosition = empMapper.selectPositionByEmpId(empDto.getEmpId());
 
+        String position = empDto.getPosition(); // 변경하는 직책
         if (position.equals("팀장")) {
-            if (deptMgrId != null){
-                return false;   // 팀장이 이미 있으면 팀장 가입 안됨
+            if (newDeptMgrId != null) {
+                return false;   // 변경하려는 부서에 팀장이 이미 있으면 변경 불가
             }
             userDto.setRole("ROLE_MANAGER");
+            if (userMapper.updateRole(userDto) == 0) {
+                return false;
+            }
+            empDto.setUserDto(userDto);
+            empDto.setDeptDto(newDeptDto);
+            empDto.setMgrId(null);
+            if (empMapper.updateEmp(empDto) == 0) {
+                return false;
+            }
+            if (newDeptDto.getDeptId() == originDeptDto.getDeptId()) { // 새로운 부서가 기존 부서랑 같을 때
+                if (empMapper.selectDeptEmpCnt(newDeptDto.getDeptId()) > 0) {
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("deptId", newDeptDto.getDeptId());
+                    paramMap.put("mgrId", empDto.getEmpId());
+                    if (empMapper.updateEmpList(paramMap) == 0)
+                        return false;
+                    else
+                        return true;
+                }
+            } else {                // 새로운 부서로 옮길 때
+                if (originPosition.equals(position)) { // 팀장 -> 팀장이면 기존 부서 사원들 mgrid 비우고 새로운 부서 사원들 mgrid update
+                    if (empMapper.selectDeptEmpCnt(originDeptDto.getDeptId()) > 0) { // 기존 부서 사원들의 mgrId를 null
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("deptId", originDeptDto.getDeptId());
+                        paramMap.put("mgrId", null);
+                        if (empMapper.updateEmpList(paramMap) == 0)
+                            return false;
+                        else
+                            return true;
+                    }
+                    if (empMapper.selectDeptEmpCnt(newDeptDto.getDeptId()) > 0) { // 새로운 부서 사원들의 mgrId를 바꿔줌
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("deptId", newDeptDto.getDeptId());
+                        paramMap.put("mgrId", empDto.getEmpId());
+                        if (empMapper.updateEmpList(paramMap) == 0)
+                            return false;
+                        else
+                            return true;
+                    }
+                } else {    // 사원 -> 팀장이면 기존 부서 사원들 mgrid 놔두고 새로운 부서 사원들 mgrid update
+                    if (empMapper.selectDeptEmpCnt(newDeptDto.getDeptId()) > 0) { // 새로운 부서 사원들의 mgrId를 바꿔줌
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("deptId", newDeptDto.getDeptId());
+                        paramMap.put("mgrId", empDto.getEmpId());
+                        if (empMapper.updateEmpList(paramMap) == 0)
+                            return false;
+                        else
+                            return true;
+                    }
+                }
+            }
+            return true;
         } else if (position.equals("사원")) {
             userDto.setRole("ROLE_EMP");
-            empDto.setMgrId(deptMgrId);
+            if (userMapper.updateRole(userDto) == 0) {
+                return false;
+            }
+            empDto.setUserDto(userDto);
+            empDto.setDeptDto(newDeptDto);
+            empDto.setMgrId(newDeptMgrId);
+            if (empMapper.updateEmp(empDto) == 0) {
+                return false;
+            } // 사원에서 사원이면 여기서 끝남 (부서, mgrId, )
+            if (!originPosition.equals(position)) { // 팀장에서 사원 (사원에서 사원이 아닐 경우)
+                // 부서가 바뀌었다면
+                if (newDeptDto.getDeptId() == originDeptDto.getDeptId()) { // 새로운 부서가 기존 부서랑 같을 때
+                    if (empMapper.selectDeptEmpCnt(newDeptDto.getDeptId()) > 0) { //부서의 사원들 mgrid를 비워줌
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("deptId", newDeptDto.getDeptId());
+                        paramMap.put("mgrId", null);
+                        if (empMapper.updateEmpList(paramMap) == 0)
+                            return false;
+                        else
+                            return true;
+                    }
+
+                }else {                // 새로운 부서로 옮길 때
+                    if (empMapper.selectDeptEmpCnt(originDeptDto.getDeptId()) > 0) { // 기존 부서 사원들의 mgrId를 null
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("deptId", originDeptDto.getDeptId());
+                        paramMap.put("mgrId", null);
+                        if (empMapper.updateEmpList(paramMap) == 0)
+                            return false;
+                        else
+                            return true;
+                    }
+                }
+            }
+            return true;
         }
+        return false;
+    }
 
-
-
-
-//        update emp
-//        set
-//        dept_id = #{deptId},
-//        position = #{position}
-//        where
-//        emp_id = #{empId}
-        return empMapper.updateEmp(empDto) == 1;
+    @Override
+    public EmpDto getEmpInfo(Long empId) throws Exception {
+        return empMapper.selectEmpByEmpId(empId);
     }
 
 
     // 이직을 했어
     // enabled 0이 됐어
     // 그럼? 해당 팀원들의 mgrid를 비워야지
+
 }

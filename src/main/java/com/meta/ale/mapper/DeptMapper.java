@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface DeptMapper {
     public DeptDto selectByDeptName(String deptName);
+    public DeptDto selectByempId(Long empId);
 }

@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.meta.ale.mapper.EmpMapper">
-	
+
+    <resultMap id="userMap" type="UserDto">
+        <id property="userId"     column="user_id"/>
+        <result property="empNum" column="emp_num"/>
+        <result property="role"   column="role"/>
+    </resultMap>
+
+    <resultMap id="deptMap" type="deptDto">
+        <id property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="vcTo" column="vc_to"/>
+    </resultMap>
+
+    <resultMap id="empMap" type="EmpDto">
+        <id     property="empId"     column="emp_id"/>
+        <result property="name"      column="name"/>
+        <result property="hireDate"  column="hire_date"/>
+        <result property="position"  column="position"/>
+        <result property="pEmail"    column="p_email"/>
+        <result property="cEmail"    column="c_email"/>
+        <result property="tel"       column="tel"/>
+        <result property="mgrId"     column="mgr_id"/>
+        <result property="leaveDate" column="leave_date"/>
+        <association property="userDto" resultMap="userMap"/>
+        <association property="deptDto" resultMap="deptMap"/>
+    </resultMap>
 	
 	<insert id="insertEmp">
         <selectKey resultType="long" order="BEFORE" keyProperty="empId">
@@ -14,11 +39,11 @@
         </if>
         dept_id)
         values
-        (#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId}
+        (#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId},
         <if test="mgrId != null">
             #{mgrId},
         </if>
-        ,#{deptDto.deptId}
+        #{deptDto.deptId}
         )
     </insert>
 
@@ -26,10 +51,10 @@
         update emp
         set
             dept_id = #{deptDto.deptId},
-            position = #{position}
+            position = #{position},
+            mgr_id = #{mgrId, jdbcType=NULL}
         where
             emp_id = #{empId}
-
     </update>
 
     <!--		-->
@@ -45,15 +70,6 @@
 		where position = '팀장' and dept_id = #{deptId}
 	</select>
 
-    <select id="selectByEmpId">
-        select u.*
-        from users u
-        join emp e
-             on e.user_id = u.user_id
-        where
-            e.emp_id = empId
-    </select>
-
     <select id="selectListByDeptId">
         select *
         from emp
@@ -62,9 +78,33 @@
 
     <update id="updateEmpList" parameterType="hashMap">
         update emp
-        set mgr_id = #{mgrId}
+        set mgr_id = #{mgrId, jdbcType=NULL}
         where dept_id = #{deptId}
+        and position = '사원'
     </update>
+
+    <select id="selectDeptEmpCnt" resultType="Long">
+        select count(*)
+        from emp
+        where dept_id = #{deptId}
+        and position = '사원'
+    </select>
+
+    <select id="selectPositionByEmpId" resultType="String">
+        select position
+        from emp
+        where emp_id = #{empId}
+    </select>
+
+    <select id="selectEmpByEmpId" resultMap="empMap">
+        select e.*, u.role, u.emp_num, d.dept_name
+        from emp e
+             join users u
+               on e.user_id = u.user_id
+             join dept d
+               on e.dept_id = d.dept_id
+        where emp_id = #{empId}
+    </select>
 	
 <!--	<resultMap type="UserDTO" id="user">-->
 <!--		<result column="user_id"		property="userId"/>-->

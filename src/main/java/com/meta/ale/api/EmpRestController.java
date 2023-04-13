@@ -36,7 +36,15 @@ public class EmpRestController {
         } else {
             return ResponseEntity.badRequest().body("잘못된 요청입니다.");
         }
+    }
 
-
+    @GetMapping("/admin/emp/{emp_id}")
+    public ResponseEntity<?> getEmpInfo(@PathVariable("emp_id") Long empId) throws Exception {
+        EmpDto empDto = empService.getEmpInfo(empId);
+        if (empDto == null) {
+            return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+        } else {
+            return ResponseEntity.ok().body(empDto);
+        }
     }
 }

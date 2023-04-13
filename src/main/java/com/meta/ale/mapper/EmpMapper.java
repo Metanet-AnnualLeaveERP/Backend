@@ -14,7 +14,8 @@ public interface EmpMapper {
     public Long insertEmp(EmpDto empDto) throws Exception;
     public Long selectDeptMgr(Long deptId) throws Exception;
     public Long updateEmp(EmpDto empDto) throws Exception;
-    public UserDto selectByEmpId(Long empId) throws Exception;
-    public List<EmpDto> selectListByDeptId(Long deptId) throws Exception;
     public Long updateEmpList(Map<String, Object> paramMap) throws Exception;
+    public Long selectDeptEmpCnt(Long deptId) throws Exception;
+    public String selectPositionByEmpId(Long empId) throws Exception;
+    public EmpDto selectEmpByEmpId(Long empId) throws Exception;
 }
