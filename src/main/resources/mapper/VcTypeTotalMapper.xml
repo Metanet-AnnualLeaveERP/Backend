@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.meta.ale.mapper.GrantedVcMapper">
+<mapper namespace="com.meta.ale.mapper.VcTypeTotalMapper">
+
+    <insert id="insertVcTypeTotal" parameterType="VcTypeTotalDto">
+        INSERT INTO vc_type_total
+        VALUES      (total_sq.nextval, #{cnt}, #{vcTypeDto.typeId}, #{empDto.empId})
+    </insert>
+
+    <update id="updateVcTypeTotal" parameterType="VcTypeTotalDto">
+        UPDATE vc_type_total
+        SET cnt = #{cnt}
+        WHERE type_id = #{vcTypeDto.typeId}
+        AND emp_id = #{empDto.empId}
+    </update>
+
+    <update id="plusVcTypeTotal" parameterType="VcTypeTotalDto">
+        UPDATE vc_type_total
+        SET cnt = cnt + #{cnt}
+        WHERE type_id = #{vcTypeDto.typeId}
+        AND emp_id = #{empDto.empId}
+    </update>
+
+    <!-- 휴가유형 신설 시 모든 emp 에게 생성된 휴가유형 개수 0 으로 컬럼 신설  -->
+    <insert id ="insertVcTypeTotalByEmpIds" parameterType="VcTypeTotalDto">
+        INSERT INTO vc_type_total (total_id, cnt, type_id, emp_id)
+        SELECT total_sq.NEXTVAL, 0,
+            #{vcTypeDto.typeId},
+            emp_id
+        FROM emp
+        WHERE
+            emp_id NOT IN (
+            SELECT emp_id
+            FROM vc_type_total
+            WHERE type_id = #{vcTypeDto.typeId})
+    </insert>
+
+
+    <resultMap type="VcTypeTotalDto" id="vcTypeTotal">
+        <id property="totalId"              column="total_id"/>
+        <result property="cnt"              column="cnt"/>
+        <association property="vcTypeDto"   resultMap="vcType"/>
+        <association property="empDto"      resultMap="emp"/>
+    </resultMap>
 
     <resultMap type="GrantedVcDto" id="grantedVc">
         <id property="vcId"                 column="vc_id"/>
@@ -14,7 +55,7 @@
 
     <resultMap type="VcTypeDto" id="vcType">
         <id property="typeId"               column="type_id" />
-        <result property="typeName"             column="type_name" />
+        <result property="name"             column="name" />
         <result property="description"      column="description" />
         <result property="pto"              column="pto" />
         <result property="maxGrantedDate"   column="max_granted_date" />
@@ -49,76 +90,4 @@
         <id property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name"/>
     </resultMap>
-
-    <select id="getListGrantedVc" resultMap="grantedVc" parameterType="hashMap">
-        SELECT
-            *
-        FROM (
-             SELECT
-                 ROWNUM RN,
-                 d.dept_name,
-                 e.emp_id,
-                 e.name,
-                 vt.type_name,
-                 gv.vc_id,
-                 gv.granted_date,
-                 gv.expired_date,
-                 gv.vc_days,
-                 gv.remain_days,
-                 gv.type_id
-             FROM
-                 granted_vc gv
-                     JOIN emp e ON e.emp_id = gv.emp_id
-                     JOIN vc_type vt ON gv.type_id = vt.type_id
-                     JOIN dept d ON d.dept_id = e.dept_id
-             WHERE
-        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-             <if test="user_id != 0">
-                 AND e.user_id = #{userId}
-             </if>
-    )
-    <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
-    </select>
-
-    <select id="getGrantedVc" resultMap="grantedVc" parameterType="Long">
-        SElECT e.*, gv.*, d.*
-        FROM granted_vc gv
-             JOIN emp e ON e.emp_id = gv.emp_id
-             JOIN vc_type vt ON gv.type_id = vt.type_id
-             JOIN dept d ON d.dept_id = e.dept_id
-        WHERE
-            vc_id = #{vcId}
-    </select>
-
-    <insert id="insertGrantedVc" parameterType="GrantedVcDto">
-        INSERT INTO granted_vc VALUES(gv_sq.nextval,
-            #{grantedDate},
-            #{expiredDate},
-            #{vcDays},
-            #{remainDays},
-            #{vcTypeDto.typeId},
-            #{empDto.empId}
-        )
-    </insert>
-
- <!-- update 는 부여된휴가일수, 남은휴가일수, 만료일자 만 수정하면 됨 -->
-    <update id="updateGrantedVc" parameterType="GrantedVcDto">
-        UPDATE granted_vc
-        SET vc_days = #{vcDays},
-            remain_days = #{remainDays},
-            expired_date = #{expiredDate}
-        WHERE vc_id = #{vcId}
-    </update>
-
-    <delete id="deleteGrantedVc" parameterType="Long">
-        DELETE FROM granted_vc WHERE vc_id = #{vcId}
-    </delete>
-
-    <!-- paging -->
-    <select id="getGrantedVcCount" resultType="Long">
-        SELECT COUNT(*)
-        FROM granted_vc
-    </select>
-
-
 </mapper>

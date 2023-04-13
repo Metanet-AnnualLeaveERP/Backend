@@ -3,15 +3,24 @@
 <mapper namespace="com.meta.ale.mapper.VcTypeMapper">
 
 	<select id="getListVcType" resultType="VcTypeDto">
-		    SELECT type_id, name, pto, max_granted_date, description
+		    SELECT type_id, type_name, pto, max_granted_date, description, expired_date
 		    FROM vc_type
 	</select>
 
+	<!-- insert 후 typeId 추가해서 dto 반환 -->
 	<insert id="insertVcType" parameterType="VcTypeDto">
-		INSERT INTO vc_type (type_id, name, description, pto, max_granted_date,
-		    start_enable_date, end_enable_date, creation_date) VALUES(
-				TYPE_SQ.nextval, #{name}, #{description}, #{pto}, #{maxGrantedDate},
-				#{startEnableDate}, #{endEnableDate}, sysdate)
+		<selectKey keyProperty="typeId" resultType="Long" order="BEFORE">
+			SELECT TYPE_SQ.nextval FROM DUAL
+		</selectKey>
+		INSERT INTO vc_type (type_id, type_name, description, pto, max_granted_date,
+		expired_date, creation_date) VALUES(
+		#{typeId},
+		#{typeName},
+		#{description},
+		#{pto},
+		#{maxGrantedDate},
+		#{expiredDate},
+		sysdate)
 	</insert>
 
 	<delete id="deleteVcType" parameterType="Long">
@@ -21,12 +30,11 @@
 
 	<update id="updateVcType" parameterType="VcTypeDto">
 		UPDATE vc_type
-		SET name = #{name},
+		SET type_name = #{typeName},
 		    description = #{description},
 		    pto = #{pto},
 		    max_granted_date = #{maxGrantedDate},
-			start_enable_date = #{startEnableDate},
-			end_enable_date = #{endEnableDate},
+			expired_date = #{expiredDate},
 			update_date = sysdate
 		WHERE type_id = #{typeId}
 	</update>

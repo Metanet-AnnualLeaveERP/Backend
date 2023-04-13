@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class VcTypeDto {
     private Long typeId;
-    private String name;
+    private String typeName;
     private String description;
     private Long pto; // 유급 여부
 
@@ -27,7 +27,7 @@ public class VcTypeDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date endEnableDate;
+    private Date expiredDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /* 휴가유형관리 RestController */
-@RequestMapping("/admin/vacations/")
+@RequestMapping("api/admin/vacations/")
 @RestController
 public class VcTypeRestController {
 
@@ -34,7 +34,6 @@ public class VcTypeRestController {
         List<VcTypeDto> vcTypeList = vcTypeService.getListVcType();
         return new ResponseEntity<>(vcTypeList, HttpStatus.OK);
     }
-    // 되나?
 
 
     /* 휴가 유형 수정 */

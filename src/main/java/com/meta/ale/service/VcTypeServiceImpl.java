@@ -1,9 +1,12 @@
 package com.meta.ale.service;
 
 import com.meta.ale.domain.VcTypeDto;
+import com.meta.ale.domain.VcTypeTotalDto;
 import com.meta.ale.mapper.VcTypeMapper;
+import com.meta.ale.mapper.VcTypeTotalMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 /* 휴가유형관리 */
@@ -13,14 +16,19 @@ public class VcTypeServiceImpl implements VcTypeService{
     @Autowired
     VcTypeMapper vcTypeMapper;
 
+    @Autowired
+    VcTypeTotalMapper vcTypeTotalMapper;
+
+
     /* 휴가유형 추가 */
     @Override
-    public boolean insertVcType(VcTypeDto vcTypeDto) {
-        int result = vcTypeMapper.insertVcType(vcTypeDto);
-        if (result == 0) {
-            return false;
-        }
-        return result == 1;
+    @Transactional
+    public void insertVcType(VcTypeDto vcTypeDto) {
+        vcTypeMapper.insertVcType(vcTypeDto);
+        System.out.println("{}{}{}{}{}{}"+vcTypeDto.getTypeId());
+        VcTypeTotalDto vcTypeTotalDto = new VcTypeTotalDto();
+        vcTypeTotalDto.setVcTypeDto(vcTypeDto);
+        vcTypeTotalMapper.insertVcTypeTotalByEmpIds(vcTypeTotalDto);
     }
 
     /* 휴가유형 조회 */
@@ -39,6 +47,7 @@ public class VcTypeServiceImpl implements VcTypeService{
         return result == 1;
     }
 
+    /* 휴가유형 삭제 */
     @Override
     public boolean deleteVcType(Long typeId) {
         int result = vcTypeMapper.deleteVcType(typeId);
@@ -48,6 +57,6 @@ public class VcTypeServiceImpl implements VcTypeService{
         return result == 1;
     }
 
-    /* 휴가유형 삭제 */
+
 
 }

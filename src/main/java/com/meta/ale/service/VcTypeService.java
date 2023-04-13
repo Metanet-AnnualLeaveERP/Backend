@@ -7,7 +7,7 @@ import java.util.List;
 public interface VcTypeService {
 
     /* 휴가유형 추가 */
-    boolean insertVcType(VcTypeDto vcTypeDto);
+    void insertVcType(VcTypeDto vcTypeDto);
 
     /* 휴가유형 조회 */
     List<VcTypeDto> getListVcType();
