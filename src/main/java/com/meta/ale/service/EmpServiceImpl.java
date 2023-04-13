@@ -20,17 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmpServiceImpl implements EmpService{
 
-    @Autowired
-    private EmpMapper empMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final EmpMapper empMapper;
 
-    @Autowired
-    private DeptMapper deptMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final DeptMapper deptMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<EmpDto> findEmpOverOneYr() {
