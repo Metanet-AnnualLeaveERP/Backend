@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.meta.ale.mapper.EmpMapper">
+    <select id="findEmpOverOneYrList" resultType="EmpDto" >
+    <![CDATA[
+        SELECT *
+        FROM EMP
+        WHERE HIRE_DATE < SYSDATE - INTERVAL '1' YEAR
+          AND NOT (TO_CHAR(HIRE_DATE) = TO_CHAR(SYSDATE - 365))
+          AND TO_CHAR(HIRE_DATE, 'MM/DD') = TO_CHAR(SYSDATE, 'MM/DD')
+          AND LEAVE_DATE IS NULL
+        ]]>
+    </select>
+
+    <select id="findEmpOneYrList" resultType="EmpDto">
+        <![CDATA[
+        SELECT *
+        FROM EMP
+        WHERE TO_CHAR(HIRE_DATE) = TO_CHAR(SYSDATE - 365)
+          AND LEAVE_DATE IS NULL
+        ]]>
+    </select>
+
+    <select id="findEmpUnderOneYrList" resultType="EmpDto">
+        SELECT *
+        FROM EMP
+        WHERE HIRE_DATE > SYSDATE - INTERVAL '1' YEAR
+          AND TO_CHAR(HIRE_DATE, 'DD') = TO_CHAR(SYSDATE, 'DD')
+          AND TO_CHAR(HIRE_DATE) !=TO_CHAR(SYSDATE)
+          AND LEAVE_DATE IS NULL
+    </select>
+
+</mapper>
