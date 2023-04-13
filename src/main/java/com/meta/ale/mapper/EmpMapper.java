@@ -9,13 +9,16 @@ import java.util.List;
 public interface EmpMapper {
 
     //근속 년수가 1년 초과인 사람 조회
-    List<EmpDto> findEmpOverOneYrList();
+    public List<EmpDto> findEmpOverOneYrList();
 
     //근속 년수가 1년 미만인 사람들을 조회
-    List<EmpDto> findEmpUnderOneYrList();
+    public List<EmpDto> findEmpUnderOneYrList();
 
     //근속 년수가 1년이 된 사람들 조회
-    List<EmpDto> findEmpOneYrList();
+    public List<EmpDto> findEmpOneYrList();
 
-    List<EmpDto> deleteEmpOverTwoYrLeaveDate();
+    public List<EmpDto> deleteEmpOverTwoYrLeaveDate();
+
+    public void insertEmp(EmpDto empDto);
+
 }
