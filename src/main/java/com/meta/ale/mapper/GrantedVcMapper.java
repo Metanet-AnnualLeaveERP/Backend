@@ -1,6 +1,7 @@
 package com.meta.ale.mapper;
 
 import com.meta.ale.domain.GrantedVcDto;
+import com.meta.ale.domain.VcTypeDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,4 +17,5 @@ public interface GrantedVcMapper {
     // 1년이 된 사람들의 연차 추가
     public void updateAnnualGranted(GrantedVcDto grantedVcDto);
 
+    public List<GrantedVcDto> findPromoteAnnualLeaveList(VcTypeDto vcTypeDto);
 }

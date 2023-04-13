@@ -55,6 +55,13 @@ public class GrantedVacationServiceImpl implements GrantedVacationService {
         return true;
     }
 
+    @Override
+    public List<GrantedVcDto> findPromoteAnnualLeave() throws Exception {
+        VcTypeDto vcTypeDto= vcTypeService.getVcType("연차");
+        return vcMapper.findPromoteAnnualLeaveList(vcTypeDto);
+    }
+
+
     /* ------------------------- Private Method ------------------------- */
     // 1년이 지난 사람들중 오늘 날짜와 1년이 된 사람 대한 연차계산 방법
     private boolean addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception{
