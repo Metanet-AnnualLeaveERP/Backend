@@ -17,7 +17,7 @@ public interface EmpMapper {
     //근속 년수가 1년이 된 사람들 조회
     public List<EmpDto> findEmpOneYrList();
 
-    public List<EmpDto> deleteEmpOverTwoYrLeaveDate();
+    public List<EmpDto> findEmpOverTwoYrLeaveDate();
 
     public void insertEmp(EmpDto empDto);
 

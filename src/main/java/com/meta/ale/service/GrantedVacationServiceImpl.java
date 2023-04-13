@@ -45,11 +45,11 @@ public class GrantedVacationServiceImpl implements GrantedVacationService {
         if (overOneYrList) System.out.println("1년 이상 사람 존재 연차부여완료");
         if(!overOneYrList) System.out.println("1년 이상 사람 존재안함");
         // 1년이 된 사람들에 대한 연차 부여
-        boolean oneYrList = addEmpOneYrList(date, expiredDate, today, vcTypeDto);
+        boolean oneYrList = addEmpOneYrList(date, expiredDate, vcTypeDto);
         if (oneYrList) System.out.println("1년이 된 사람 존재 : 연차 부여 완료");
         if(!oneYrList) System.out.println("1년 된 사람 존재안함");
         // 1년이 안된 사람들에 대한 연차 계산
-        boolean underOneYrList = addEmpUnderOneYrList(date, expiredDate, today, vcTypeDto);
+        boolean underOneYrList = addEmpUnderOneYrList(date, expiredDate, vcTypeDto);
         if (underOneYrList) System.out.println("1년 안된 사람들 : 연차 부여 완료");
         if(!underOneYrList) System.out.println("1년 안된 사람들 존재안함");
         return true;
@@ -57,7 +57,7 @@ public class GrantedVacationServiceImpl implements GrantedVacationService {
 
     /* ------------------------- Private Method ------------------------- */
     // 1년이 지난 사람들중 오늘 날짜와 1년이 된 사람 대한 연차계산 방법
-    private boolean addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) {
+    private boolean addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception{
         List<EmpDto> empOverOneYrList = empService.findEmpOverOneYr();
 
         if (empOverOneYrList.size() != 0) {
@@ -72,7 +72,7 @@ public class GrantedVacationServiceImpl implements GrantedVacationService {
         return false;
     }
     // 오늘날로부터 딱 1년인 사람의 연차 부여
-    private boolean addEmpOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) {
+    private boolean addEmpOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception{
 
         List<EmpDto> empOneYrList = empService.findEmpOneYr();
         //1년인 사람에 대한 연차계산 방법
@@ -102,7 +102,7 @@ public class GrantedVacationServiceImpl implements GrantedVacationService {
 
     }
     // 오늘날로부터 1년이 안된 사람들 중 한 달 간격인 된 사람들
-    private boolean addEmpUnderOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) {
+    private boolean addEmpUnderOneYrList(Date date, Date expiredDate,VcTypeDto vcTypeDto) throws Exception{
 
         // 사원들 중 1년이 안되었으면서 n달이 된 사람들
         List<EmpDto> empUnderOneYrList = empService.findEmpUnderOneYr();

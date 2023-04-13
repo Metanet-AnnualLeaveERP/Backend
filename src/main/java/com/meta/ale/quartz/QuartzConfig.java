@@ -38,8 +38,8 @@ public class QuartzConfig implements WebMvcConfigurer {
                 .setJobData(ctx)
                 .build();
         // 1시간 간격으로 스케쥴러 수행
-        scheduler.scheduleJob(annualCreateNewYearJob, trigger.apply("0/10 * * * * ? *"));
-        scheduler.scheduleJob(removeLeaveEmployee,trigger.apply("* * 1 * * ? *"));
+        scheduler.scheduleJob(annualCreateNewYearJob, trigger.apply("0 0 0 1/1 * ? *"));
+        scheduler.scheduleJob(removeLeaveEmployee,trigger.apply("0 0 0 1/1 * ? *"));
 
     }
 }

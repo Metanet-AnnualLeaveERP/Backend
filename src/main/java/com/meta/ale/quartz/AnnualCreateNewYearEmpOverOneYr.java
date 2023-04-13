@@ -9,6 +9,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 public class AnnualCreateNewYearEmpOverOneYr extends QuartzJobBean {
 
     private static GrantedVacationService grantedVacationService;
+
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         ApplicationContext appCtx = (ApplicationContext) context.getJobDetail().getJobDataMap().get("appContext");
@@ -17,10 +18,10 @@ public class AnnualCreateNewYearEmpOverOneYr extends QuartzJobBean {
 
         grantedVacationService = appCtx.getBean(GrantedVacationService.class);
         try {
-            if(grantedVacationService.insertAnnualByEmpOverOneYr()) {
+            if (grantedVacationService.insertAnnualByEmpOverOneYr()) {
                 System.out.println("정상적으로 연차 생성이 완료되었습니다.");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("알 수 없는 문제로 인해 연차 생성이 실패하였습니다.");
         }
