@@ -11,8 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 //@RequestMapping("/api")
@@ -22,13 +25,23 @@ public class FileRestController {
     FileService fileService;
 
     @PostMapping("/files/upload")
-    public ResponseEntity uploadFile(MultipartFile[] uploadFiles) {
+    public ResponseEntity<Map<String, Object>> uploadFile(MultipartFile[] uploadFiles) throws IOException {
         System.out.println("---------------------- 파일 업로드 api 호출 -----------------------");
         System.out.println(uploadFiles);
+        System.out.println("uploadFiles 컨트롤러로 넘어온 개수 = " + uploadFiles.length);
 
-        fileService.upload(uploadFiles);
+        Path filePath = null;
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("파일 업로드에 성공하였습니다.");
+        if (uploadFiles.length > 1) {
+            filePath = fileService.uploadZip(uploadFiles);
+        } else {
+            filePath = fileService.upload(uploadFiles[0]);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", "성공");
+        map.put("filePath", filePath);
+        return ResponseEntity.status(HttpStatus.CREATED).body(map);
     }
 
 }

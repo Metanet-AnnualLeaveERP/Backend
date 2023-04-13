@@ -6,16 +6,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -26,65 +24,123 @@ public class FileServiceImpl implements FileService {
 
     /*파일 저장*/
     @Override
-    public void upload(MultipartFile[] uploadFiles) {
+    public Path upload(MultipartFile uploadFile) {
         System.out.println("----------- file Service upload method ----------");
 
-        List<String> savedPaths = new ArrayList<>();
+        String originalName = uploadFile.getOriginalFilename();
+        String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
+        System.out.println("fileName = " + fileName);
 
-        for(MultipartFile uploadFile : uploadFiles) {
+        // 날짜 폴더 생성
+        String folderPath = makeFolder();
+
+        // UUID
+        String uuid = UUID.randomUUID().toString();
+
+        // 저장할 파일 이름 중간에 "_"를 이용하여 구분
+        String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
+        Path savePath = Paths.get(saveName); // Paths.get() 메서드는 특정 경로의 파일 정보를 가져옵니다.(경로 정의하기)
+
+        try {
+            if (uploadFile.isEmpty()) {
+                throw new Exception("ERROR : File is empty.");
+            }
+
+            // ---------- 파일 업로드 -----------
+            try {
+                // uploadFile에 파일을 업로드 하는 메소드 transferTo(file)
+                uploadFile.transferTo(savePath);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+        }
+
+        // 저장 경로 리턴
+        System.out.println("파일 저장 경로 = " + savePath);
+        System.out.println("최종 파일 네임 = " + saveName);
+
+        return savePath;
+    }
+
+    /*---------------------------------------------------*/
+    /*ZipOutputStream과 ZipEntry를 통해 압축파일을 만드는 로직*/
+    /*---------------------------------------------------*/
+    @Override
+    public Path uploadZip(MultipartFile[] uploadFiles) throws IOException {
+        System.out.println("----------- file Service ZIP 폴더 upload method ----------");
+
+        // 날짜 폴더 생성
+        String folderPath = makeFolder();
+
+        // UUID
+        String uuid = UUID.randomUUID().toString();
+
+        // zip 폴더 파일명을 uuid로 설정
+        String zipName = uuid + ".zip";
+
+        // zip 폴더가 생성될 경로 설정
+        // 저장할 파일 이름 중간에 "_"를 이용하여 구분
+        String zipPath = uploadPath + File.separator + folderPath + File.separator + zipName;
+        Path savePath = Paths.get(zipPath);
+        System.out.println("zip 파일 경로 = " + savePath);
+
+        // Zip파일을 저장할 FileOutputStream과 ZipOutputStream을 생성합니다.
+        // zip 파일 경로 및 파일명 설정
+        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipPath));
+
+        for (MultipartFile uploadFile : uploadFiles) {
             String originalName = uploadFile.getOriginalFilename();
             String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-
             System.out.println("fileName = " + fileName);
 
-            //날짜 폴더 생성
-            String folderPath = makeFolder();
-
-            //UUID
-            String uuid = UUID.randomUUID().toString();
-
-            //저장할 파일 이름 중간에 "_"를 이용하여 구분
-            String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
-
-            //Paths.get() 메서드는 특정 경로의 파일 정보를 가져옵니다.(경로 정의하기)
-            Path savePath = Paths.get(saveName);
-
+            File file = multipartToFile(uploadFile, fileName);
+//            System.out.println("108line");
+//            System.out.println(file.length());
+            FileInputStream in = new FileInputStream(file);
             try {
                 if (uploadFile.isEmpty()) {
                     throw new Exception("ERROR : File is empty.");
                 }
-                Path root = Paths.get(uploadPath);
-                System.out.println("uploadroot = " + root);
+//                Path root = Paths.get(uploadPath);
+//                System.out.println("uploadroot = " + root);
 
-                // 파일 업로드
+                // ---------- zipEntry를 생성하여 zipPath에 파일 업로드 -----------
                 try {
-                    uploadFile.transferTo(savePath);
-                    //uploadFile에 파일을 업로드 하는 메서드 transferTo(file)
+                    ZipEntry zipEntry = new ZipEntry(fileName);
+                    out.putNextEntry(zipEntry);
+
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    in.close();
+                    out.closeEntry(); // zipOutputStream close zipEntry
                 } catch (IOException e) {
                     e.printStackTrace();
-                    //printStackTrace()를 호출하면 로그에 Stack trace가 출력됩니다.
                 }
-//            // 파일 스트림 가져옴
-//            try (InputStream inputStream = uploadFile.getInputStream()) {
-//
-//                Files.copy(inputStream, root.resolve(saveName),
-//                        StandardCopyOption.REPLACE_EXISTING);
-//            }
             } catch (Exception e) {
                 throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
             }
-
-            // 저장 경로 리턴
-            System.out.println("파일 저장 경로 = " + savePath);
-            System.out.println("최종 파일 네임 = " + saveName);
-            
-
-            savedPaths.add(savePath.toString());
         }
+        out.close(); // zipOutputStream close
+        return savePath;
+    }
+
+    /*multipartFile 을 File 로 변환하는 메소드*/
+    public  static File multipartToFile(MultipartFile multipart, String fileName) throws IllegalStateException, IOException {
+        File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileName);
+        multipart.transferTo(convFile);
+        return convFile;
     }
 
     /*파일 저장 경로에 오늘 날짜 폴더 생성*/
-    private String makeFolder() {
+    @Override
+    public String makeFolder() {
 
         String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
@@ -117,11 +173,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Path download(String filename) {
-        return null;
-    }
-
-    @Override
-    public Resource downloadAsResource(String filename) {
         return null;
     }
 

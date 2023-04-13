@@ -1,5 +1,7 @@
 package com.meta.ale.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
@@ -9,17 +11,23 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileService {
 
     /*파일 저장*/
-    void upload(MultipartFile[] uploadFiles);
+    public Path upload(MultipartFile uploadFile);
+
+    /*파일 zip 저장*/
+    public Path uploadZip(MultipartFile[] uploadFiles) throws IOException;
 
     /*파일 전체 다운로드*/
-    Stream<Path> downloadAll();
+    public Stream<Path> downloadAll();
 
     /*파일 다운로드*/
-    Path download(String filename);
-
-    Resource downloadAsResource(String filename);
+    public Path download(String filename);
 
     /*파일 전체 삭제*/
-    void deleteAll();
+    public void deleteAll();
+
+    /*다중파일 zip 폴더로 압축*/
+
+    /*경로 폴더 생성*/
+    public String makeFolder();
 
 }
