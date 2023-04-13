@@ -21,8 +21,9 @@ public class QuartzConfig implements WebMvcConfigurer {
         this.applicationContext = applicationContext;
     }
 
+    //스케줄 트리거 등록
     @PostConstruct
-    public void schInint() throws SchedulerException {
+    public void schInit() throws SchedulerException {
         final Function<String, Trigger> trigger = (exp) -> TriggerBuilder.newTrigger()
                 .withSchedule(CronScheduleBuilder.cronSchedule(exp)).build();
 
@@ -37,9 +38,13 @@ public class QuartzConfig implements WebMvcConfigurer {
         JobDetail removeLeaveEmployee = JobBuilder.newJob(RemoveLeaveEmployee.class)
                 .setJobData(ctx)
                 .build();
-        // 1시간 간격으로 스케쥴러 수행
+        JobDetail annualPromoteOccur = JobBuilder.newJob(AnnualPromoteOccur.class)
+                .setJobData(ctx)
+                .build();
+        // 1일 0시 0분에 스케쥴러 수행
         scheduler.scheduleJob(annualCreateNewYearJob, trigger.apply("0 0 0 1/1 * ? *"));
         scheduler.scheduleJob(removeLeaveEmployee,trigger.apply("0 0 0 1/1 * ? *"));
+        scheduler.scheduleJob(annualPromoteOccur,trigger.apply("0 0 0 1/1 * ? *"));
 
     }
 }

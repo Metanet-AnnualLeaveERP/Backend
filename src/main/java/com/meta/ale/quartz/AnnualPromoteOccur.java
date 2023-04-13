@@ -11,5 +11,13 @@ public class AnnualPromoteOccur extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         ApplicationContext appCtx = (ApplicationContext) context.getJobDetail().getJobDataMap().get("appContext");
+        anpDocService = appCtx.getBean(AnpDocService.class);
+        try {
+            anpDocService.insertAnpDocScheduler();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
+
 }

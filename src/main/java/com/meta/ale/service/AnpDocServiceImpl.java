@@ -21,6 +21,7 @@ public class AnpDocServiceImpl implements AnpDocService {
     @Override
     @Transactional
     public void insertAnpDocScheduler() throws Exception {
+        // 연차 촉진문서를 날리기위해 조회
         List<GrantedVcDto> grantedVcDtoList = gvService.findPromoteAnnualLeave();
 
         if (grantedVcDtoList.size() != 0) {
