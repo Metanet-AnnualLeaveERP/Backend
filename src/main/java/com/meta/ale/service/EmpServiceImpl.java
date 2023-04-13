@@ -70,5 +70,4 @@ public class EmpServiceImpl implements EmpService{
         empMapper.insertEmp(empDto);
 
     }
->>>>>>> main
 }
