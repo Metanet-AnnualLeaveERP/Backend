@@ -50,7 +50,9 @@
     <!--휴가 결재(승인/반려)-->
 
     <!--휴가 결재 내역 조회-->
+    <select id="getVcReqListByMgr" resultType="VcReqDto">
 
+    </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
         UPDATE vc_req SET status = #{status} WHERE req_id = #{reqId}

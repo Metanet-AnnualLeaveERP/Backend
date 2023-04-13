@@ -1,9 +1,9 @@
 package com.meta.ale.service;
 
 import com.meta.ale.domain.Criteria;
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public interface VcReqService {
@@ -21,6 +21,9 @@ public interface VcReqService {
     public boolean updateVcReqStatus(VcReqDto dto);
 
     /*휴가 결재(승인/반려)*/
+    public void approvalVcRequestStatus(String role, Long vcReqId, String status);
 
     /*휴가 결재 내역 조회*/
+    Map<String, Object> approvalVcRequestList(UserDto userDto, Criteria cri);
+
 }

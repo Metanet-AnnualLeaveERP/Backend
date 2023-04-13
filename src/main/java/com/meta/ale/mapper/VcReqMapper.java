@@ -22,6 +22,7 @@ public interface VcReqMapper {
     /*휴가 결재(승인/반려)*/
 
     /*휴가 결재 내역 조회*/
+    public List<VcReqDto> getVcReqListByMgr(HashMap<String,Object> hashMap);
 
     /*휴가 신청 상태 변경*/
     public int updateVcReqStatus(VcReqDto dto);

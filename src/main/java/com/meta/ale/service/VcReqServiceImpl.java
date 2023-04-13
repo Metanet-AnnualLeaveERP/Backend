@@ -1,22 +1,22 @@
 package com.meta.ale.service;
 
-import com.meta.ale.domain.Criteria;
-import com.meta.ale.domain.EmpDto;
-import com.meta.ale.domain.PagenationDTO;
-import com.meta.ale.domain.VcReqDto;
+import com.meta.ale.domain.*;
 import com.meta.ale.mapper.VcReqMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class VcReqServiceImpl implements VcReqService {
 
-    private VcReqMapper vcReqMapper;
+    private final VcReqMapper vcReqMapper;
+
+    private final EmpService empService;
 
     /*휴가 신청 내역 조회*/
     @Override
@@ -58,8 +58,36 @@ public class VcReqServiceImpl implements VcReqService {
     }
 
     /*휴가 결재(승인/반려)*/
+    @Override
+    public void approvalVcRequestStatus(String role, Long vcReqId, String status) {
+//        보류
+        VcReqDto vcReq = new VcReqDto();
+        vcReq.setReqId(vcReqId);
+        vcReq.setStatus(status);
+        vcReqMapper.updateVcReqStatus(vcReq);
+    }
 
     /*휴가 결재 내역 조회*/
+    @Override
+    public Map<String, Object> approvalVcRequestList(UserDto userDto, Criteria cri) {
+        String role = userDto.getRole();
+        String status;
+
+        HashMap<String, Object> vo = new HashMap<String, Object>();
+        vo.put("pageNum", cri.getPageNum());
+        vo.put("amount", cri.getAmount());
+
+        if (role.equals("ROLE_ADMIN")) {
+            status = "관리자 대기중";
+
+        } else {
+            status = "대기중";
+        }
+        vo.put("status",status);
+        vcReqMapper.getVcReqListByMgr(vo);
+        return null;
+    }
+
 
     /* ------------서비스 내부에서 쓸 메소드 -------------- */
 
@@ -67,4 +95,9 @@ public class VcReqServiceImpl implements VcReqService {
     private int getVcReqCount(Long empId) {
         return vcReqMapper.getVcReqCount(empId).intValue();
     }
+
+    private Map<String, Object> approvalVcRequestListByAdmin(){
+
+        return null;
+    };
 }
