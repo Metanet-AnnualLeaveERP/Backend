@@ -9,4 +9,5 @@ public interface UserService extends UserDetailsService {
 //    public TokenDto login(String empNum, String pwd);
 
     public Optional<UserDto> getByEmpNum(String EmpNum) throws Exception;
+
 }

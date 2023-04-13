@@ -47,6 +47,12 @@
 			e.emp_id = #{empId}
 	</select>
 
+	<update id="updatePwd">
+		update users
+		set pwd = #{pwd}
+		where user_id = #{userId}
+	</update>
+
 <!--	&lt;!&ndash; 계정 비활성화 &ndash;&gt;-->
 <!--	<delete id="deleteUser">-->
 <!--		update users-->

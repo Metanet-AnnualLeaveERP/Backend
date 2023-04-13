@@ -97,7 +97,7 @@
     </select>
 
     <select id="selectEmpByEmpId" resultMap="empMap">
-        select e.*, u.role, u.emp_num, d.dept_name
+        select e.*, u.user_id, u.role, u.emp_num, d.dept_name
         from emp e
              join users u
                on e.user_id = u.user_id
@@ -105,6 +105,41 @@
                on e.dept_id = d.dept_id
         where emp_id = #{empId}
     </select>
+
+    <select id="selectEmpListCnt" resultType="Integer">
+        select count(*)
+        from emp
+        where
+            emp_id != 0
+    </select>
+
+    <select id="getEmpList" resultMap="empMap">
+        select
+            *
+        from (
+            select
+                rownum rn, e.*, u.role, u.emp_num, d.dept_name
+            from
+                emp e
+            join users u
+                 on e.user_id = u.user_id
+            join dept d
+                 on e.dept_id = d.dept_id
+            where
+                <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+            and
+                emp_id != 0
+             )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+
+    </select>
+
+    <update id="updateEmpInfo">
+        update emp
+        set p_email = #{pEmail}
+        where
+            emp_id = #{empId}
+    </update>
 	
 <!--	<resultMap type="UserDTO" id="user">-->
 <!--		<result column="user_id"		property="userId"/>-->

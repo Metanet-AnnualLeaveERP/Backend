@@ -1,12 +1,12 @@
 package com.meta.ale.service;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
-import com.meta.ale.domain.DeptDto;
-import com.meta.ale.domain.EmpDto;
-import com.meta.ale.domain.UserDto;
+import com.meta.ale.domain.*;
 import com.meta.ale.mapper.DeptMapper;
 import com.meta.ale.mapper.EmpMapper;
 import com.meta.ale.mapper.UserMapper;
+import oracle.security.crypto.core.ECC;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -207,6 +207,40 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public EmpDto getEmpInfo(Long empId) throws Exception {
         return empMapper.selectEmpByEmpId(empId);
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> getEmpList(Criteria criteria) throws Exception {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("pageNum", criteria.getPageNum());
+        paramMap.put("amount", criteria.getAmount());
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("paging", new PagenationDTO(criteria, getEmpCnt()));
+        res.put("empList", empMapper.getEmpList(paramMap));
+
+        return  res;
+    }
+
+    @Override
+    public boolean modifyInfo(UserDto userDto, EmpDto empDto) throws Exception {
+
+        if (!userDto.getPwd().equals("")) {
+            userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
+            if (userMapper.updatePwd(userDto) <= 0) {
+                return false;
+            }
+        }
+
+        if (empMapper.updateEmpInfo(empDto) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private Integer getEmpCnt() throws Exception {
+        return empMapper.selectEmpListCnt();
     }
 
 
