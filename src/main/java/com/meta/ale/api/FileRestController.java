@@ -11,19 +11,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 @AllArgsConstructor
 public class FileRestController {
 
     FileService fileService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(MultipartFile file) {
+    @PostMapping("/files/upload")
+    public ResponseEntity uploadFile(MultipartFile[] uploadFiles) {
         System.out.println("---------------------- 파일 업로드 api 호출 -----------------------");
-        fileService.upload(file);
-        return new ResponseEntity<>("저장 성공!", HttpStatus.OK);
+        System.out.println(uploadFiles);
+
+        fileService.upload(uploadFiles);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("파일 업로드에 성공하였습니다.");
     }
 
 }

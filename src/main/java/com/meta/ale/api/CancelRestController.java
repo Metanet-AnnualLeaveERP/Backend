@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class CancelRestController {
 
     private CancelService cancelService;

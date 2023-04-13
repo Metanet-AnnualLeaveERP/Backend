@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -24,54 +26,61 @@ public class FileServiceImpl implements FileService {
 
     /*파일 저장*/
     @Override
-    public String upload(MultipartFile uploadFile) {
+    public void upload(MultipartFile[] uploadFiles) {
         System.out.println("----------- file Service upload method ----------");
 
-        String originalName = uploadFile.getOriginalFilename();
-        String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
+        List<String> savedPaths = new ArrayList<>();
 
-        System.out.println("fileName = " + fileName);
+        for(MultipartFile uploadFile : uploadFiles) {
+            String originalName = uploadFile.getOriginalFilename();
+            String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
 
-        //날짜 폴더 생성
-        String folderPath = makeFolder();
+            System.out.println("fileName = " + fileName);
 
-        //UUID
-        String uuid = UUID.randomUUID().toString();
+            //날짜 폴더 생성
+            String folderPath = makeFolder();
 
-        //저장할 파일 이름 중간에 "_"를 이용하여 구분
-        String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
+            //UUID
+            String uuid = UUID.randomUUID().toString();
 
-        //Paths.get() 메서드는 특정 경로의 파일 정보를 가져옵니다.(경로 정의하기)
-        Path savePath = Paths.get(saveName);
+            //저장할 파일 이름 중간에 "_"를 이용하여 구분
+            String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
 
-        try {
-            if (uploadFile.isEmpty()) {
-                throw new Exception("ERROR : File is empty.");
-            }
-            Path root = Paths.get(uploadPath);
-            System.out.println("uploadroot = " + root);
+            //Paths.get() 메서드는 특정 경로의 파일 정보를 가져옵니다.(경로 정의하기)
+            Path savePath = Paths.get(saveName);
 
-            // 파일 업로드
             try {
-                uploadFile.transferTo(savePath);
-                //uploadFile에 파일을 업로드 하는 메서드 transferTo(file)
-            } catch (IOException e) {
-                e.printStackTrace();
-                //printStackTrace()를 호출하면 로그에 Stack trace가 출력됩니다.
-            }
+                if (uploadFile.isEmpty()) {
+                    throw new Exception("ERROR : File is empty.");
+                }
+                Path root = Paths.get(uploadPath);
+                System.out.println("uploadroot = " + root);
+
+                // 파일 업로드
+                try {
+                    uploadFile.transferTo(savePath);
+                    //uploadFile에 파일을 업로드 하는 메서드 transferTo(file)
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //printStackTrace()를 호출하면 로그에 Stack trace가 출력됩니다.
+                }
 //            // 파일 스트림 가져옴
 //            try (InputStream inputStream = uploadFile.getInputStream()) {
 //
 //                Files.copy(inputStream, root.resolve(saveName),
 //                        StandardCopyOption.REPLACE_EXISTING);
 //            }
-        } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
-        }
+            } catch (Exception e) {
+                throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            }
 
-        // 저장 경로 리턴
-        System.out.println("파일 저장 경로 = " + savePath);
-        return savePath.toString();
+            // 저장 경로 리턴
+            System.out.println("파일 저장 경로 = " + savePath);
+            System.out.println("최종 파일 네임 = " + saveName);
+            
+
+            savedPaths.add(savePath.toString());
+        }
     }
 
     /*파일 저장 경로에 오늘 날짜 폴더 생성*/
