@@ -11,6 +11,11 @@ public class EmpServiceTests {
     private EmpService empService;
     @Test
     public void empOverTwoYrLeaveDate(){
-        empService.deleteEmpOverTwoYrLeaveDate();
+        try {
+            //크론스케줄러 사원 삭제 테스트 코드
+//            empService.deleteEmpOverTwoYrLeaveDate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

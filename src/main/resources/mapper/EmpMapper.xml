@@ -40,5 +40,11 @@
 		values
 			(#{empId}, #{name}, #{hireDate}, #{position}, #{pEmail}, #{cEmail}, #{tel}, #{userDto.userId}, #{deptDto.deptId})
 	</insert>
+    <select id="findEmpOverTwoYrLeaveDate" resultType="EmpDto">
+        SELECT *
+        FROM EMP
+        WHERE LEAVE_DATE IS NOT NULL
+          AND (TO_CHAR(LEAVE_DATE) = TO_CHAR(SYSDATE - 730))
+    </select>
 </mapper>
 

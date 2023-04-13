@@ -1,7 +1,6 @@
 package com.meta.ale.service;
 
 
-
 import com.meta.ale.domain.DeptDto;
 import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.UserDto;
@@ -9,7 +8,6 @@ import com.meta.ale.mapper.DeptMapper;
 import com.meta.ale.mapper.EmpMapper;
 import com.meta.ale.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EmpServiceImpl implements EmpService{
+public class EmpServiceImpl implements EmpService {
 
 
     private final EmpMapper empMapper;
@@ -39,6 +37,7 @@ public class EmpServiceImpl implements EmpService{
 
         return empMapper.findEmpOneYrList();
     }
+
     @Override
     public List<EmpDto> findEmpUnderOneYr() {
         return empMapper.findEmpUnderOneYrList();
@@ -46,10 +45,16 @@ public class EmpServiceImpl implements EmpService{
 
     @Override
     public void deleteEmpOverTwoYrLeaveDate() {
+        List<EmpDto> empLeaveTwoYrList = empMapper.findEmpOverTwoYrLeaveDate();
 
-        empMapper.deleteEmpOverTwoYrLeaveDate();
+        if (empLeaveTwoYrList.size() != 0) {
+            for (EmpDto e : empLeaveTwoYrList) {
 
+                userMapper.deleteUserByUserId(e.getUserDto());
+            }
+        }
     }
+
     @Override
     @Transactional
     public void register(UserDto userDto, EmpDto empDto) throws Exception {
