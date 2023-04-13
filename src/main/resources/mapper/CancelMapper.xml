@@ -11,10 +11,11 @@
         SELECT
         ROWNUM RN, cancel_id, cancel_status, cancel_req_date, res_date, req_comm,res_comm,
         v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-        v.aprv_date,v.file_path, e.*
+        v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id
         FROM
         cancel c JOIN vc_req v ON c.req_id = v.req_id
         JOIN emp e ON v.emp_id = e.emp_id
+
         WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         <if test="user_id != 0">
@@ -27,7 +28,7 @@
     <!--휴가 취소 내역 상세 조회-->
     <select id="getCancel" resultMap="cancelMap">
         SELECT
-            c.*, v.*, e.*
+            c.*, v.*, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id
         FROM
             cancel c JOIN vc_req v ON c.req_id = v.req_id
                      JOIN emp e ON v.emp_id = e.emp_id
@@ -108,8 +109,7 @@
 
     <resultMap id="userMap" type="UserDto">
         <id property="userId" column="user_id" />
-<!--        <result property="empNum" column="emp_num" />-->
-<!--        <result property="role" column="role" />-->
+        <result property="role" column="role" />
     </resultMap>
 
     <resultMap id="deptMap" type="DeptDto">

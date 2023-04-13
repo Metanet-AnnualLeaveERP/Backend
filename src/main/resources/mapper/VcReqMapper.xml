@@ -9,7 +9,9 @@
         *
         FROM (
             SELECT
-                ROWNUM RN, v.*
+                ROWNUM RN,
+                v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id
             FROM
                 vc_req v JOIN emp e ON v.emp_id = e.emp_id
             WHERE
