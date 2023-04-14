@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -63,16 +64,28 @@ public class FileServiceTest {
     }
 
     @Test
-    void download() {
+    void download() throws IOException {
         /*
   		Paths.get를 통해 파일 정보를 가져온후 파일의 내용을 바이트 배열로 읽어 들인 다음 파일을 닫는다.
         */
-        byte[] data = null;
-        try {
-            Path path = Paths.get(this.fileStorageLocation.resolve(fileKey).normalize().toString());
-            data = Files.readAllBytes(path);
-        } catch (IOException ex) {
-            throw new IOException("IOE Error Message= " + ex.getMessage());
-        }
+        String filePath = "d:\\ALE_downloaded_files\\2023_04_14\\7d6f8f04-914e-40fe-a572-03c0e440ef55.zip";
+        System.out.println(filePath);
+//        String[] split = filePath.split("\\\\");
+        String fileName = filePath.split("\\\\")[3];
+//        for (String s : split ){
+//            System.out.println(s);
+//        }
+        System.out.println(fileName);
+
+//        byte[] data = null;
+//        try {
+//            Path path = Paths.get(filePath);
+//            System.out.println(path);
+//            data = Files.readAllBytes(path);
+//            System.out.println(data);
+//        } catch (IOException ex) {
+//            throw new IOException("IOE Error Message= " + ex.getMessage());
+//        }
+
     }
 }

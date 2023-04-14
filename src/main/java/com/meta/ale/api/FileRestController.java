@@ -2,19 +2,18 @@ package com.meta.ale.api;
 
 import com.meta.ale.service.FileService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,5 +41,36 @@ public class FileRestController {
         map.put("filePath", filePath);
         return ResponseEntity.status(HttpStatus.CREATED).body(map);
     }
+
+    @PostMapping("/files/download")
+    public ResponseEntity<Resource> download(@RequestBody String filePath) throws IOException {
+        System.out.println("============파일 다운로드 api===========");
+        System.out.println("filePath 인코딩 된 상태로 들어온 것 : " + filePath);
+
+        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+        // 파일 경로에서 마지막에 있는 패딩 문자 제거
+        if (decodedPath.endsWith("=")) {
+            decodedPath = decodedPath.substring(0, decodedPath.length() - 1);
+        }
+
+        // 디코딩된 파일 경로를 콘솔에 출력
+        System.out.println("Decoded File Path: " + decodedPath);
+
+        Path path = Paths.get(decodedPath);
+        System.out.println("final path : " + path);
+        String fileName = decodedPath.split("\\\\")[3];
+        System.out.println("file name : " + fileName);
+
+        Resource resource = new UrlResource(path.toUri());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM) // 응답 데이터가 binary 데이터
+                .cacheControl(CacheControl.noCache())
+                // 브라우저가 파일을 다운받게 하는 설정
+                .header(HttpHeaders.CONTENT_DISPOSITION,  "attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8")+"\"")
+                // 바디 : 파일 uri
+                .body(resource);
+    }
+
 
 }
