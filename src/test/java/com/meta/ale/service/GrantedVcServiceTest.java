@@ -29,6 +29,9 @@ public class GrantedVcServiceTest {
     void getListGrantedVc(){
         Criteria criteria = new Criteria();
         Map<String, Object> map = gvService.getListGrantedVc(criteria);
+        for (Map.Entry<String, Object> entrySet : map.entrySet()) {
+            System.out.println(entrySet.getKey() + " : " + entrySet.getValue());
+        }
     }
 
     @Test
@@ -40,9 +43,9 @@ public class GrantedVcServiceTest {
 
     @Test
     void deleteGrantedVcTest(){
-        Long vcId = 2L;
+        Long vcId = 28L;
         boolean result = gvService.deleteGrantedVc(vcId);
-        System.out.println("[RESULT]" + result);
+        //System.out.println("[RESULT]" + result);
     }
 
     @Test
@@ -50,8 +53,8 @@ public class GrantedVcServiceTest {
         GrantedVcDto grantedVcDto = new GrantedVcDto();
         grantedVcDto.setGrantedDate(new Date());
         grantedVcDto.setExpiredDate(new Date());
-        grantedVcDto.setRemainDays(99L);
-        grantedVcDto.setVcDays(99L);
+        grantedVcDto.setRemainDays(17L);
+        grantedVcDto.setVcDays(17L);
 
         VcTypeDto typeDto = new VcTypeDto();
         typeDto.setTypeId(1L);

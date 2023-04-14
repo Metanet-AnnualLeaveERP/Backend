@@ -9,6 +9,8 @@ public interface VcTypeTotalMapper {
 
     int plusVcTypeTotal(VcTypeTotalDto vcTypeTotalDto);
 
+    int minusVcTypeTotal(VcTypeTotalDto vcTypeTotalDto);
+
     int updateVcTypeTotal(VcTypeTotalDto vcTypeTotalDto);
 
     void insertVcTypeTotalByEmpIds(VcTypeTotalDto vcTypeTotalDto);

@@ -33,14 +33,27 @@ public class GrantedVcServiceImpl implements GrantedVcService{
 
     @Override
     public GrantedVcDto getGrantedVc(Long vcId){
-        GrantedVcDto gvDto = mapper.getGrantedVc(vcId);
-        return gvDto;
+        return mapper.getGrantedVc(vcId);
     }
 
     @Override
+    @Transactional
     public boolean deleteGrantedVc(Long vcId) {
+        GrantedVcDto gvDto = mapper.getGrantedVc(vcId);
+        Long remainDays = gvDto.getRemainDays();
+        EmpDto empDto = gvDto.getEmpDto();
+        VcTypeDto typeDto = gvDto.getVcTypeDto();
+
         int result = mapper.deleteGrantedVc(vcId);
-        return result != 0;
+        if(result != 0 ){
+            VcTypeTotalDto totalDto = new VcTypeTotalDto();
+            totalDto.setCnt(remainDays);
+            totalDto.setVcTypeDto(typeDto);
+            totalDto.setEmpDto(empDto);
+            totalMapper.minusVcTypeTotal(totalDto);
+            return true;
+        } else{ return false; }
+
     }
 
     @Override

@@ -21,6 +21,13 @@
         AND emp_id = #{empDto.empId}
     </update>
 
+    <update id="minusVcTypeTotal" parameterType="VcTypeTotalDto">
+        UPDATE vc_type_total
+        SET cnt = cnt - #{cnt}
+        WHERE type_id = #{vcTypeDto.typeId}
+        AND emp_id = #{empDto.empId}
+    </update>
+
     <!-- 휴가유형 신설 시 모든 emp 에게 생성된 휴가유형 개수 0 으로 컬럼 신설  -->
     <insert id ="insertVcTypeTotalByEmpIds" parameterType="VcTypeTotalDto">
         INSERT INTO vc_type_total (total_id, cnt, type_id, emp_id)

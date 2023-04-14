@@ -73,9 +73,7 @@
                      JOIN dept d ON d.dept_id = e.dept_id
              WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-             <if test="user_id != 0">
-                 AND e.user_id = #{userId}
-             </if>
+
     )
     <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
     </select>
