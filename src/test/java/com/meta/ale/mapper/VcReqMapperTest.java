@@ -11,9 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Log4j2

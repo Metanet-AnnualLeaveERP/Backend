@@ -2,68 +2,64 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.meta.ale.mapper.UserMapper">
 
-	<resultMap id="userMap" type="UserDto">
-		<result property="userId" column="user_id"/>
-		<result property="empNum" column="emp_num" />
-		<result property="pwd" column="pwd"/>
-		<result property="role" column="role"/>
-	</resultMap>
+    <resultMap id="userMap" type="UserDto">
+        <result property="userId" column="user_id"/>
+        <result property="empNum" column="emp_num"/>
+        <result property="pwd" column="pwd"/>
+        <result property="role" column="role"/>
+    </resultMap>
 
-	<select id="selectByEmpNum" resultType="UserDto">
+    <select id="selectByEmpNum" resultType="UserDto">
         select * from users where emp_num = #{empNum}
     </select>
 
-	<select id="selectByUserId" resultMap="userMap">
-		select * from users where user_id = #{userId}
-	</select>
+    <select id="selectByUserId" resultMap="userMap">
+        select * from users where user_id = #{userId}
+    </select>
 
-
-	<insert id="insertUser">
+    <insert id="insertUser">
 
         <selectKey keyProperty="userId" order="BEFORE" resultType="long">
             select users_sq.nextval from dual
         </selectKey>
-		insert into users
-		(user_id, emp_num, pwd, role)
-		values
-		(#{userId}, #{empNum}, #{pwd}, #{role})
+        insert into users
+        (user_id, emp_num, pwd, role)
+        values
+        (#{userId}, #{empNum}, #{pwd}, #{role})
 
-	</insert>
-	<delete id="deleteUserByUserId" parameterType="UserDto">
-		DELETE FROM USERS WHERE user_id = #{userId}
-	</delete>
-<!--	&lt;!&ndash; 계정 비활성화 &ndash;&gt;-->
-<!--	<delete id="deleteUser">-->
-<!--		update users-->
-<!--		set-->
-<!--			enabled = 0-->
-<!--		where-->
-<!--			user_id = #{userId}-->
-<!--	</delete>-->
+    </insert>
 
-<!--	&lt;!&ndash; 비밀번호 수정 &ndash;&gt;-->
-<!--	<update id="updateUser">-->
-<!--		update users-->
-<!--		set-->
-<!--			password = #{password}-->
-<!--		where-->
-<!--			user_id = #{userId}-->
-<!--	</update>-->
-<!--	-->
-<!--	&lt;!&ndash; 이메일로 스프링 시큐리티 검사 &ndash;&gt;-->
-<!--	<select id="getUser" resultType="UserDTO">-->
-<!--		select * -->
-<!--			from users -->
-<!--		where-->
-<!--			email = #{email}-->
-<!--	</select>-->
-<!--	-->
-<!--	&lt;!&ndash; userId로 user 검색 &ndash;&gt;-->
-<!--	<select id="getUserById" resultType="UserDTO">-->
-<!--		select user_id, email-->
-<!--			from users -->
-<!--		where-->
-<!--			user_id = #{userId}-->
-<!--	</select>-->
 
+    <update id="updateRole">
+        update users
+        set
+        role = #{role}
+        where
+        user_id = #{userId}
+    </update>
+
+    <select id="selectByEmpId" resultType="UserDto">
+        select u.*
+        from users u
+        join emp e
+        on e.user_id = u.user_id
+        where
+        e.emp_id = #{empId}
+    </select>
+
+    <update id="updatePwd">
+        update users
+        set pwd = #{pwd}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateEnabled">
+        update users
+        set enabled = 0
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteUserByUserId" parameterType="UserDto">
+        DELETE FROM USERS WHERE user_id = #{userId}
+    </delete>
 </mapper>
