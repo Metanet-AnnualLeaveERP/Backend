@@ -48,6 +48,7 @@ public class CancelServiceImpl implements CancelService {
     @Override
     @Transactional
     public void createCancel(CancelDto dto, Long reqId) {
+        /*자동 취소 시 차감일을 다시 부여해야 한다 ... 로직 추가하기 */
         // 휴가 요청을 찾아 cancel DTO에 셋 해준다
         VcReqDto req = vcReqService.getVcReq(reqId);
         dto.setVcReqDto(req);

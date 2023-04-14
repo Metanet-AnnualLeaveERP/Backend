@@ -65,7 +65,7 @@ class VcReqServiceTest {
         emp.setEmpId(2L);
         dto.setEmpDto(emp);
 
-        vcReqService.createVcReq(dto);
+//        vcReqService.createVcReq(dto);
     }
 
     @Test

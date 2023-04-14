@@ -5,18 +5,23 @@ import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.PagenationDTO;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.mapper.VcReqMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class VcReqServiceImpl implements VcReqService {
 
-    private VcReqMapper vcReqMapper;
+    private final VcReqMapper vcReqMapper;
+
+    private final FileService fileService;
 
     /*휴가 신청 내역 조회*/
     @Override
@@ -53,7 +58,33 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 신청*/
     @Override
-    public void createVcReq(VcReqDto dto) {
+    @Transactional
+    public void createVcReq(VcReqDto dto, MultipartFile[] uploadFiles) throws IOException {
+        System.out.println("-- 휴가 신청 서비스 --");
+//        System.out.println("uploadFiles 서비스로 넘어온 개수 = " + uploadFiles.length);
+
+        Path filePath = null;
+
+        if (uploadFiles == null) {
+            System.out.println(" 파일 업로드 안 했음");
+            filePath = null;
+        } else {
+            // 파일 업로드 요청이 있는 경우 파일 업로드 서비스 호출
+            if (uploadFiles.length > 1) {
+                filePath = fileService.uploadZip(uploadFiles);
+            } else if (uploadFiles.length == 1){
+                filePath = fileService.upload(uploadFiles[0]);
+            }
+        }
+
+        System.out.println("80line");
+        System.out.println(filePath);
+
+        // 업로드된 파일이 있으면 파일 경로가 생성된다
+        if (filePath != null) {
+            dto.setFilePath(filePath.toString());
+        }
+        dto.setAprvDate(null);
         vcReqMapper.insertVcReq(dto);
     }
 

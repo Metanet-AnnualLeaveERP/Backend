@@ -27,7 +27,6 @@ public class FileRestController {
     @PostMapping("/files/upload")
     public ResponseEntity<Map<String, Object>> uploadFile(MultipartFile[] uploadFiles) throws IOException {
         System.out.println("---------------------- 파일 업로드 api 호출 -----------------------");
-        System.out.println(uploadFiles);
         System.out.println("uploadFiles 컨트롤러로 넘어온 개수 = " + uploadFiles.length);
 
         Path filePath = null;
