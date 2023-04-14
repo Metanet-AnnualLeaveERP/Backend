@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.meta.ale.mapper.EmpMapper">
-    <select id="findEmpOverOneYrList" resultType="EmpDto" >
+    <select id="findEmpOverOneYrList" resultType="EmpDto">
     <![CDATA[
         SELECT *
         FROM EMP
@@ -30,7 +30,7 @@
           AND TO_CHAR(HIRE_DATE) !=TO_CHAR(SYSDATE)
           AND LEAVE_DATE IS NULL
     </select>
-	
+
 	<insert id="insertEmp">
 		<selectKey resultType="long" order="BEFORE" keyProperty="empId">
 			select emp_sq.nextval from dual
@@ -46,5 +46,35 @@
         WHERE LEAVE_DATE IS NOT NULL
           AND (TO_CHAR(LEAVE_DATE) = TO_CHAR(SYSDATE - 730))
     </select>
+
+    <select id="findEmpByUserId" resultMap="empMap">
+        SELECT e.*
+        FROM EMP e,
+             DEPT d
+        WHERE e.dept_id = d.dept_id
+          AND e.user_id = #{userId}
+    </select>
+
+    <resultMap id="empMap" type="EmpDto">
+        <id property="empId" column="emp_id"/>
+        <result property="name" column="name"/>
+        <result property="hireDate" column="hire_date"/>
+        <result property="leaveDate" column="leave_date"/>
+        <result property="position" column="position"/>
+        <result property="pEmail" column="p_email"/>
+        <result property="cEmail" column="c_email"/>
+        <result property="tel" column="tel"/>
+        <result property="mgrId" column="mgr_id"/>
+        <association property="userDto" resultMap="userMap"/>
+        <association property="deptDto" resultMap="deptMap"/>
+    </resultMap>
+    <resultMap id="userMap" type="UserDto">
+        <id property="userId" column="user_id"/>
+        <result property="empNum" column="emp_num"/>
+        <result property="role" column="role"/>
+    </resultMap>
+    <resultMap id="deptMap" type="DeptDto">
+        <id property="deptId" column="dept_id"/>
+    </resultMap>
 </mapper>
 

@@ -72,4 +72,9 @@ public class EmpServiceImpl implements EmpService {
         empMapper.insertEmp(empDto);
 
     }
+
+    @Override
+    public EmpDto findEmpByUserId(Long userId) {
+        return empMapper.findEmpByUserId(userId);
+    }
 }

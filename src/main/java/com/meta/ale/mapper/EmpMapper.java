@@ -21,4 +21,6 @@ public interface EmpMapper {
 
     public void insertEmp(EmpDto empDto);
 
+    /*UserId로 사원 조회 */
+    public EmpDto findEmpByUserId(Long userId);
 }
