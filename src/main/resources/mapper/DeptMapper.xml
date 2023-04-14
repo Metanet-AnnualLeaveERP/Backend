@@ -7,6 +7,16 @@
 	<select id="selectByDeptName" resultType="DeptDto">
 		select * from dept where dept_name = #{deptName}
 	</select>
+
+	<select id="selectByempId" resultType="DeptDto">
+		select d.*
+		from dept d
+		join emp e
+		  on d.dept_id = e.dept_id
+		where
+		    e.emp_id = #{empId}
+
+	</select>
 	
 	
 <!--	<resultMap type="UserDTO" id="user">-->

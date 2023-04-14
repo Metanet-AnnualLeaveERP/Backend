@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.AnpDocMapper">
+
+    <insert id="insertAnpDocMapper">
+        <selectKey resultType="AnpDocDto" order="BEFORE" keyProperty="docId" keyColumn="doc_id">
+            SELECT DOC_SQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ANP_DOC(DOC_ID,
+        TOTAL_ANV,
+        USED_ANV,
+        REMAIN_ANV,
+        OCCUR_DATE,
+        ANV_OCCUR_DATE,
+        EMP_ID)
+        VALUES
+        (
+        #{docId},
+        #{totalAnv},
+        #{usedAnv},
+        #{remainAnv},
+        #{occurDate},
+        #{anvOccurDate},
+        #{empDto.empId},
+        )
+    </insert>
+
+</mapper>

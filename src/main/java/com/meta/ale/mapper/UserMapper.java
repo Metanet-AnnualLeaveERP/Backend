@@ -12,6 +12,16 @@ public interface UserMapper {
 
     public Optional<UserDto> selectByUserId(Long userId);
 
-    public void insertUser(UserDto userDto);
+    public Integer insertUser(UserDto userDto);
+
+    public Integer updateRole(UserDto userDto);
+
+    public UserDto selectByEmpId(Long empId) throws Exception;
+
+    public Integer updatePwd(UserDto userDto) throws Exception;
+
+    public Integer updateEnabled(UserDto userDto) throws Exception;
+
+    public int deleteUserByUserId(UserDto userDto);
 
 }

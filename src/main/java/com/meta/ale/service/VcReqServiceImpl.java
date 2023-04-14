@@ -85,7 +85,8 @@ public class VcReqServiceImpl implements VcReqService {
             dto.setFilePath(filePath.toString());
         }
         dto.setAprvDate(null);
-        vcReqMapper.insertVcReq(dto);
+        // emp 문제 수정한 후 주석 해제
+//        vcReqMapper.insertVcReq(dto);
     }
 
     /*휴가 신청 상태 변경*/

@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -58,5 +60,19 @@ public class FileServiceTest {
 
         zipOutputStream.close();
         zipFileOutputStream.close();
+    }
+
+    @Test
+    void download() {
+        /*
+  		Paths.get를 통해 파일 정보를 가져온후 파일의 내용을 바이트 배열로 읽어 들인 다음 파일을 닫는다.
+        */
+        byte[] data = null;
+        try {
+            Path path = Paths.get(this.fileStorageLocation.resolve(fileKey).normalize().toString());
+            data = Files.readAllBytes(path);
+        } catch (IOException ex) {
+            throw new IOException("IOE Error Message= " + ex.getMessage());
+        }
     }
 }

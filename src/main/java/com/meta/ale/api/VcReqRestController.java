@@ -64,6 +64,8 @@ public class VcReqRestController {
                                       @RequestPart(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
                                       @AuthenticationPrincipal UserDto user) throws IOException {
         // 현재 로그인한 사람의 emp 객체를 가지고 오기 위해
+        // getEmp 서비스를 호출해서 userId로 emp를 가져온 후
+        // vcReq.setEmp 를 해 주어야 함
         user.getUserId();
 
         vcReqService.createVcReq(dto, uploadFiles);
