@@ -2,6 +2,7 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.EmpDto;
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.mapper.VcReqMapper;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
+
 
 @SpringBootTest
 class VcReqServiceTest {
@@ -19,6 +22,9 @@ class VcReqServiceTest {
 
     @Autowired
     VcReqMapper vcReqMapper;
+
+    @Autowired
+    UserService userService;
 
     @Test
     void getVcReqList() {
@@ -73,5 +79,14 @@ class VcReqServiceTest {
         VcReqDto dto = vcReqMapper.getVcReq(2L);
         dto.setStatus("취소");
         System.out.println(vcReqService.updateVcReqStatus(dto));
+    }
+
+    @Test
+    void approvalVcRequestList() {
+        Optional<UserDto> userDto = userService.getByEmpNum("admin");
+        System.out.println(userDto.get());
+        Criteria cri = new Criteria();
+//        cri.setKeyword("취소");
+        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
     }
 }

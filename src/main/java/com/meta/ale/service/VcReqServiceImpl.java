@@ -1,9 +1,6 @@
 package com.meta.ale.service;
 
-import com.meta.ale.domain.Criteria;
-import com.meta.ale.domain.EmpDto;
-import com.meta.ale.domain.PagenationDTO;
-import com.meta.ale.domain.VcReqDto;
+import com.meta.ale.domain.*;
 import com.meta.ale.mapper.VcReqMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +19,8 @@ public class VcReqServiceImpl implements VcReqService {
     private final VcReqMapper vcReqMapper;
 
     private final FileService fileService;
+
+    private final EmpService empService;
 
     /*휴가 신청 내역 조회*/
     @Override
@@ -72,7 +71,7 @@ public class VcReqServiceImpl implements VcReqService {
             // 파일 업로드 요청이 있는 경우 파일 업로드 서비스 호출
             if (uploadFiles.length > 1) {
                 filePath = fileService.uploadZip(uploadFiles);
-            } else if (uploadFiles.length == 1){
+            } else if (uploadFiles.length == 1) {
                 filePath = fileService.upload(uploadFiles[0]);
             }
         }
@@ -96,8 +95,48 @@ public class VcReqServiceImpl implements VcReqService {
     }
 
     /*휴가 결재(승인/반려)*/
+    @Override
+    public void approvalVcRequestStatus(String role, Long vcReqId, String status) {
+//        보류
+        VcReqDto vcReq = new VcReqDto();
+        vcReq.setReqId(vcReqId);
+        vcReq.setStatus(status);
+        vcReqMapper.updateVcReqStatus(vcReq);
+    }
 
     /*휴가 결재 내역 조회*/
+    @Override
+    public Map<String, Object> getApprovalVcRequestList(UserDto userDto, Criteria cri) {
+
+        // 권한으로 팀장 - 매니저 구분 (role이 manger 일 경우 dept를 조회)
+        String role = userDto.getRole();
+        HashMap<String, Object> vo = new HashMap<String, Object>();
+        Long managerDeptId = null;
+        //팀장일 경우 자신의 팀원의 내용만 볼 수 있음 ( 관리자의 경우 managerId가 null)
+        if (role.equals("ROLE_MANAGER")) {
+            Long userId = userDto.getUserId();
+            EmpDto managerDto = empService.findEmpByUserId(userId);
+            managerDeptId = managerDto.getDeptDto().getDeptId();
+        }
+        System.out.println(cri.getKeyword());
+        vo.put("pageNum", cri.getPageNum());
+        vo.put("amount", cri.getAmount());
+        vo.put("keyword", cri.getKeyword());
+        vo.put("deptId", managerDeptId);
+
+        // 페이징 처리를 위한 전체 count 조회
+        int count = approvalVcRequestCountByAdmin(vo);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("paging", new PagenationDTO(cri, count));
+        System.out.println(count);
+        PagenationDTO pg = (PagenationDTO) map.get("paging");
+        System.out.println(pg.getTotal());
+        map.put("vcReqs", vcReqMapper.getVcReqListByMgr(vo));
+
+        return map;
+    }
+
 
     /* ------------서비스 내부에서 쓸 메소드 -------------- */
 
@@ -105,4 +144,12 @@ public class VcReqServiceImpl implements VcReqService {
     private int getVcReqCount(Long userId) {
         return vcReqMapper.getVcReqCount(userId).intValue();
     }
+
+    /*휴가결재내역 조회 개수(페이징 처리용)*/
+    private int approvalVcRequestCountByAdmin(HashMap<String, Object> hashMap) {
+
+        return vcReqMapper.getVcReqCountByMgr(hashMap).intValue();
+    }
+
+    ;
 }

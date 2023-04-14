@@ -311,4 +311,8 @@ public class EmpServiceImpl implements EmpService {
         return empNum;
     }
 
+    @Override
+    public EmpDto findEmpByUserId(Long userId) {
+        return empMapper.findEmpByUserId(userId);
+    }
 }
