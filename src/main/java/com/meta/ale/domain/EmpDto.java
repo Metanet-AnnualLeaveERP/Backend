@@ -18,6 +18,8 @@ public class EmpDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date hireDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd" )
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date leaveDate;
     private String position;
     @JsonProperty("pEmail")
