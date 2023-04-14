@@ -82,7 +82,7 @@ class VcReqServiceTest {
     }
 
     @Test
-    void approvalVcRequestList() {
+    void approvalVcRequestList() throws Exception {
         Optional<UserDto> userDto = userService.getByEmpNum("admin");
         System.out.println(userDto.get());
         Criteria cri = new Criteria();

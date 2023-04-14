@@ -103,7 +103,19 @@
             </if>
         </where>
     </select>
-    
+
+    <select id="getVcReqByDept" resultMap="reqMap">
+        SELECT  V.*,E.name,E.C_EMAIL,E.POSITION
+        FROM VC_REQ V,
+             EMP E
+        WHERE V.EMP_ID = E.EMP_ID
+          AND E.LEAVE_DATE IS NULL
+          AND V.STATUS IN ('자동승인', '승인완료')
+          AND E.DEPT_ID = (SELECT DEPT_ID
+                           FROM EMP E2
+                           WHERE E2.USER_ID = #{userId})
+    </select>
+
     <resultMap id="reqMap" type="VcReqDto">
         <id property="reqId" column="req_id"/>
         <result property="reqDate" column="req_date" />
@@ -144,4 +156,7 @@
         <id property="deptId" column="dept_id" />
     </resultMap>
 
+
 </mapper>
+
+

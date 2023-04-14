@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -96,12 +97,14 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 결재(승인/반려)*/
     @Override
-    public void approvalVcRequestStatus(String role, Long vcReqId, String status) {
-//        보류
-        VcReqDto vcReq = new VcReqDto();
-        vcReq.setReqId(vcReqId);
-        vcReq.setStatus(status);
-        vcReqMapper.updateVcReqStatus(vcReq);
+    public void approvalVcRequestStatus(UserDto userDto, Long vcReqId, String status) {
+        // 보류
+        if(userDto.getRole() !=null && userDto.getRole().equals("ROLE_ADMIN")){
+
+        }
+//        vcReq.setReqId(vcReqId);
+//        vcReq.setStatus(status);
+//        vcReqMapper.updateVcReqStatus(vcReq);
     }
 
     /*휴가 결재 내역 조회*/
@@ -135,6 +138,12 @@ public class VcReqServiceImpl implements VcReqService {
         map.put("vcReqs", vcReqMapper.getVcReqListByMgr(vo));
 
         return map;
+    }
+    /*팀 휴가 승인된 내역 조회*/
+    @Override
+    public List<VcReqDto> findMyTeamVacation(UserDto userDto) {
+        System.out.println(userDto);
+        return vcReqMapper.getVcReqByDept(userDto);
     }
 
 

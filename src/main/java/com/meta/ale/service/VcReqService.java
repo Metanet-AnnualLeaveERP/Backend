@@ -6,6 +6,7 @@ import com.meta.ale.domain.VcReqDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface VcReqService {
@@ -26,9 +27,11 @@ public interface VcReqService {
     public boolean updateVcReqStatus(VcReqDto dto);
 
     /*휴가 결재(승인/반려)*/
-    public void approvalVcRequestStatus(String role, Long vcReqId, String status);
+    public void approvalVcRequestStatus(UserDto userDto, Long vcReqId, String status);
 
     /*휴가 결재 내역 조회*/
     Map<String, Object> getApprovalVcRequestList(UserDto userDto, Criteria cri);
 
+    /*팀 휴가 승인된 내역 조회*/
+    List<VcReqDto> findMyTeamVacation(UserDto userDto);
 }
