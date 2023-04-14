@@ -60,11 +60,11 @@ public class CancelServiceImpl implements CancelService {
         // 시작일이 현재일 이전이라면
         if (compare > 0) {
 //            System.out.println("자동 취소 가능");
-            dto.setStatus("자동취소");
+            dto.setCancelStatus("자동취소");
         } // 시작일이 현재일이거나 이후라면 (지났다면)
         else if (compare == 0 || compare < 0) {
 //            System.out.println("취소 요청 필요");
-            dto.setStatus("대기중");
+            dto.setCancelStatus("대기중");
         }
         req.setStatus("취소");
 
