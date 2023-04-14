@@ -19,4 +19,6 @@ public interface UserMapper {
     public UserDto selectByEmpId(Long empId) throws Exception;
 
     public Integer updatePwd(UserDto userDto) throws Exception;
+
+    public Integer updateEnabled(UserDto userDto) throws Exception;
 }

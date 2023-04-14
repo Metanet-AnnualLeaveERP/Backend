@@ -113,7 +113,7 @@
             emp_id != 0
     </select>
 
-    <select id="getEmpList" resultMap="empMap">
+    <select id="selectEmpList" resultMap="empMap">
         select
             *
         from (
@@ -129,6 +129,14 @@
                 <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
             and
                 emp_id != 0
+                <choose>
+                    <when test="keyWord != null and keyWord == 'resign'">
+                        and leave_date is not null
+                    </when>
+                    <when test="keyWord != null and keyWord == 'active'">
+                        and leave_date is null
+                    </when>
+                </choose>
              )
         <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
 
@@ -140,7 +148,25 @@
         where
             emp_id = #{empId}
     </update>
-	
+
+    <select id="selectHireOrder" resultType="Integer">
+        SELECT COUNT(*)
+        FROM emp
+        WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM SYSDATE)
+    </select>
+
+    <update id="updateLeaveDate">
+        update emp
+        set leave_date = sysdate
+        where
+            emp_id = #{empId}
+    </update>
+
+    <select id="selectDuplicatedEmail" resultType="Integer">
+        select count(*)
+        from emp
+        where p_email = #{email}
+    </select>
 <!--	<resultMap type="UserDTO" id="user">-->
 <!--		<result column="user_id"		property="userId"/>-->
 <!--		<result column="email"			property="email"/>-->

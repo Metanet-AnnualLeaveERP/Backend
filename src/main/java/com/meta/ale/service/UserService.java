@@ -1,5 +1,6 @@
 package com.meta.ale.service;
 
+import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -10,4 +11,7 @@ public interface UserService extends UserDetailsService {
 
     public Optional<UserDto> getByEmpNum(String EmpNum) throws Exception;
 
+    public boolean modifyEnabled(UserDto userDto, EmpDto empDto) throws Exception;
+
+    public boolean checkEmail(String email) throws Exception;
 }

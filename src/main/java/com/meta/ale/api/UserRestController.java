@@ -11,6 +11,7 @@ import com.meta.ale.jwt.TokenRefreshException;
 import com.meta.ale.service.EmpService;
 import com.meta.ale.service.RefreshTokenService;
 import com.meta.ale.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -27,33 +28,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@RequiredArgsConstructor
 // CORS(Cross-Origin Resource Sharing) 정책을 지원하기 위한 것
 // 기본적으로 브라우저는 보안 상의 이유로 다른 도메인에 대한 HTTP 요청을 제한
 // 이러한 제한을 우회하려면 서버에서 CORS를 지원
 // origins 속성에는 "*"를 지정하였으므로 모든 도메인에서 요청을 허용
 // maxAge 속성에는 3600을 지정하였으므로 프리플라이 요청을 1시간 동안 캐시할 수 있도록 설정한 것
 public class UserRestController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserService userService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private EmpService empService;
+    private final UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final EmpService empService;
 
-    @Autowired
-    private JwtUtils jwtUtils;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RefreshTokenService refreshTokenService;
+    private final JwtUtils jwtUtils;
 
-    @PostMapping("/login")
+    private final RefreshTokenService refreshTokenService;
+
+    @PostMapping("/user/login")
     public ResponseEntity<?> login(@RequestBody UserDto LoginUserDto) {
 
         // Spring Security의 인증 매니저를 사용하여 로그인 요청을 인증
@@ -82,7 +79,7 @@ public class UserRestController {
                 .body(new UserInfoResponse(userDto.getEmpNum(), userDto.getRole()));
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/user/logout")
     public ResponseEntity<?> logout() {
         Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principle.toString() != "anonymousUser") {
@@ -99,7 +96,7 @@ public class UserRestController {
                 .body("로그아웃 되었습니다.");
     }
 
-    @PostMapping("/refreshtoken")
+    @PostMapping("/user/refreshtoken")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
 
@@ -117,6 +114,27 @@ public class UserRestController {
                     .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!"));
         }
         return ResponseEntity.badRequest().body("Refresh Token is empty!");
+    }
 
+    @PutMapping("/admin/user/disable")
+    public ResponseEntity<?> userDisable(@RequestBody ObjectNode objectNode) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserDto userDto = objectMapper.treeToValue(objectNode.get("userDto"), UserDto.class);
+        EmpDto empDto = objectMapper.treeToValue(objectNode.get("empDto"), EmpDto.class);
+
+        if (userService.modifyEnabled(userDto, empDto)) {
+            return ResponseEntity.ok().body("계정 비활성화 완료");
+        } else {
+            return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+        }
+    }
+
+    // 이거하고 가입시에 p_email 해줘야함.
+    @GetMapping("/user/check")
+    public String checkPwd(@RequestParam String email) throws Exception {
+        if (userService.checkEmail(email)) {
+            return "duplicated";
+        }
+        return "ok";
     }
 }

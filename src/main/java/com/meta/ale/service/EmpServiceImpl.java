@@ -5,6 +5,7 @@ import com.meta.ale.domain.*;
 import com.meta.ale.mapper.DeptMapper;
 import com.meta.ale.mapper.EmpMapper;
 import com.meta.ale.mapper.UserMapper;
+import lombok.RequiredArgsConstructor;
 import oracle.security.crypto.core.ECC;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,23 +13,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class EmpServiceImpl implements EmpService {
 
-    @Autowired
-    private EmpMapper empMapper;
+    private final EmpMapper empMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private DeptMapper deptMapper;
+    private final DeptMapper deptMapper;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
+    // 사용자 계정 생성
     @Override
     @Transactional
     public boolean register(UserDto userDto, EmpDto empDto) throws Exception {
@@ -37,6 +37,14 @@ public class EmpServiceImpl implements EmpService {
         DeptDto deptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName()); // 부서정보
         Long deptMgrId = empMapper.selectDeptMgr(deptDto.getDeptId()); // 팀장아이디
         String position = empDto.getPosition();
+
+        // 사번설정
+        String empNum = createEmpNum(empDto, deptDto);
+        userDto.setEmpNum(empNum);
+
+        // 회사 이메일
+        String cEmail = empNum + "gmail.com";
+        empDto.setCEmail(cEmail);
 
         if (position.equals("팀장")) {
             if (deptMgrId != null) {
@@ -82,7 +90,7 @@ public class EmpServiceImpl implements EmpService {
         }
         return false;
     }
-// register 테스트 해야함
+
 
     // modifyEmp 구현 해야함
     // 팀장이 부서를 바꾸면 전에 있던 직원들과 새로운 부서의 직원들의 mgrid 변경
@@ -95,7 +103,11 @@ public class EmpServiceImpl implements EmpService {
     // 원래 부서에서 팀장이 될 경우 그 부서의 팀원들을 새로운 팀장의 empId로 mgrId설정
     // 새로운 부서로 간다면 원래 있던 부서의 팀원들의 mgrId를 비우고
     // 새로운 부서의 팀원들의 mgrId를 새로운 팀장의 empId로 바꿔
+
+    // 관리자 사용자 계정 수정
+    // 부서, 직책 수정
     @Override
+    @Transactional
     public boolean modifyEmp(EmpDto empDto) throws Exception {
         System.out.println(empDto.toString());
         DeptDto newDeptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName());  // 변경하는 부서정보
@@ -204,26 +216,32 @@ public class EmpServiceImpl implements EmpService {
         return false;
     }
 
+    // 사원 상세 내역 조회
     @Override
     public EmpDto getEmpInfo(Long empId) throws Exception {
         return empMapper.selectEmpByEmpId(empId);
     }
 
+    // 사원 내역 조회 (paging)
     @Override
     @Transactional
     public Map<String, Object> getEmpList(Criteria criteria) throws Exception {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageNum", criteria.getPageNum());
         paramMap.put("amount", criteria.getAmount());
+        paramMap.put("keyWord", criteria.getKeyword());
 
         Map<String, Object> res = new HashMap<>();
         res.put("paging", new PagenationDTO(criteria, getEmpCnt()));
-        res.put("empList", empMapper.getEmpList(paramMap));
+        res.put("empList", empMapper.selectEmpList(paramMap));
 
         return  res;
     }
 
+    // 팀원 사용자 계정 수정
+    // 비밀번호, 개인 이메일 수정
     @Override
+    @Transactional
     public boolean modifyInfo(UserDto userDto, EmpDto empDto) throws Exception {
 
         if (!userDto.getPwd().equals("")) {
@@ -239,13 +257,32 @@ public class EmpServiceImpl implements EmpService {
         return false;
     }
 
+    // 페이징용
     private Integer getEmpCnt() throws Exception {
         return empMapper.selectEmpListCnt();
     }
 
+    // 사번 생성
+    private String createEmpNum(EmpDto empDto, DeptDto deptDto) throws Exception {
 
-    // 이직을 했어
-    // enabled 0이 됐어
-    // 그럼? 해당 팀원들의 mgrid를 비워야지
+        String empNum = ""; // 사번
+
+        String tempYear = empDto.getHireDate().toString();
+        String hireYear = tempYear.substring(tempYear.length() - 2); // 연도 두자리
+
+        String deptNum = Long.toString(deptDto.getDeptId()); // 부서번호 두자리
+        if (deptNum.length() < 2) {
+            deptNum = "0" + deptNum;
+        }
+        String hireOrder = Integer.toString(empMapper.selectHireOrder() + 1); // 입사 순서
+        if (hireOrder.length() == 1) {
+            hireOrder = "00" + hireOrder;
+        } else if (hireOrder.length() == 2) {
+            hireOrder = "0" + hireOrder;
+        }
+        empNum = hireYear + deptNum + hireOrder;
+
+        return empNum;
+    }
 
 }

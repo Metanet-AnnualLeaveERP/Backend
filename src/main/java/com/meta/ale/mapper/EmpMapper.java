@@ -19,6 +19,9 @@ public interface EmpMapper {
     public String selectPositionByEmpId(Long empId) throws Exception;
     public EmpDto selectEmpByEmpId(Long empId) throws Exception;
     public Integer selectEmpListCnt() throws Exception;
-    public List<EmpDto> getEmpList(Map<String, Object> paramMap) throws Exception;
+    public List<EmpDto> selectEmpList(Map<String, Object> paramMap) throws Exception;
     public Integer updateEmpInfo(EmpDto empDto) throws Exception;
+    public Integer selectHireOrder() throws Exception;
+    public Integer updateLeaveDate(EmpDto empDto);
+    public Integer selectDuplicatedEmail(String email); // 진행중
 }

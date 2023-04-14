@@ -53,6 +53,12 @@
 		where user_id = #{userId}
 	</update>
 
+	<update id="updateEnabled">
+		update users
+		set enabled = 0
+		where user_id = #{userId}
+	</update>
+
 <!--	&lt;!&ndash; 계정 비활성화 &ndash;&gt;-->
 <!--	<delete id="deleteUser">-->
 <!--		update users-->
