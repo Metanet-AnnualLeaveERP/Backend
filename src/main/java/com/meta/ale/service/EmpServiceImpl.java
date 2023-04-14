@@ -1,30 +1,59 @@
 package com.meta.ale.service;
 
+
 import com.meta.ale.domain.DeptDto;
 import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.mapper.DeptMapper;
 import com.meta.ale.mapper.EmpMapper;
 import com.meta.ale.mapper.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
-public class EmpServiceImpl implements EmpService{
+@RequiredArgsConstructor
+public class EmpServiceImpl implements EmpService {
 
-    @Autowired
-    private EmpMapper empMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final EmpMapper empMapper;
 
-    @Autowired
-    private DeptMapper deptMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final DeptMapper deptMapper;
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public List<EmpDto> findEmpOverOneYr() {
+        return empMapper.findEmpOverOneYrList();
+    }
+
+    @Override
+    public List<EmpDto> findEmpOneYr() {
+
+        return empMapper.findEmpOneYrList();
+    }
+
+    @Override
+    public List<EmpDto> findEmpUnderOneYr() {
+        return empMapper.findEmpUnderOneYrList();
+    }
+
+    @Override
+    public void deleteEmpOverTwoYrLeaveDate() {
+        List<EmpDto> empLeaveTwoYrList = empMapper.findEmpOverTwoYrLeaveDate();
+
+        if (empLeaveTwoYrList.size() != 0) {
+            for (EmpDto e : empLeaveTwoYrList) {
+
+                userMapper.deleteUserByUserId(e.getUserDto());
+            }
+        }
+    }
 
     @Override
     @Transactional

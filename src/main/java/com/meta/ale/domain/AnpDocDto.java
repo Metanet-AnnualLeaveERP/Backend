@@ -23,4 +23,13 @@ public class AnpDocDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date anvOccurDate;
     private EmpDto empDto;
+
+    public void setAll(EmpDto empDto, int totalAnv, Date occurDate, int remainAnv, int usedAnv, Date anvOccurDate) {
+        this.totalAnv =totalAnv;
+        this.usedAnv =usedAnv;
+        this.remainAnv = remainAnv;
+        this.empDto =empDto;
+        this.occurDate =occurDate;
+        this.anvOccurDate = anvOccurDate;
+    }
 }
