@@ -4,6 +4,8 @@ import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.UserDto;
 
+import java.util.List;
+
 import java.util.Map;
 
 public interface EmpService {
@@ -25,5 +27,14 @@ public interface EmpService {
     // 비밀번호, 개인 이메일 수정
     public boolean modifyInfo(UserDto userDto, EmpDto empDto) throws Exception;
 
+    //1년이상 근무한 사원들 조회
+    public List<EmpDto> findEmpOverOneYr() throws Exception;
 
+    //1년 근무한 사원들 조회
+    public List<EmpDto> findEmpOneYr() throws Exception;
+
+    // 1년 미만 근무한 사원들 조회
+    public List<EmpDto> findEmpUnderOneYr() throws Exception;
+
+    public void deleteEmpOverTwoYrLeaveDate() throws Exception;
 }

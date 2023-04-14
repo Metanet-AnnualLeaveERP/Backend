@@ -21,4 +21,7 @@ public interface UserMapper {
     public Integer updatePwd(UserDto userDto) throws Exception;
 
     public Integer updateEnabled(UserDto userDto) throws Exception;
+
+    public int deleteUserByUserId(UserDto userDto);
+
 }

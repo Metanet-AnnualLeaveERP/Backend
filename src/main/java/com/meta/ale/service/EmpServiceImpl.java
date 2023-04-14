@@ -1,24 +1,23 @@
 package com.meta.ale.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
+
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.DeptMapper;
 import com.meta.ale.mapper.EmpMapper;
 import com.meta.ale.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
-import oracle.security.crypto.core.ECC;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class EmpServiceImpl implements EmpService {
+
 
     private final EmpMapper empMapper;
 
@@ -27,6 +26,33 @@ public class EmpServiceImpl implements EmpService {
     private final DeptMapper deptMapper;
 
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public List<EmpDto> findEmpOverOneYr() {
+        return empMapper.findEmpOverOneYrList();
+    }
+
+    @Override
+    public List<EmpDto> findEmpOneYr() {
+
+        return empMapper.findEmpOneYrList();
+    }
+
+    @Override
+    public List<EmpDto> findEmpUnderOneYr() {
+        return empMapper.findEmpUnderOneYrList();
+    }
+
+    @Override
+    public void deleteEmpOverTwoYrLeaveDate() {
+        List<EmpDto> empLeaveTwoYrList = empMapper.findEmpOverTwoYrLeaveDate();
+        if (empLeaveTwoYrList.size() != 0) {
+            for (EmpDto e : empLeaveTwoYrList) {
+
+                userMapper.deleteUserByUserId(e.getUserDto());
+            }
+        }
+    }
 
     // 사용자 계정 생성
     @Override
@@ -199,7 +225,7 @@ public class EmpServiceImpl implements EmpService {
                             return true;
                     }
 
-                }else {                // 새로운 부서로 옮길 때
+                } else {                // 새로운 부서로 옮길 때
                     if (empMapper.selectDeptEmpCnt(originDeptDto.getDeptId()) > 0) { // 기존 부서 사원들의 mgrId를 null
                         Map<String, Object> paramMap = new HashMap<>();
                         paramMap.put("deptId", originDeptDto.getDeptId());
@@ -235,7 +261,7 @@ public class EmpServiceImpl implements EmpService {
         res.put("paging", new PagenationDTO(criteria, getEmpCnt()));
         res.put("empList", empMapper.selectEmpList(paramMap));
 
-        return  res;
+        return res;
     }
 
     // 팀원 사용자 계정 수정
