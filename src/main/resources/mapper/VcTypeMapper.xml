@@ -40,6 +40,6 @@
 	</update>
 	<select id="findVcTypeByTypeName" resultType="VcTypeDto">
         SELECT * FROM VC_TYPE
-        WHERE name = #{name}
+        WHERE type_name = #{typeName}
     </select>
 </mapper>

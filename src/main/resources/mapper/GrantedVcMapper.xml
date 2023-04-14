@@ -123,7 +123,7 @@
 
     <resultMap type="VcTypeDto" id="vcType">
         <id property="typeId"               column="type_id" />
-        <result property="typeName"             column="type_name" />
+        <result property="typeName"         column="type_name" />
         <result property="description"      column="description" />
         <result property="pto"              column="pto" />
         <result property="maxGrantedDate"   column="max_granted_date" />
@@ -142,7 +142,7 @@
         <result property="pEmail"       column="p_email"/>
         <result property="cEmail"       column="c_email"/>
         <result property="tel"          column="tel"/>
-        <result property="mgrId"   column="mgr_id"/>
+        <result property="mgrId"        column="mgr_id"/>
         <association property="userDto" resultMap="user"/>
         <association property="deptDto" resultMap="dept"/>
     </resultMap>

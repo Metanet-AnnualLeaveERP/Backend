@@ -7,8 +7,8 @@
 	<select id="selectByDeptName" resultType="DeptDto">
 		select * from dept where dept_name = #{deptName}
 	</select>
-	
-	
+
+
 <!--	<resultMap type="UserDTO" id="user">-->
 <!--		<result column="user_id"		property="userId"/>-->
 <!--		<result column="email"			property="email"/>-->

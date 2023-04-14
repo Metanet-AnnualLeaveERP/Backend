@@ -38,6 +38,7 @@ public class GrantedVcServiceImpl implements GrantedVcService{
         return mapper.getGrantedVc(vcId);
     }
 
+    /* 임의휴가부여내역 삭제 */
     @Override
     @Transactional
     public boolean deleteGrantedVc(Long vcId) {
@@ -58,6 +59,7 @@ public class GrantedVcServiceImpl implements GrantedVcService{
 
     }
 
+    /* 임의휴가부여내역 추가 */
     @Override
     @Transactional
     public boolean insertGrantedVc(GrantedVcDto grantedVc){
