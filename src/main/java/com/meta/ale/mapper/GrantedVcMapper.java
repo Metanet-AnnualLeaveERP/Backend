@@ -1,8 +1,10 @@
 package com.meta.ale.mapper;
 
 import com.meta.ale.domain.GrantedVcDto;
-import com.meta.ale.domain.VcTypeDto;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.HashMap;
+import com.meta.ale.domain.VcTypeDto;
 
 import java.util.List;
 
@@ -18,4 +20,10 @@ public interface GrantedVcMapper {
     public void updateAnnualGranted(GrantedVcDto grantedVcDto);
 
     public List<GrantedVcDto> findPromoteAnnualLeaveList(VcTypeDto vcTypeDto);
+    int insertGrantedVc(GrantedVcDto grantedVc);
+    List<GrantedVcDto> getListGrantedVc(HashMap<String, Object> hashMap);
+    GrantedVcDto getGrantedVc(Long vcId);
+    int updateGrantedVc(GrantedVcDto grantedVc);
+    int deleteGrantedVc(Long vcId);
+    Long getGrantedVcCount();
 }

@@ -45,4 +45,6 @@ public interface EmpMapper {
 
     public List<EmpDto> findEmpOverTwoYrLeaveDate();
 
+    /*UserId로 사원 조회 */
+    public EmpDto findEmpByUserId(Long userId);
 }

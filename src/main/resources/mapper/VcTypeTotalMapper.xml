@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.VcTypeTotalMapper">
+
+    <insert id="insertVcTypeTotal" parameterType="VcTypeTotalDto">
+        INSERT INTO vc_type_total
+        VALUES      (total_sq.nextval, #{cnt}, #{vcTypeDto.typeId}, #{empDto.empId})
+    </insert>
+
+    <update id="updateVcTypeTotal" parameterType="VcTypeTotalDto">
+        UPDATE vc_type_total
+        SET cnt = #{cnt}
+        WHERE type_id = #{vcTypeDto.typeId}
+        AND emp_id = #{empDto.empId}
+    </update>
+
+    <update id="plusVcTypeTotal" parameterType="VcTypeTotalDto">
+        UPDATE vc_type_total
+        SET cnt = cnt + #{cnt}
+        WHERE type_id = #{vcTypeDto.typeId}
+        AND emp_id = #{empDto.empId}
+    </update>
+
+    <update id="minusVcTypeTotal" parameterType="VcTypeTotalDto">
+        UPDATE vc_type_total
+        SET cnt = cnt - #{cnt}
+        WHERE type_id = #{vcTypeDto.typeId}
+        AND emp_id = #{empDto.empId}
+    </update>
+
+    <!-- 휴가유형 신설 시 모든 emp 에게 생성된 휴가유형 개수 0 으로 컬럼 신설  -->
+    <insert id ="insertVcTypeTotalByEmpIds" parameterType="VcTypeTotalDto">
+        INSERT INTO vc_type_total (total_id, cnt, type_id, emp_id)
+        SELECT total_sq.NEXTVAL, 0,
+            #{vcTypeDto.typeId},
+            emp_id
+        FROM emp
+        WHERE
+            emp_id NOT IN (
+            SELECT emp_id
+            FROM vc_type_total
+            WHERE type_id = #{vcTypeDto.typeId})
+    </insert>
+
+
+    <resultMap type="VcTypeTotalDto" id="vcTypeTotal">
+        <id property="totalId"              column="total_id"/>
+        <result property="cnt"              column="cnt"/>
+        <association property="vcTypeDto"   resultMap="vcType"/>
+        <association property="empDto"      resultMap="emp"/>
+    </resultMap>
+
+    <resultMap type="GrantedVcDto" id="grantedVc">
+        <id property="vcId"                 column="vc_id"/>
+        <result property="grantedDate"      column="granted_date"/>
+        <result property="expiredDate"      column="expired_date"/>
+        <result property="vcDays"           column="vc_days"/>
+        <result property="remainDays"       column="remain_days"/>
+        <association property="vcTypeDto"   resultMap="vcType" />
+        <association property="empDto"      resultMap="emp"/>
+    </resultMap>
+
+    <resultMap type="VcTypeDto" id="vcType">
+        <id property="typeId"               column="type_id" />
+        <result property="name"             column="name" />
+        <result property="description"      column="description" />
+        <result property="pto"              column="pto" />
+        <result property="maxGrantedDate"   column="max_granted_date" />
+        <result property="startEnableDate"  column="start_enable_date" />
+        <result property="endEnableDate"    column="end_enable_date" />
+        <result property="creationDate"     column="creation_date" />
+        <result property="updateDate"       column="update_date" />
+    </resultMap>
+
+    <resultMap type="EmpDto" id="emp">
+        <id property="empId"            column="emp_id"/>
+        <result property="name"         column="name"/>
+        <result property="hire_date"    column="hireDate"/>
+        <result property="leaveDate"    column="leave_date"/>
+        <result property="position"     column="position"/>
+        <result property="pEmail"       column="p_email"/>
+        <result property="cEmail"       column="c_email"/>
+        <result property="tel"          column="tel"/>
+        <result property="mgrId"   column="mgr_id"/>
+        <association property="userDto" resultMap="user"/>
+        <association property="deptDto" resultMap="dept"/>
+    </resultMap>
+
+    <resultMap type="UserDto" id="user">
+        <id property="userId"          column="user_id"/>
+        <result property="empNum"     column="emp_num"/>
+        <result property="enabled"     column="enabled"/>
+        <result property="role"        column="role"/>
+    </resultMap>
+
+    <resultMap type="DeptDto" id="dept" >
+        <id property="deptId" column="dept_id" />
+        <result property="deptName" column="dept_name"/>
+    </resultMap>
+</mapper>

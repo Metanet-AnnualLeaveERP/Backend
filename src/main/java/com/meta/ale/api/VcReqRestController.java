@@ -1,12 +1,9 @@
 package com.meta.ale.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.service.VcReqService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,8 +15,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -47,7 +42,7 @@ public class VcReqRestController {
     /*휴가 신청 내역 상세 조회*/
     @GetMapping("/vacations/{vacation_request_id}")
     public ResponseEntity<Object> vcReqDetail(@PathVariable("vacation_request_id") Long reqId,
-                                                @AuthenticationPrincipal UserDto user) {
+                                              @AuthenticationPrincipal UserDto user) {
         VcReqDto dto = vcReqService.getVcReqCompared(reqId, user.getUserId());
 
         if (dto != null) {
@@ -81,7 +76,22 @@ public class VcReqRestController {
 
 
     /*휴가 결재(승인/반려)*/
+    @PutMapping("/manager/vacations/confirm/{vacation_request_id}")
+    public ResponseEntity approvalVcReq(@AuthenticationPrincipal UserDto userDto,
+                                        @PathVariable("vacation_request_id") Long vcReqId,
+                                        @RequestParam("status") String status) {
+
+        vcReqService.approvalVcRequestStatus(userDto.getRole(), vcReqId, status);
+        return null;
+    }
 
     /*휴가 결재 내역 조회*/
+    @GetMapping("/manager/vacations/approval")
+    public ResponseEntity teamApprovalList(Criteria cri,
+                                           @AuthenticationPrincipal UserDto userDto) {
 
+        Map<String, Object> result = vcReqService.getApprovalVcRequestList(userDto, cri);
+
+        return ResponseEntity.ok(result);
+    }
 }

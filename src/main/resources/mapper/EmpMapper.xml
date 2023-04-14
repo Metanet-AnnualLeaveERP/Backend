@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.meta.ale.mapper.EmpMapper">
-
     <resultMap id="userMap" type="UserDto">
         <id property="userId" column="user_id"/>
         <result property="empNum" column="emp_num"/>
@@ -29,6 +28,50 @@
         <association property="deptDto" resultMap="deptMap"/>
     </resultMap>
 
+
+    <select id="findEmpOverOneYrList" resultType="EmpDto">
+    <![CDATA[
+        SELECT *
+        FROM EMP
+        WHERE HIRE_DATE < SYSDATE - INTERVAL '1' YEAR
+          AND NOT (TO_CHAR(HIRE_DATE) = TO_CHAR(SYSDATE - 365))
+          AND TO_CHAR(HIRE_DATE, 'MM/DD') = TO_CHAR(SYSDATE, 'MM/DD')
+          AND LEAVE_DATE IS NULL
+        ]]>
+    </select>
+
+    <select id="findEmpOneYrList" resultType="EmpDto">
+        <![CDATA[
+        SELECT *
+        FROM EMP
+        WHERE TO_CHAR(HIRE_DATE) = TO_CHAR(SYSDATE - 365)
+          AND LEAVE_DATE IS NULL
+        ]]>
+    </select>
+
+    <select id="findEmpUnderOneYrList" resultType="EmpDto">
+        SELECT *
+        FROM EMP
+        WHERE HIRE_DATE > SYSDATE - INTERVAL '1' YEAR
+          AND TO_CHAR(HIRE_DATE, 'DD') = TO_CHAR(SYSDATE, 'DD')
+          AND TO_CHAR(HIRE_DATE) !=TO_CHAR(SYSDATE)
+          AND LEAVE_DATE IS NULL
+    </select>
+
+    <select id="findEmpOverTwoYrLeaveDate" resultType="EmpDto">
+        SELECT *
+        FROM EMP
+        WHERE LEAVE_DATE IS NOT NULL
+          AND (TO_CHAR(LEAVE_DATE) = TO_CHAR(SYSDATE - 730))
+    </select>
+
+    <select id="findEmpByUserId" resultMap="empMap">
+        SELECT e.*
+        FROM EMP e,
+             DEPT d
+        WHERE e.dept_id = d.dept_id
+          AND e.user_id = #{userId}
+    </select>
     <insert id="insertEmp">
         <selectKey resultType="long" order="BEFORE" keyProperty="empId">
             select emp_sq.nextval from dual
@@ -50,18 +93,17 @@
 
     <update id="updateEmp">
         update emp
-        set
-        dept_id = #{deptDto.deptId},
-        position = #{position},
-        mgr_id = #{mgrId, jdbcType=NULL}
-        where
-        emp_id = #{empId}
+        set dept_id  = #{deptDto.deptId},
+            position = #{position},
+            mgr_id   = #{mgrId, jdbcType=NULL}
+        where emp_id = #{empId}
     </update>
 
     <select id="selectDeptMgr" resultType="Long">
         select emp_id
         from emp
-        where position = '팀장' and dept_id = #{deptId}
+        where position = '팀장'
+          and dept_id = #{deptId}
     </select>
 
     <select id="selectListByDeptId">
@@ -74,14 +116,14 @@
         update emp
         set mgr_id = #{mgrId, jdbcType=NULL}
         where dept_id = #{deptId}
-        and position = '사원'
+          and position = '사원'
     </update>
 
     <select id="selectDeptEmpCnt" resultType="Long">
         select count(*)
         from emp
         where dept_id = #{deptId}
-        and position = '사원'
+          and position = '사원'
     </select>
 
     <select id="selectPositionByEmpId" resultType="String">
@@ -93,18 +135,17 @@
     <select id="selectEmpByEmpId" resultMap="empMap">
         select e.*, u.user_id, u.role, u.emp_num, d.dept_name
         from emp e
-        join users u
-        on e.user_id = u.user_id
-        join dept d
-        on e.dept_id = d.dept_id
+                 join users u
+                      on e.user_id = u.user_id
+                 join dept d
+                      on e.dept_id = d.dept_id
         where emp_id = #{empId}
     </select>
 
     <select id="selectEmpListCnt" resultType="Integer">
         select count(*)
         from emp
-        where
-        emp_id != 0
+        where emp_id != 0
     </select>
 
     <select id="selectEmpList" resultMap="empMap">
@@ -139,8 +180,7 @@
     <update id="updateEmpInfo">
         update emp
         set p_email = #{pEmail}
-        where
-        emp_id = #{empId}
+        where emp_id = #{empId}
     </update>
 
     <select id="selectHireOrder" resultType="Integer">
@@ -152,21 +192,12 @@
     <update id="updateLeaveDate">
         update emp
         set leave_date = sysdate
-        where
-        emp_id = #{empId}
+        where emp_id = #{empId}
     </update>
 
     <select id="selectDuplicatedEmail" resultType="Integer">
         select count(*)
         from emp
         where p_email = #{email}
-    </select>
-
-
-    <select id="findEmpOverTwoYrLeaveDate" resultType="EmpDto">
-        SELECT *
-        FROM EMP
-        WHERE LEAVE_DATE IS NOT NULL
-        AND (TO_CHAR(LEAVE_DATE) = TO_CHAR(SYSDATE - 730))
     </select>
 </mapper>
