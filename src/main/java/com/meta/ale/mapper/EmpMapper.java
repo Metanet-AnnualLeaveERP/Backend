@@ -4,9 +4,35 @@ import com.meta.ale.domain.EmpDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface EmpMapper {
+    public Integer insertEmp(EmpDto empDto) throws Exception;
+
+    public Long selectDeptMgr(Long deptId) throws Exception;
+
+    public Integer updateEmp(EmpDto empDto) throws Exception;
+
+    public Integer updateEmpList(Map<String, Object> paramMap) throws Exception;
+
+    public Long selectDeptEmpCnt(Long deptId) throws Exception;
+
+    public String selectPositionByEmpId(Long empId) throws Exception;
+
+    public EmpDto selectEmpByEmpId(Long empId) throws Exception;
+
+    public Integer selectEmpListCnt() throws Exception;
+
+    public List<EmpDto> selectEmpList(Map<String, Object> paramMap) throws Exception;
+
+    public Integer updateEmpInfo(EmpDto empDto) throws Exception;
+
+    public Integer selectHireOrder() throws Exception;
+
+    public Integer updateLeaveDate(EmpDto empDto);
+
+    public Integer selectDuplicatedEmail(String email); // 진행중
 
     //근속 년수가 1년 초과인 사람 조회
     public List<EmpDto> findEmpOverOneYrList();
@@ -18,7 +44,5 @@ public interface EmpMapper {
     public List<EmpDto> findEmpOneYrList();
 
     public List<EmpDto> findEmpOverTwoYrLeaveDate();
-
-    public void insertEmp(EmpDto empDto);
 
 }
