@@ -25,7 +25,6 @@ public class VcTypeServiceImpl implements VcTypeService{
     @Transactional
     public void insertVcType(VcTypeDto vcTypeDto) {
         vcTypeMapper.insertVcType(vcTypeDto);
-        System.out.println("{}{}{}{}{}{}"+vcTypeDto.getTypeId());
         VcTypeTotalDto vcTypeTotalDto = new VcTypeTotalDto();
         vcTypeTotalDto.setVcTypeDto(vcTypeDto);
         vcTypeTotalMapper.insertVcTypeTotalByEmpIds(vcTypeTotalDto);

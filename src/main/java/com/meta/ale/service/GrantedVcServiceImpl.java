@@ -19,6 +19,7 @@ public class GrantedVcServiceImpl implements GrantedVcService{
     @Autowired
     VcTypeTotalMapper totalMapper;
 
+    /* 임의휴가부여내역 조회 */
     @Override
     public Map<String, Object> getListGrantedVc(Criteria criteria) {
         HashMap<String, Object> dto = new HashMap<>();
@@ -31,6 +32,7 @@ public class GrantedVcServiceImpl implements GrantedVcService{
         return map;
     }
 
+    /* 임의휴가부여내역 상세조회 */
     @Override
     public GrantedVcDto getGrantedVc(Long vcId){
         return mapper.getGrantedVc(vcId);
@@ -84,7 +86,6 @@ public class GrantedVcServiceImpl implements GrantedVcService{
             return false;
         }
     }
-    // 이렇게 한땀한땀 dto통 만들어서 하는게 맞나?
 
 
     // 전체 부여휴가 row count

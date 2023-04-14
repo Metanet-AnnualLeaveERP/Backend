@@ -79,11 +79,12 @@
     </select>
 
     <select id="getGrantedVc" resultMap="grantedVc" parameterType="Long">
-        SElECT e.*, gv.*, d.*
+        SElECT e.*, gv.*, d.*, u.role
         FROM granted_vc gv
              JOIN emp e ON e.emp_id = gv.emp_id
              JOIN vc_type vt ON gv.type_id = vt.type_id
              JOIN dept d ON d.dept_id = e.dept_id
+             JOIN users u on e.user_id = u.user_id
         WHERE
             vc_id = #{vcId}
     </select>

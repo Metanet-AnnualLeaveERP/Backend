@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /* 휴가유형관리 RestController */
-@RequestMapping("api/admin/vacations/")
+@RequestMapping("api/admin")
 @RestController
 public class VcTypeRestController {
 
@@ -18,7 +18,7 @@ public class VcTypeRestController {
     private VcTypeService vcTypeService;
 
     /* 휴가 유형 추가 */
-    @PostMapping("type")
+    @PostMapping("/vacations/type")
     public ResponseEntity<String> insertVcType(@RequestBody VcTypeDto vcType) {
         try {
             vcTypeService.insertVcType(vcType);
@@ -29,7 +29,7 @@ public class VcTypeRestController {
     }
 
     /* 휴가 유형 조회 */
-    @GetMapping("type")
+    @GetMapping("/vacations/type")
     public ResponseEntity<List<VcTypeDto>> getListVcType(){
         List<VcTypeDto> vcTypeList = vcTypeService.getListVcType();
         return new ResponseEntity<>(vcTypeList, HttpStatus.OK);
@@ -37,7 +37,7 @@ public class VcTypeRestController {
 
 
     /* 휴가 유형 수정 */
-    @PutMapping("type/{typeId}")
+    @PutMapping("/vacations/type/{typeId}")
     public ResponseEntity<String> updateVcType(
             @PathVariable("typeId") Long typeId, @RequestBody VcTypeDto vcTypeDto){
         vcTypeDto.setTypeId(typeId);
@@ -50,7 +50,7 @@ public class VcTypeRestController {
     }
 
     /* 휴가 유형 삭제 */
-    @DeleteMapping("type/{typeId}")
+    @DeleteMapping("/vacations/type/{typeId}")
     public ResponseEntity<String> deleteVcType(
             @PathVariable("typeId") Long typeId){
         boolean result = vcTypeService.deleteVcType(typeId);

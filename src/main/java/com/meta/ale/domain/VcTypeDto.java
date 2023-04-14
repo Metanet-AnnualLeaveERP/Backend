@@ -17,9 +17,7 @@ public class VcTypeDto {
     private String description;
     private Long pto; // 유급 여부
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date maxGrantedDate; // 최대부여가능일자
+    private Long maxGrantedDays; // 최대부여가능일자
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

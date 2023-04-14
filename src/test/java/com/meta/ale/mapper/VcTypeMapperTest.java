@@ -20,10 +20,10 @@ class VcTypeMapperTest {
     @Test
     void insertVcTypeTest() {
         VcTypeDto vc = new VcTypeDto();
-        vc.setTypeName("테스트휴가유형3");
-        vc.setDescription("테스트 휴가유형입니다3");
-        vc.setPto(0L); // 유급
-        vc.setMaxGrantedDate(new Date());
+        vc.setTypeName("mxdays휴가");
+        vc.setDescription("mxdays휴가유형입니다");
+        vc.setPto(0L); // 유급여부
+        vc.setMaxGrantedDays(20L);
         vc.setStartEnableDate(new Date());
         vc.setExpiredDate(new Date());
         mapper.insertVcType(vc);
@@ -31,17 +31,17 @@ class VcTypeMapperTest {
 
     @Test
     void deleteVcTypeTest(){
-        mapper.deleteVcType(2L);
+        mapper.deleteVcType(38L);
     }
 
     @Test
     void updateVcTypeTest(){
         VcTypeDto vc = new VcTypeDto();
-        vc.setTypeId(2L);
-        vc.setTypeName("!수정! 테스트 휴가유형");
-        vc.setDescription("!수정! 테스트 휴가유형입니다");
+        vc.setTypeId(36L);
+        vc.setTypeName("수정");
+        vc.setDescription("수정입니다");
         vc.setPto(0L); // 무급
-        vc.setMaxGrantedDate(new Date());
+        vc.setMaxGrantedDays(10L);
         vc.setStartEnableDate(new Date());
         vc.setExpiredDate(new Date());
         mapper.updateVcType(vc);

@@ -37,7 +37,18 @@ public class GrantedVcRestController {
         return grantedVcService.getListGrantedVc(criteria);
     }
 
-    /* 휴가내역 삭제 */
+    /* 임의휴가내역 상세조회 */
+    @GetMapping("granted/{vcId}")
+    public ResponseEntity<Object> getGrantedVc(@PathVariable("vcId") Long vcId){
+        GrantedVcDto gvDto = grantedVcService.getGrantedVc(vcId);
+        if (gvDto != null) {
+            System.out.println(gvDto);
+            return ResponseEntity.status(HttpStatus.OK).body(gvDto);
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다");
+    }
+
+    /* 임의휴가내역 삭제 */
     @DeleteMapping("granted/{vcId}")
     public ResponseEntity<String> deleteGrantedVc(@PathVariable("vcId") Long vcId){
         boolean result = grantedVcService.deleteGrantedVc(vcId);
@@ -49,4 +60,13 @@ public class GrantedVcRestController {
     }
 
     // 작성중
+    /* 임의휴가내역 수정 */
+    @PutMapping("/granted/{vcId}")
+    public ResponseEntity<String> updateGrantedVc(@PathVariable("vcId") Long vcId,
+                                                  @RequestBody GrantedVcDto gvDto){
+
+        gvDto.setVcId(vcId);
+
+        return null;
+    }
 }
