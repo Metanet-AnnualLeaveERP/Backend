@@ -84,11 +84,11 @@
         <result property="reqDate" column="req_date"/>
         <result property="startDate" column="start_date"/>
         <result property="endDate" column="end_date"/>
-        <result property="VcType" column="vc_type"/>
+        <result property="vcType" column="vc_type"/>
         <result property="reqDays" column="req_days"/>
         <result property="comments" column="comments"/>
         <result property="status" column="status"/>
-        <result property="AprvDate" column="aprv_date"/>
+        <result property="aprvDate" column="aprv_date"/>
         <result property="filePath" column="file_path"/>
         <association property="empDto" resultMap="empMap"/>
     </resultMap>

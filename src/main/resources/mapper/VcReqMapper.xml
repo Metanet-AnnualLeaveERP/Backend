@@ -40,7 +40,7 @@
         vc_req
         (REQ_ID, REQ_DATE, START_DATE, END_DATE, VC_TYPE, REQ_DAYS, COMMENTS, STATUS, APRV_DATE, FILE_PATH, EMP_ID)
         VALUES
-        (REQ_SQ.nextval, SYSDATE, #{startDate}, #{endDate}, #{VcType}, #{reqDays}, #{comments}, #{status}, #{AprvDate},
+        (REQ_SQ.nextval, SYSDATE, #{startDate}, #{endDate}, #{vcType}, #{reqDays}, #{comments}, #{status}, #{aprvDate},
         #{filePath}, #{empDto.empId})
 
         <selectKey keyProperty="reqId" order="AFTER" resultType="long">
@@ -76,11 +76,11 @@
         <result property="reqDate" column="req_date" />
         <result property="startDate" column="start_date" />
         <result property="endDate" column="end_date" />
-        <result property="VcType" column="vc_type" />
+        <result property="vcType" column="vc_type" />
         <result property="reqDays" column="req_days" />
         <result property="comments" column="comments" />
         <result property="status" column="status" />
-        <result property="AprvDate" column="aprv_date" />
+        <result property="aprvDate" column="aprv_date" />
         <result property="filePath" column="file_path" />
         <association property="empDto" resultMap="empMap" />
     </resultMap>
