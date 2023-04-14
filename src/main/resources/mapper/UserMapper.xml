@@ -29,7 +29,9 @@
 		(#{userId}, #{empNum}, #{pwd}, #{role})
 
 	</insert>
-
+	<delete id="deleteUserByUserId" parameterType="UserDto">
+		DELETE FROM USERS WHERE user_id = #{userId}
+	</delete>
 <!--	&lt;!&ndash; 계정 비활성화 &ndash;&gt;-->
 <!--	<delete id="deleteUser">-->
 <!--		update users-->
