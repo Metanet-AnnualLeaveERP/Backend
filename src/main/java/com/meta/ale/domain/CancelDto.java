@@ -13,10 +13,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class CancelDto {
     private Long cancelId;
-    private String status;
+    private String cancelStatus;
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date reqDate;
+    private Date cancelReqDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date resDate;

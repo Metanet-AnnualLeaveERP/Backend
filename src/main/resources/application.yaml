@@ -1,0 +1,56 @@
+server:
+  port: 8100
+
+#logging:
+#  level:
+#    org.springframework: DEBUG
+
+spring:
+  messages:
+    basename: message
+
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    username: vacation
+    password: 1234
+
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 215MB
+      location: d://ALE_downloaded_files
+      enabled: true
+      file-size-threshold: 2KB
+  # 메일 서비스 설정
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: vacationmeta@gmail.com
+    password: pwgxnttxpsmmxkfd
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+
+  ##?? ??? ?????. null? ???? JSON?? ????? ??.
+  jackson:
+    default-property-inclusion: NON_NULL
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.meta.ale.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+ale:
+  jwt:
+    jwtCookieName: ale-jwt
+    jwtRefreshCookieName: ale-jwt-refresh
+    jwtSecret: aleSecretKey
+    #    jwtExpirationMs: 86400000
+    jwtRefreshExpirationMs: 86400000
+    jwtExpirationMs: 60000
+#    jwtRefreshExpirationMs: 180000

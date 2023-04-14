@@ -13,9 +13,11 @@ import java.time.Instant;
 @AllArgsConstructor
 public class RefreshTokenDto {
     private Long tokenId;
-    private UserDto userDto;
+    private UserDto userDto; //Security 완성 전까지 비활성화
     private String token;
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Instant expiryDate;
 }
+
+//Security 완성 전까지 비활성화

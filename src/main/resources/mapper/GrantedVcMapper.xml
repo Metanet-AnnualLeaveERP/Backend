@@ -1,30 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.meta.ale.mapper.GrantedVcMapper">
-    <insert id="insertAnnualGranted">
-        <selectKey resultType="Long" keyColumn="vc_id" keyProperty="vcId" order="BEFORE">
-            select VC_SQ.NEXTVAL FROM DUAL
-        </selectKey>
-        insert into GRANTED_VC(VC_ID,
-                               GRANTED_DATE,
-                               EXPIRED_DATE,
-                               VC_DAYS,
-                               REMAIN_DAYS,
-                               TYPE_ID,
-                               EMP_ID)
-        values (#{vcId},
-            #{grantedDate},
-            #{expiredDate},
-            #{vcDays},
-            #{remainDays},
-            #{vcTypeDto.typeId},
-            #{empDto.empId})
+
+    <select id="getListGrantedVc" resultMap="grantedVc" parameterType="hashMap">
+        SELECT
+            *
+        FROM (
+                 SELECT
+                     ROWNUM RN,
+                     d.dept_name,
+                     e.emp_id,
+                     e.name,
+                     vt.type_name,
+                     gv.vc_id,
+                     gv.granted_date,
+                     gv.expired_date,
+                     gv.vc_days,
+                     gv.remain_days,
+                     gv.type_id
+                 FROM
+                     granted_vc gv
+                         JOIN emp e ON e.emp_id = gv.emp_id
+                         JOIN vc_type vt ON gv.type_id = vt.type_id
+                         JOIN dept d ON d.dept_id = e.dept_id
+                 WHERE
+        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+
+    )
+    <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
+
+    <select id="getGrantedVc" resultMap="grantedVc" parameterType="Long">
+        SElECT e.*, gv.*, d.*, u.role
+        FROM granted_vc gv
+                 JOIN emp e ON e.emp_id = gv.emp_id
+                 JOIN vc_type vt ON gv.type_id = vt.type_id
+                 JOIN dept d ON d.dept_id = e.dept_id
+                 JOIN users u on e.user_id = u.user_id
+        WHERE
+            vc_id = #{vcId}
+    </select>
+
+    <insert id="insertGrantedVc" parameterType="GrantedVcDto">
+        INSERT INTO granted_vc VALUES(gv_sq.nextval,
+                                      #{grantedDate},
+                                      #{expiredDate},
+                                      #{vcDays},
+                                      #{remainDays},
+                                      #{vcTypeDto.typeId},
+                                      #{empDto.empId})
     </insert>
 
     <select id="findByEmpIdVcType" resultType="GrantedVcDto">
         SELECT * FROM GRANTED_VC
         WHERE EMP_ID =#{empDto.empId}
-        AND   TYPE_ID = #{vcTypeDto.typeId}
+          AND   TYPE_ID = #{vcTypeDto.typeId}
     </select>
 
     <update id="updateAnnualGranted" parameterType="GrantedVcDto">
@@ -46,6 +76,89 @@
 
     </select>
 
+    <insert id="insertAnnualGranted">
+        <selectKey resultType="Long" keyColumn="vc_id" keyProperty="vcId" order="BEFORE">
+            select VC_SQ.NEXTVAL FROM DUAL
+        </selectKey>
+        insert into GRANTED_VC(VC_ID,
+                               GRANTED_DATE,
+                               EXPIRED_DATE,
+                               VC_DAYS,
+                               REMAIN_DAYS,
+                               TYPE_ID,
+                               EMP_ID)
+        values (#{vcId},
+        #{empDto.empId}
+        )
+    </insert>
+
+    <!-- update 는 부여된휴가일수, 남은휴가일수, 만료일자 만 수정하면 됨 -->
+    <update id="updateGrantedVc" parameterType="GrantedVcDto">
+        UPDATE granted_vc
+        SET vc_days = #{vcDays},
+            remain_days = #{remainDays},
+            expired_date = #{expiredDate}
+        WHERE vc_id = #{vcId}
+    </update>
+
+    <delete id="deleteGrantedVc" parameterType="Long">
+        DELETE FROM granted_vc WHERE vc_id = #{vcId}
+    </delete>
+
+    <!-- paging -->
+    <select id="getGrantedVcCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM granted_vc
+    </select>
+
+    <resultMap type="GrantedVcDto" id="grantedVc">
+        <id property="vcId"                 column="vc_id"/>
+        <result property="grantedDate"      column="granted_date"/>
+        <result property="expiredDate"      column="expired_date"/>
+        <result property="vcDays"           column="vc_days"/>
+        <result property="remainDays"       column="remain_days"/>
+        <association property="vcTypeDto"   resultMap="vcType" />
+        <association property="empDto"      resultMap="emp"/>
+    </resultMap>
+
+    <resultMap type="VcTypeDto" id="vcType">
+        <id property="typeId"               column="type_id" />
+        <result property="typeName"         column="type_name" />
+        <result property="description"      column="description" />
+        <result property="pto"              column="pto" />
+        <result property="maxGrantedDate"   column="max_granted_date" />
+        <result property="startEnableDate"  column="start_enable_date" />
+        <result property="endEnableDate"    column="end_enable_date" />
+        <result property="creationDate"     column="creation_date" />
+        <result property="updateDate"       column="update_date" />
+    </resultMap>
+
+    <resultMap type="EmpDto" id="emp">
+        <id property="empId"            column="emp_id"/>
+        <result property="name"         column="name"/>
+        <result property="hire_date"    column="hireDate"/>
+        <result property="leaveDate"    column="leave_date"/>
+        <result property="position"     column="position"/>
+        <result property="pEmail"       column="p_email"/>
+        <result property="cEmail"       column="c_email"/>
+        <result property="tel"          column="tel"/>
+        <result property="mgrId"        column="mgr_id"/>
+        <association property="userDto" resultMap="user"/>
+        <association property="deptDto" resultMap="dept"/>
+    </resultMap>
+
+    <resultMap type="UserDto" id="user">
+        <id property="userId"          column="user_id"/>
+        <result property="empNum"     column="emp_num"/>
+        <result property="enabled"     column="enabled"/>
+        <result property="role"        column="role"/>
+    </resultMap>
+
+    <resultMap type="DeptDto" id="dept" >
+        <id property="deptId" column="dept_id" />
+        <result property="deptName" column="dept_name"/>
+    </resultMap>
+
     <resultMap id="grantedVcMap" type="GrantedVcDto">
         <result property="vcId" column="vc_id"/>
         <result property="grantedDate" column="granted_date"/>
@@ -55,12 +168,13 @@
         <association property="vcTypeDto" resultMap="vcTypeMap"/>
         <association property="empDto" resultMap="empMap"/>
     </resultMap>
+
     <resultMap id="vcTypeMap" type="vcTypeDto">
         <result property="typeId" column="type_id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
-
     </resultMap>
+
     <resultMap id="empMap" type="EmpDto">
         <id property="empId" column="emp_id" />
         <result property="name" column="name" />
@@ -71,8 +185,8 @@
         <result property="cEmail" column="c_email" />
         <result property="tel" column="tel" />
         <result property="mgrId" column="mgr_id" />
-
 <!--        <association property="userDto" resultMap="userMap" />-->
 <!--        <association property="deptDto" resultMap="deptMap" />-->
     </resultMap>
 </mapper>
+
