@@ -17,4 +17,6 @@ public interface VcTypeService {
 
     /* 휴가유형 삭제 */
     boolean deleteVcType(Long typeId);
+
+    public VcTypeDto getVcType(String typeName);
 }

@@ -4,6 +4,7 @@ import com.meta.ale.domain.VcTypeDto;
 import com.meta.ale.domain.VcTypeTotalDto;
 import com.meta.ale.mapper.VcTypeMapper;
 import com.meta.ale.mapper.VcTypeTotalMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,13 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 /* 휴가유형관리 */
 @Service
+@RequiredArgsConstructor
 public class VcTypeServiceImpl implements VcTypeService{
 
-    @Autowired
-    VcTypeMapper vcTypeMapper;
+    private final VcTypeMapper vcTypeMapper;
 
-    @Autowired
-    VcTypeTotalMapper vcTypeTotalMapper;
+    private final VcTypeTotalMapper vcTypeTotalMapper;
 
 
     /* 휴가유형 추가 */
@@ -56,6 +56,8 @@ public class VcTypeServiceImpl implements VcTypeService{
         return result == 1;
     }
 
-
-
+    @Override
+    public VcTypeDto getVcType(String typeName) {
+        return vcTypeMapper.findVcTypeByTypeName(typeName);
+    }
 }

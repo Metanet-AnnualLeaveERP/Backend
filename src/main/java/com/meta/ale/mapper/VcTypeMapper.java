@@ -14,4 +14,6 @@ public interface VcTypeMapper {
     int updateVcType(VcTypeDto vcTypeDto);
 
     int deleteVcType(Long typeId);
+
+    public VcTypeDto findVcTypeByTypeName(String name);
 }

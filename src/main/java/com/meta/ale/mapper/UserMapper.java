@@ -14,4 +14,6 @@ public interface UserMapper {
 
     public void insertUser(UserDto userDto);
 
+    public int deleteUserByUserId(UserDto userDto);
+
 }
