@@ -50,13 +50,44 @@
     <!--휴가 결재(승인/반려)-->
 
     <!--휴가 결재 내역 조회-->
-    <select id="getVcReqListByMgr" resultType="VcReqDto">
+    <select id="getVcReqListByMgr" resultMap="reqMap" parameterType="HashMap">
+        SELECT
+        *
+        FROM (
+        SELECT
+        ROWNUM RN, v.*, e.name,e.p_email,e.c_email, e.position,e.hire_date
+        FROM
+        vc_req v JOIN emp e ON v.emp_id = e.emp_id
+        WHERE
+        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+        AND e.leave_date IS NULL
+        <if test="deptId != null">
+            AND e.dept_id = #{deptId}
+        </if>
+        <if test="keyword != null and !keyword.equals('')">
+            AND v.STATUS = #{keyword}
+        </if>
 
+        )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
     </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
         UPDATE vc_req SET status = #{status} WHERE req_id = #{reqId}
     </update>
+
+    <!--  관리자 및 매니저 휴가 신청내역 개수(페이징 처리용)  -->
+    <select id="getVcReqCountByMgr" resultType="Long">
+        SELECT COUNT(*) FROM VC_REQ v,EMP e
+        WHERE v.emp_id = e.emp_id
+        <if test="deptId != null">
+            AND e.dept_id = #{deptId}
+        </if>
+        <if test="keyword != null and !keyword.equals('')">
+            AND v.STATUS = #{keyword}
+        </if>
+
+    </select>
 
     <!--휴가 신청 개수 (페이징 처리용)-->
     <select id="getVcReqCount" resultType="Long">

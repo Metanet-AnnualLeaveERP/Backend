@@ -2,12 +2,13 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.VcReqMapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -69,23 +70,35 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 결재 내역 조회*/
     @Override
-    public Map<String, Object> approvalVcRequestList(UserDto userDto, Criteria cri) {
-        String role = userDto.getRole();
-        String status;
+    public Map<String, Object> getApprovalVcRequestList(UserDto userDto, Criteria cri) {
 
+        // 권한으로 팀장 - 매니저 구분 (role이 manger 일 경우 dept를 조회)
+        String role = userDto.getRole();
         HashMap<String, Object> vo = new HashMap<String, Object>();
+        Long managerDeptId= null;
+        //팀장일 경우 자신의 팀원의 내용만 볼 수 있음 ( 관리자의 경우 managerId가 null)
+        if (role.equals("ROLE_MANAGER")) {
+            Long userId = userDto.getUserId();
+            EmpDto managerDto = empService.findEmpByUserId(userId);
+            managerDeptId = managerDto.getDeptDto().getDeptId();
+        }
+        System.out.println(cri.getKeyword());
         vo.put("pageNum", cri.getPageNum());
         vo.put("amount", cri.getAmount());
+        vo.put("keyword", cri.getKeyword());
+        vo.put("deptId",managerDeptId);
 
-        if (role.equals("ROLE_ADMIN")) {
-            status = "관리자 대기중";
+        // 페이징 처리를 위한 전체 count 조회
+        int count = approvalVcRequestCountByAdmin(vo);
 
-        } else {
-            status = "대기중";
-        }
-        vo.put("status",status);
-        vcReqMapper.getVcReqListByMgr(vo);
-        return null;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("paging", new PagenationDTO(cri,count));
+        System.out.println(count);
+        PagenationDTO pg= (PagenationDTO)map.get("paging");
+        System.out.println(pg.getTotal());
+        map.put("vcReqs", vcReqMapper.getVcReqListByMgr(vo));
+
+        return map;
     }
 
 
@@ -96,8 +109,11 @@ public class VcReqServiceImpl implements VcReqService {
         return vcReqMapper.getVcReqCount(empId).intValue();
     }
 
-    private Map<String, Object> approvalVcRequestListByAdmin(){
+    /*휴가결재내역 조회 개수(페이징 처리용)*/
+    private int approvalVcRequestCountByAdmin(HashMap<String, Object> hashMap) {
 
-        return null;
-    };
+        return vcReqMapper.getVcReqCountByMgr(hashMap).intValue();
+    }
+
+    ;
 }

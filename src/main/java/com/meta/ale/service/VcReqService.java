@@ -24,6 +24,6 @@ public interface VcReqService {
     public void approvalVcRequestStatus(String role, Long vcReqId, String status);
 
     /*휴가 결재 내역 조회*/
-    Map<String, Object> approvalVcRequestList(UserDto userDto, Criteria cri);
+    Map<String, Object> getApprovalVcRequestList(UserDto userDto, Criteria cri);
 
 }

@@ -82,7 +82,8 @@ public class VcReqRestController {
     public ResponseEntity teamApprovalList(Criteria cri,
                                            @AuthenticationPrincipal UserDto userDto) {
 
-        Map<String, Object> result = vcReqService.approvalVcRequestList(userDto, cri);
-        return null;
+        Map<String, Object> result = vcReqService.getApprovalVcRequestList(userDto, cri);
+
+        return ResponseEntity.ok(result);
     }
 }
