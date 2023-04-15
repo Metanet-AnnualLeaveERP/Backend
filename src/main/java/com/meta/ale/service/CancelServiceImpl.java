@@ -21,6 +21,8 @@ public class CancelServiceImpl implements CancelService {
 
     private final EmpService empService;
 
+    private final VcTypeTotalService totalService;
+
     /*휴가 취소 내역 조회*/
     @Override
     public Map<String, Object> getCancelList(Criteria cri, Long userId) {
@@ -77,25 +79,35 @@ public class CancelServiceImpl implements CancelService {
 
     /*휴가취소 승인 / 휴가취소 반려*/
     @Override
-    public boolean approvalCancel(Long cancelId, String status) {
-        CancelDto cancelDto= cancelMapper.getCancel(cancelId);
-        if(cancelDto.getCancelId() == null){
+    public boolean approvalCancel(Long cancelId, String status, String comment) {
+        CancelDto cancelDto = cancelMapper.getCancel(cancelId);
+        if ((status == null || status.equals("")) || cancelDto.getCancelId() == null) {
             return false;
         }
-        cancelDto.setCancelStatus(status);
 
-        return cancelMapper.updateCancelStatus(cancelDto) !=0;
+        cancelDto.setCancelStatus(status);
+        cancelDto.setResDate(new Date());
+        cancelDto.setResComm(comment);
+
+        if (status.equals("승인")) {
+            VcReqDto vcReqDto = cancelDto.getVcReqDto();
+            VcTypeTotalDto total = totalService.getVcTotalByTypeAndEmpId(vcReqDto);
+            total.setCnt(total.getCnt()+vcReqDto.getReqDays());
+            totalService.updateVcTypeTotalByTotalId(total);
+        }
+
+        return cancelMapper.updateCancelStatus(cancelDto) != 0;
 
     }
 
     /*휴가취소 승인 / 휴가취소 반려 관리자 조회*/
     @Override
-    public Map<String,Object> getApprovalCancelList(UserDto userDto,Criteria cri) {
+    public Map<String, Object> getApprovalCancelList(UserDto userDto, Criteria cri) {
         String role = userDto.getRole();
         Long mgrDeptId = null;
-        if(role.equals("ROLE_MANAGER")){
+        if (role.equals("ROLE_MANAGER")) {
             Long userId = userDto.getUserId();
-            EmpDto managerDto =  empService.findEmpByUserId(userId);
+            EmpDto managerDto = empService.findEmpByUserId(userId);
             mgrDeptId = managerDto.getDeptDto().getDeptId();
         }
         HashMap<String, Object> vo = new HashMap();
@@ -105,16 +117,17 @@ public class CancelServiceImpl implements CancelService {
         vo.put("deptId", mgrDeptId);
 
         int count = getCancelCountByMgr(vo);
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap();
         map.put("paging", new PagenationDTO(cri, count));
-        map.put("cancel",cancelMapper.getCancelListByMgr(vo));
-        return null;
+        map.put("cancel", cancelMapper.getCancelListByMgr(vo));
+
+        return map;
     }
 
     /*휴가 취소 상태 변경*/
     @Override
     public boolean updateCancelStatus(CancelDto dto) {
-        return cancelMapper.updateCancelStatus(dto) != 0 ? true: false;
+        return cancelMapper.updateCancelStatus(dto) != 0 ? true : false;
     }
     /* ------------서비스 내부에서 쓸 메소드 -------------- */
 
@@ -124,7 +137,7 @@ public class CancelServiceImpl implements CancelService {
     }
 
     /*휴가취소 신청 개수 [관리자, 매니저 ] (페이징 처리용)*/
-    private int getCancelCountByMgr(HashMap<String, Object> hashMap){
+    private int getCancelCountByMgr(HashMap<String, Object> hashMap) {
 
         return cancelMapper.getCancelCountByMgr(hashMap).intValue();
     }
