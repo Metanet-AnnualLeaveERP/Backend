@@ -24,7 +24,7 @@ public interface CancelService {
     public boolean updateCancelStatus(CancelDto dto);
 
     /*휴가 취소 결재*/
-    public boolean approvalCancel(Long cancelId, String status);
+    public boolean approvalCancel(Long cancelId, String status,String comment);
 
 
 }
