@@ -26,4 +26,6 @@ public interface GrantedVcMapper {
     int updateGrantedVc(GrantedVcDto grantedVc);
     int deleteGrantedVc(Long vcId);
     Long getGrantedVcCount();
+
+
 }
