@@ -75,7 +75,14 @@
     </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
-        UPDATE vc_req SET status = #{status} WHERE req_id = #{reqId}
+        UPDATE vc_req SET status = #{status}
+        <if test="aprvDate != null">
+            , APRV_DATE = #{aprvDate}
+        </if>
+        <if test="deniedComments != null">
+            , DENIED_COMMENTs = #{deniedComments}
+        </if>
+        WHERE req_id = #{reqId}
     </update>
 
     <!--  관리자 및 매니저 휴가 신청내역 개수(페이징 처리용)  -->
@@ -103,21 +110,39 @@
             </if>
         </where>
     </select>
-    
+
+    <!--  캘린더용 우리팀 부서의 휴가 뿌리기 위한 것  -->
+    <select id="getVcReqByDept" resultMap="reqMap">
+        SELECT  V.*,E.name,E.C_EMAIL,E.POSITION
+        FROM VC_REQ V,
+             EMP E
+        WHERE V.EMP_ID = E.EMP_ID
+          AND E.LEAVE_DATE IS NULL
+          AND V.STATUS IN ('자동승인', '승인완료')
+          AND E.DEPT_ID = (SELECT DEPT_ID
+                           FROM EMP E2
+                           WHERE E2.USER_ID = #{userId})
+    </select>
+
     <resultMap id="reqMap" type="VcReqDto">
         <id property="reqId" column="req_id"/>
         <result property="reqDate" column="req_date" />
         <result property="startDate" column="start_date" />
         <result property="endDate" column="end_date" />
-        <result property="vcType" column="vc_type" />
         <result property="reqDays" column="req_days" />
         <result property="comments" column="comments" />
+        <result property="deniedComment" column="denied_comment"/>
         <result property="status" column="status" />
         <result property="aprvDate" column="aprv_date" />
         <result property="filePath" column="file_path" />
+        <association property="vcTypeDto" resultMap="vcTypeMap" />
         <association property="empDto" resultMap="empMap" />
     </resultMap>
-
+    <resultMap id="vcTypeMap" type="VcTypeDto">
+        <result property="typeId" column="type_id"/>
+        <result property="typeName" column="type_name"/>
+        <result property="description" column="description"/>
+    </resultMap>
     <resultMap id="empMap" type="EmpDto">
         <id property="empId" column="emp_id" />
         <result property="name" column="name" />
@@ -128,7 +153,6 @@
         <result property="cEmail" column="c_email" />
         <result property="tel" column="tel" />
         <result property="mgrId" column="mgr_id" />
-
         <association property="userDto" resultMap="userMap" />
         <association property="deptDto" resultMap="deptMap" />
     </resultMap>
@@ -144,4 +168,7 @@
         <id property="deptId" column="dept_id" />
     </resultMap>
 
+
 </mapper>
+
+

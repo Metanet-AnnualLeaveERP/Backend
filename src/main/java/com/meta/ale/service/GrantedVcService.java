@@ -4,6 +4,7 @@ import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.GrantedVcDto;
 import com.meta.ale.domain.VcTypeDto;
 
+import java.util.List;
 import java.util.Map;
 
 public interface GrantedVcService {
@@ -16,5 +17,8 @@ public interface GrantedVcService {
 
     boolean insertGrantedVc(GrantedVcDto grantedVc);
 
+    public boolean insertAnnualByEmpOverOneYr() throws Exception;
+
+    public List<GrantedVcDto> findPromoteAnnualLeave() throws Exception;
 
 }

@@ -46,13 +46,13 @@
         </selectKey>
     </insert>
 
-    <!--휴가 취소 결재(승인/반려)-->
-
-    <!--휴가취소 승인 / 휴가취소 반려-->
-
     <!--휴가 신청 상태 변경-->
     <update id="updateCancelStatus" parameterType="CancelDto">
-        UPDATE cancel SET cancel_status = #{status} WHERE cancel_id = #{cancelId}
+        UPDATE cancel SET cancel_status = #{status}
+                      <if test="resDate != null">
+                          ,res_date =#{resDate}
+                      </if>
+                      WHERE cancel_id = #{cancelId}
     </update>
 
     <!--휴가 취소 개수 (페이징 처리용)-->
@@ -68,7 +68,44 @@
             </if>
         </where>
     </select>
+    <!--휴가취소 승인 / 휴가취소 반려 갯수 (페이징처리용) -->
+    <select id="getCancelCountByMgr" resultType="Long">
+        SELECT COUNT(*) FROM CANCEL c,VC_REQ v,EMP e
+        WHERE v.REQ_ID = c.REQ_ID
+        AND e.EMP_ID = v.EMP_ID
+        AND e.LEAVE_DATE IS NULL
+        <if test="deptId != null">
+            AND e.DEPT_ID = #{deptId}
+        </if>
+        <if test="keyword != null and !keyword.equals('')">
+            AND v.STATUS = #{keyword}
+        </if>
+    </select>
 
+    <!--휴가 취소 결재(승인/반려) 리스트-->
+    <select id="getCancelListByMgr" resultMap="cancelMap">
+        SELECT
+        *
+        FROM (
+        SELECT
+        ROWNUM RN,c.*, e.name,e.p_email,e.c_email, e.position,e.hire_date
+        FROM
+        vc_req v, emp e, CANCEL c
+        WHERE
+        v.EMP_ID = e.EMP_ID AND
+        c.REQ_ID = v.REQ_ID AND
+        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+        AND e.leave_date IS NULL
+        <if test="deptId != null">
+            AND e.dept_id = #{deptId}
+        </if>
+        <if test="keyword != null and !keyword.equals('')">
+            AND c.cancelStatus = #{keyword}
+        </if>
+
+        )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
     <resultMap id="cancelMap" type="CancelDto">
         <id property="cancelId" column="cancel_id"/>
         <result property="status" column="status"/>
@@ -84,15 +121,26 @@
         <result property="reqDate" column="req_date"/>
         <result property="startDate" column="start_date"/>
         <result property="endDate" column="end_date"/>
-        <result property="vcType" column="vc_type"/>
         <result property="reqDays" column="req_days"/>
         <result property="comments" column="comments"/>
+        <result property="deniedComment" column="denied_comment"/>
         <result property="status" column="status"/>
         <result property="aprvDate" column="aprv_date"/>
         <result property="filePath" column="file_path"/>
+        <association property="vcTypeDto" resultMap="vcTypeMap"/>
         <association property="empDto" resultMap="empMap"/>
     </resultMap>
-
+    <resultMap type="VcTypeDto" id="vcTypeMap">
+        <id property="typeId"               column="type_id" />
+        <result property="name"             column="name" />
+        <result property="description"      column="description" />
+        <result property="pto"              column="pto" />
+        <result property="maxGrantedDate"   column="max_granted_date" />
+        <result property="startEnableDate"  column="start_enable_date" />
+        <result property="endEnableDate"    column="end_enable_date" />
+        <result property="creationDate"     column="creation_date" />
+        <result property="updateDate"       column="update_date" />
+    </resultMap>
     <resultMap id="empMap" type="EmpDto">
         <id property="empId" column="emp_id"/>
         <result property="name" column="name"/>

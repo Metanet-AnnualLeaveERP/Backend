@@ -5,10 +5,12 @@ import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.service.VcReqService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -79,19 +81,30 @@ public class VcReqRestController {
     @PutMapping("/manager/vacations/confirm/{vacation_request_id}")
     public ResponseEntity approvalVcReq(@AuthenticationPrincipal UserDto userDto,
                                         @PathVariable("vacation_request_id") Long vcReqId,
-                                        @RequestParam("status") String status) {
+                                        @RequestParam("status") String status,
+                                        @RequestParam("comment")String comment) {
+        // 잘못된 VcReq일 경우
+        if (!vcReqService.approvalVcRequestStatus(userDto, vcReqId, status,comment)) {
+            return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+        }
+        ;
 
-        vcReqService.approvalVcRequestStatus(userDto.getRole(), vcReqId, status);
-        return null;
+        return ResponseEntity.ok("정상처리 되었습니다.");
     }
 
     /*휴가 결재 내역 조회*/
     @GetMapping("/manager/vacations/approval")
     public ResponseEntity teamApprovalList(Criteria cri,
                                            @AuthenticationPrincipal UserDto userDto) {
-
         Map<String, Object> result = vcReqService.getApprovalVcRequestList(userDto, cri);
 
         return ResponseEntity.ok(result);
+    }
+
+    /*팀원 휴가 승인내역 조회 (캘린더용) */
+    @GetMapping("/vacations/my-team")
+    public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto) {
+
+        return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto));
     }
 }

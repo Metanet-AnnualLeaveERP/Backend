@@ -65,7 +65,10 @@ public class GrantedVcServiceTest {
         grantedVcDto.setEmpDto(empDto);
 
         gvService.insertGrantedVc(grantedVcDto);
-
-
     }
+    @Test
+    public void insertAnnual() throws Exception{
+        gvService.insertAnnualByEmpOverOneYr();
+    }
+
 }
