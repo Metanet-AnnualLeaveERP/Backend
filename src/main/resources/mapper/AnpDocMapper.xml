@@ -2,8 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.meta.ale.mapper.AnpDocMapper">
 
+    <select id="getListAnpDoc" resultType="AnpDocDto" parameterType="HashMap">
+        SELECT *
+        FROM (
+            SELECT  ROWNUM RN, ad.*
+            FROM    anp_doc ad
+            WHERE
+                <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+             )
+        <![CDATA[
+        WHERE RN > (#{pageNum} - 1) * #{amount}
+        ]]>
+    </select>
+
+    <select id="getAnpDoc" resultType="AnpDocDto">
+        SELECT *
+        FROM anp_doc
+        WHERE doc_id = #{docId}
+    </select>
+
+    <delete id="deleteAnpDoc" parameterType="Long">
+        DELETE FROM anp_doc WHERE doc_id = #{docId}
+    </delete>
+    <!-- paging -->
+    <select id="getAnpDocCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM anp_doc
+    </select>
+
     <insert id="insertAnpDocMapper">
-        <selectKey resultType="AnpDocDto" order="BEFORE" keyProperty="docId" keyColumn="doc_id">
+        <selectKey resultType="long" order="BEFORE" keyProperty="docId" keyColumn="doc_id">
             SELECT DOC_SQ.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO ANP_DOC(DOC_ID,
@@ -21,8 +49,9 @@
         #{remainAnv},
         #{occurDate},
         #{anvOccurDate},
-        #{empDto.empId},
+        #{empDto.empId}
         )
     </insert>
+
 
 </mapper>

@@ -18,10 +18,10 @@ public class AnpDocDto {
     private Integer remainAnv;
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date occurDate;
+    private Date occurDate; // 문서생성시점
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date anvOccurDate;
+    private Date anvOccurDate; // 연차생성시점
     private EmpDto empDto;
 
     public void setAll(EmpDto empDto, int totalAnv, Date occurDate, int remainAnv, int usedAnv, Date anvOccurDate) {

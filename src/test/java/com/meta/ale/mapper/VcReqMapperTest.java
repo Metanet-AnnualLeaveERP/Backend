@@ -1,9 +1,6 @@
 package com.meta.ale.mapper;
 
-import com.meta.ale.domain.Criteria;
-import com.meta.ale.domain.EmpDto;
-import com.meta.ale.domain.UserDto;
-import com.meta.ale.domain.VcReqDto;
+import com.meta.ale.domain.*;
 import com.meta.ale.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -96,6 +93,7 @@ public class VcReqMapperTest {
             System.out.println(v);
         }
     }
+
 
 
 }
