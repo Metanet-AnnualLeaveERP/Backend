@@ -13,13 +13,12 @@
 			SELECT TYPE_SQ.nextval FROM DUAL
 		</selectKey>
 		INSERT INTO vc_type (type_id, type_name, description, pto, max_granted_days,
-		expired_date, creation_date) VALUES(
+		creation_date) VALUES(
 		#{typeId},
 		#{typeName},
 		#{description},
 		#{pto},
 		#{maxGrantedDays},
-		#{expiredDate},
 		sysdate)
 	</insert>
 
@@ -34,7 +33,6 @@
 		    description = #{description},
 		    pto = #{pto},
 		    max_granted_days = #{maxGrantedDays},
-			expired_date = #{expiredDate},
 			update_date = sysdate
 		WHERE type_id = #{typeId}
 	</update>

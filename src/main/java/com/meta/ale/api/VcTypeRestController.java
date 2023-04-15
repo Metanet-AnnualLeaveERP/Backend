@@ -55,7 +55,7 @@ public class VcTypeRestController {
             @PathVariable("typeId") Long typeId){
         boolean result = vcTypeService.deleteVcType(typeId);
         if(result){
-            return new ResponseEntity<>("SUCESSS", HttpStatus.OK);
+            return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
         } else { return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
     }
 }
