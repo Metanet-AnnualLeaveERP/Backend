@@ -22,13 +22,13 @@ public class VcReqDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date endDate;
-    private String VcType;
+    private String vcType;
     private Long reqDays;
     private String comments;
     private String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date AprvDate;
+    private Date aprvDate;
     private String filePath;
     private EmpDto empDto;
 }

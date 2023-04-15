@@ -9,7 +9,9 @@
         *
         FROM (
             SELECT
-                ROWNUM RN, v.*
+                ROWNUM RN,
+                v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id
             FROM
                 vc_req v JOIN emp e ON v.emp_id = e.emp_id
             WHERE
@@ -38,7 +40,7 @@
         vc_req
         (REQ_ID, REQ_DATE, START_DATE, END_DATE, VC_TYPE, REQ_DAYS, COMMENTS, STATUS, APRV_DATE, FILE_PATH, EMP_ID)
         VALUES
-        (REQ_SQ.nextval, SYSDATE, #{startDate}, #{endDate}, #{VcType}, #{reqDays}, #{comments}, #{status}, #{AprvDate},
+        (REQ_SQ.nextval, SYSDATE, #{startDate}, #{endDate}, #{vcType}, #{reqDays}, #{comments}, #{status}, #{aprvDate},
         #{filePath}, #{empDto.empId})
 
         <selectKey keyProperty="reqId" order="AFTER" resultType="long">
@@ -50,21 +52,54 @@
     <!--휴가 결재(승인/반려)-->
 
     <!--휴가 결재 내역 조회-->
+    <select id="getVcReqListByMgr" resultMap="reqMap" parameterType="HashMap">
+        SELECT
+        *
+        FROM (
+        SELECT
+        ROWNUM RN, v.*, e.name,e.p_email,e.c_email, e.position,e.hire_date
+        FROM
+        vc_req v JOIN emp e ON v.emp_id = e.emp_id
+        WHERE
+        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+        AND e.leave_date IS NULL
+        <if test="deptId != null">
+            AND e.dept_id = #{deptId}
+        </if>
+        <if test="keyword != null and !keyword.equals('')">
+            AND v.STATUS = #{keyword}
+        </if>
 
+        )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
         UPDATE vc_req SET status = #{status} WHERE req_id = #{reqId}
     </update>
+
+    <!--  관리자 및 매니저 휴가 신청내역 개수(페이징 처리용)  -->
+    <select id="getVcReqCountByMgr" resultType="Long">
+        SELECT COUNT(*) FROM VC_REQ v,EMP e
+        WHERE v.emp_id = e.emp_id
+        <if test="deptId != null">
+            AND e.dept_id = #{deptId}
+        </if>
+        <if test="keyword != null and !keyword.equals('')">
+            AND v.STATUS = #{keyword}
+        </if>
+
+    </select>
 
     <!--휴가 신청 개수 (페이징 처리용)-->
     <select id="getVcReqCount" resultType="Long">
         SELECT
             COUNT(*)
         FROM
-            vc_req
+            vc_req v JOIN emp e ON v.emp_id = e.emp_id
         <where>
-            <if test="empId != 0">
-                emp_id = #{empId}
+            <if test="user_id != 0">
+                AND e.user_id = #{userId}
             </if>
         </where>
     </select>
@@ -74,11 +109,11 @@
         <result property="reqDate" column="req_date" />
         <result property="startDate" column="start_date" />
         <result property="endDate" column="end_date" />
-        <result property="VcType" column="vc_type" />
+        <result property="vcType" column="vc_type" />
         <result property="reqDays" column="req_days" />
         <result property="comments" column="comments" />
         <result property="status" column="status" />
-        <result property="AprvDate" column="aprv_date" />
+        <result property="aprvDate" column="aprv_date" />
         <result property="filePath" column="file_path" />
         <association property="empDto" resultMap="empMap" />
     </resultMap>

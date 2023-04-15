@@ -2,6 +2,7 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.EmpDto;
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.mapper.VcReqMapper;
 import org.junit.jupiter.api.Test;
@@ -9,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class VcReqServiceTest {
@@ -22,6 +22,9 @@ class VcReqServiceTest {
 
     @Autowired
     VcReqMapper vcReqMapper;
+
+    @Autowired
+    UserService userService;
 
     @Test
     void getVcReqList() {
@@ -35,7 +38,7 @@ class VcReqServiceTest {
 
     @Test
     void getVcReq() {
-        VcReqDto dto = vcReqService.getVcReq(5L, 1L);
+        VcReqDto dto = vcReqService.getVcReqCompared(5L, 1L);
         String result;
         result = dto == null ? "접근 실패" : dto.toString();
         System.out.println(result);
@@ -68,7 +71,7 @@ class VcReqServiceTest {
         emp.setEmpId(2L);
         dto.setEmpDto(emp);
 
-        vcReqService.createVcReq(dto);
+//        vcReqService.createVcReq(dto);
     }
 
     @Test
@@ -76,5 +79,14 @@ class VcReqServiceTest {
         VcReqDto dto = vcReqMapper.getVcReq(2L);
         dto.setStatus("취소");
         System.out.println(vcReqService.updateVcReqStatus(dto));
+    }
+
+    @Test
+    void approvalVcRequestList() {
+        Optional<UserDto> userDto = userService.getByEmpNum("admin");
+        System.out.println(userDto.get());
+        Criteria cri = new Criteria();
+//        cri.setKeyword("취소");
+        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
     }
 }
