@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.meta.ale.mapper.UsePlanMapper">
+
+    <resultMap id="deptMap" type="deptDto">
+        <id property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="vcTo" column="vc_to"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="UserDto">
+        <id property="userId" column="user_id"/>
+        <result property="empNum" column="emp_num"/>
+        <result property="role" column="role"/>
+    </resultMap>
+
+    <resultMap id="empMap" type="EmpDto">
+        <id property="empId" column="emp_id"/>
+        <result property="name" column="name"/>
+        <result property="hireDate" column="hire_date"/>
+        <result property="position" column="position"/>
+        <result property="pEmail" column="p_email"/>
+        <result property="cEmail" column="c_email"/>
+        <result property="tel" column="tel"/>
+        <result property="mgrId" column="mgr_id"/>
+        <result property="leaveDate" column="leave_date"/>
+        <association property="userDto" resultMap="userMap"/>
+        <association property="deptDto" resultMap="deptMap"/>
+    </resultMap>
+
+    <resultMap id="AnpDocMap" type="AnpDocDto">
+        <id property="docId" column="doc_id"/>
+        <result property="totalAnv" column="total_anv"/>
+        <result property="usedAnv" column="used_anv"/>
+        <result property="remainAnv" column="remain_anv"/>
+        <result property="occurDate" column="occur_date"/>
+        <result property="anvOccurDate" column="anv_occur_date"/>
+        <association property="empDto" resultMap="empMap"/>
+    </resultMap>
+
+    <resultMap id="usePlanMap" type="UsePlanDto">
+        <id property="planId" column="plan_id"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="useDays" column="use_days"/>
+        <association property="anpDocDto" resultMap="AnpDocMap"/>
+    </resultMap>
+
+    <select id="selectUsePlanCnt" parameterType="UserDto" resultType="Integer">
+        select count(*)
+        from use_plan p
+        <if test="role != 'ROLE_ADMIN'">
+            join anp_doc d
+                 on p.doc_id = d.doc_id
+            join emp e
+                 on d.emp_id = e.emp_id
+            join users u
+                 on u.user_id = e.user_id
+            WHERE u.user_id = #{userId}
+        </if>
+    </select>
+
+    <select id="selectUsePlanList" resultMap="usePlanMap">
+        select *
+        from (
+            select rownum rn, p.*, e.name, u.emp_num, u.role
+            from use_plan p
+                 join anp_doc d
+                      on p.doc_id = d.doc_id
+                 join emp e
+                      on d.emp_id = e.emp_id
+                 join users u
+                      on u.user_id = e.user_id
+            where
+                <choose>
+                    <when test="userDto.role == 'ROLE_ADMIN'">
+                        u.enabled != 0 and
+                    </when>
+                    <otherwise>
+                        u.user_id = #{userDto.userId} and
+                    </otherwise>
+                </choose>
+
+                <if test="keyWord != 'all'">
+                    e.name = #{keyWord} and
+                </if>
+                <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+             )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
+
+    <select id="selectUsePlanByPlanId" parameterType="Long" resultMap="usePlanMap">
+        select *
+        from use_plan p
+             join anp_doc d
+                  on p.doc_id = d.doc_id
+        where plan_id = #{planId}
+    </select>
+
+    <update id="updateUsePlan" parameterType="UsePlanDto">
+        update
+            use_plan
+        set
+            start_date = #{startDate},
+            end_date = #{endDate},
+            use_days = #{useDays}
+        where
+            plan_id = #{planId}
+    </update>
+
+    <insert id="insertUsePlan" parameterType="UsePlanDto">
+        insert into use_plan values (plan_sq.nextval, #{startDate}, #{endDate}, #{useDays}, #{anpDocDto.docId})
+    </insert>
+</mapper>
