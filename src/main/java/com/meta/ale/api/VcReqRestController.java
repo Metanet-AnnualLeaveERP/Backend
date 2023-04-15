@@ -81,10 +81,15 @@ public class VcReqRestController {
     @PutMapping("/manager/vacations/confirm/{vacation_request_id}")
     public ResponseEntity approvalVcReq(@AuthenticationPrincipal UserDto userDto,
                                         @PathVariable("vacation_request_id") Long vcReqId,
-                                        @RequestParam("status") String status) {
-        vcReqService.approvalVcRequestStatus(userDto, vcReqId, status);
+                                        @RequestParam("status") String status,
+                                        @RequestParam("comment")String comment) {
+        // 잘못된 VcReq일 경우
+        if (!vcReqService.approvalVcRequestStatus(userDto, vcReqId, status,comment)) {
+            return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+        }
+        ;
 
-        return null;
+        return ResponseEntity.ok("정상처리 되었습니다.");
     }
 
     /*휴가 결재 내역 조회*/
@@ -98,7 +103,7 @@ public class VcReqRestController {
 
     /*팀원 휴가 승인내역 조회 (캘린더용) */
     @GetMapping("/vacations/my-team")
-    public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto){
+    public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto) {
 
         return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto));
     }

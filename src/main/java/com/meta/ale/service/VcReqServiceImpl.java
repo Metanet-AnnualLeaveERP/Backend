@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ public class VcReqServiceImpl implements VcReqService {
     private final FileService fileService;
 
     private final EmpService empService;
+
+    private final VcTypeTotalService totalService;
 
     /*휴가 신청 내역 조회*/
     @Override
@@ -97,14 +100,25 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 결재(승인/반려)*/
     @Override
-    public void approvalVcRequestStatus(UserDto userDto, Long vcReqId, String status) {
-        // 보류
-        if(userDto.getRole() !=null && userDto.getRole().equals("ROLE_ADMIN")){
-
+    @Transactional
+    public boolean approvalVcRequestStatus(UserDto userDto, Long vcReqId, String status,String comment) {
+        VcReqDto vcReq= vcReqMapper.getVcReq(vcReqId);
+        Date date = new Date();
+        if(vcReq.getReqId() == null){
+            return false;
         }
-//        vcReq.setReqId(vcReqId);
-//        vcReq.setStatus(status);
-//        vcReqMapper.updateVcReqStatus(vcReq);
+        //상태변경
+        vcReq.setStatus(status);
+        vcReq.setAprvDate(date);
+        // 반려시 반려 사유
+        vcReq.setDeniedComment(comment);
+        vcReqMapper.updateVcReqStatus(vcReq);
+        if(status.equals("반려")) {
+            totalService.getVcTotalByTypeAndEmpId();
+//            totalService.updateVcTotalCount();
+        }
+        return true;
+
     }
 
     /*휴가 결재 내역 조회*/
@@ -132,9 +146,6 @@ public class VcReqServiceImpl implements VcReqService {
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("paging", new PagenationDTO(cri, count));
-        System.out.println(count);
-        PagenationDTO pg = (PagenationDTO) map.get("paging");
-        System.out.println(pg.getTotal());
         map.put("vcReqs", vcReqMapper.getVcReqListByMgr(vo));
 
         return map;

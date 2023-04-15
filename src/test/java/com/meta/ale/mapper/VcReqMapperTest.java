@@ -39,7 +39,7 @@ public class VcReqMapperTest {
             endDate.setDate((dto.getStartDate().getDate()) + i);
             dto.setEndDate(endDate);
 
-            dto.setVcType("연차");
+//            dto.setVcType("연차");
             dto.setReqDays(2L);
             dto.setComments(null);
             dto.setStatus("자동승인");

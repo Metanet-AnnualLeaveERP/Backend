@@ -27,7 +27,7 @@ public interface VcReqService {
     public boolean updateVcReqStatus(VcReqDto dto);
 
     /*휴가 결재(승인/반려)*/
-    public void approvalVcRequestStatus(UserDto userDto, Long vcReqId, String status);
+    public boolean approvalVcRequestStatus(UserDto userDto, Long vcReqId, String status,String comment);
 
     /*휴가 결재 내역 조회*/
     Map<String, Object> getApprovalVcRequestList(UserDto userDto, Criteria cri);
