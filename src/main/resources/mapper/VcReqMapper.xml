@@ -76,11 +76,11 @@
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
         UPDATE vc_req SET status = #{status}
-        <if test="approvalDate != null">
-            , APRV_DATE = #{approvalDate}
+        <if test="aprvDate != null">
+            , APRV_DATE = #{aprvDate}
         </if>
-        <if test="deniedComment != null">
-            , DENIED_COMMENT = #{deniedComment}
+        <if test="deniedComments != null">
+            , DENIED_COMMENTs = #{deniedComments}
         </if>
         WHERE req_id = #{reqId}
     </update>
@@ -135,7 +135,7 @@
         <result property="status" column="status" />
         <result property="aprvDate" column="aprv_date" />
         <result property="filePath" column="file_path" />
-        <association property="vcType" resultMap="vcTypeMap" />
+        <association property="vcTypeDto" resultMap="vcTypeMap" />
         <association property="empDto" resultMap="empMap" />
     </resultMap>
     <resultMap id="vcTypeMap" type="VcTypeDto">

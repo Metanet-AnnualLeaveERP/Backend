@@ -28,7 +28,7 @@ public class VcReqDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date aprvDate;
-    private String deniedComment;
+    private String deniedComments;
     private String filePath;
     private EmpDto empDto;
     private VcTypeDto vcTypeDto;

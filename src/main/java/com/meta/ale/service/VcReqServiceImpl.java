@@ -111,11 +111,14 @@ public class VcReqServiceImpl implements VcReqService {
         vcReq.setStatus(status);
         vcReq.setAprvDate(date);
         // 반려시 반려 사유
-        vcReq.setDeniedComment(comment);
+        vcReq.setDeniedComments(comment);
         vcReqMapper.updateVcReqStatus(vcReq);
         if(status.equals("반려")) {
-            totalService.getVcTotalByTypeAndEmpId();
-//            totalService.updateVcTotalCount();
+            VcTypeTotalDto vcTotal= totalService.getVcTotalByTypeAndEmpId(vcReq);
+            Long cnt= vcTotal.getCnt();
+            cnt += vcReq.getReqDays();
+            vcTotal.setCnt(cnt);
+            totalService.updateVcTypeTotalByTotalId(vcTotal);
         }
         return true;
 
