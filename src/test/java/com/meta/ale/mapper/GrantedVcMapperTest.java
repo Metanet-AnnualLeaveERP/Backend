@@ -78,6 +78,13 @@ class GrantedVcMapperTest {
     }
 
     @Test
+    void getGrantedVcTest(){
+        GrantedVcDto dto = new GrantedVcDto();
+        dto = mapper.getGrantedVc(14L);
+        System.out.println(dto);
+    }
+
+    @Test
     void deleteGrantedVcTest(){
         mapper.deleteGrantedVc(1L);
     }

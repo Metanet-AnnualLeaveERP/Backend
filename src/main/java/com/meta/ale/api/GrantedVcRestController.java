@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RequestMapping("api/admin/vacations/")
+@RequestMapping("admin/vacations/")
 @RestController
 public class GrantedVcRestController {
 
