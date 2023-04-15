@@ -2,7 +2,9 @@ package com.meta.ale.mapper;
 
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.EmpDto;
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
+import com.meta.ale.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @Log4j2
@@ -19,6 +22,8 @@ public class VcReqMapperTest {
     @Autowired
     private VcReqMapper vcReqMapper;
 
+    @Autowired
+    private UserService userService;
     @Test
     void insertVcReq() {
         for (int i = 1; i <= 3; i++) {
@@ -34,7 +39,7 @@ public class VcReqMapperTest {
             endDate.setDate((dto.getStartDate().getDate()) + i);
             dto.setEndDate(endDate);
 
-            dto.setVcType("연차");
+//            dto.setVcType("연차");
             dto.setReqDays(2L);
             dto.setComments(null);
             dto.setStatus("자동승인");
@@ -82,4 +87,15 @@ public class VcReqMapperTest {
     void getVcReqCount() {
         System.out.println(vcReqMapper.getVcReqCount(1L));
     }
+
+    @Test
+    void getVcReqByDeptTest() throws Exception {
+        Optional<UserDto> user = userService.getByEmpNum("emp_3");
+        List<VcReqDto> data =vcReqMapper.getVcReqByDept(user.get());
+        for(VcReqDto v: data){
+            System.out.println(v);
+        }
+    }
+
+
 }

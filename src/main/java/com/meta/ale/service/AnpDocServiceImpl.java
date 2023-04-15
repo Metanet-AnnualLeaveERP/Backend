@@ -16,7 +16,7 @@ import java.util.List;
 public class AnpDocServiceImpl implements AnpDocService {
 
     private final AnpDocMapper anpDocMapper;
-    private final GrantedVacationService gvService;
+    private final GrantedVcService gvService;
 
     @Override
     @Transactional

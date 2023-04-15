@@ -1,5 +1,6 @@
 package com.meta.ale.mapper;
 
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -33,4 +34,7 @@ public interface VcReqMapper {
 
     /*휴가 결재 내역 조회 개수(페이징 처리용) */
     public Long getVcReqCountByMgr(HashMap<String, Object> hashMap);
+
+    /* 팀원 자동승인, 승인완료 내역 조회  */
+    public List<VcReqDto> getVcReqByDept(UserDto userDto);
 }

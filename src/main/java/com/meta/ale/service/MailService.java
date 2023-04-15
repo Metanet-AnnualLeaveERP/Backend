@@ -28,21 +28,25 @@ public class MailService {
             MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"UTF-8");
             messageHelper.setSubject(subject);
             messageHelper.setTo(empDto.getPEmail());
-            String body = setAddText("임시 비밀번호 생성", empDto.getUserDto().getPwd());
-            messageHelper.setText(body,true);
+            String body = setAddText("<메타넷> 임시 비밀번호 생성", "임시 비밀번호는 " + empDto.getUserDto().getPwd() + "입니다.");
+            messageHelper.setText(body, true);
             javaMailSender.send(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 휴가 관련 메일을 발송해야함.
+    // 휴가 관련 메일을 발송해야함.(사내이메일 발송)
     public void sendToCEmail(EmpDto empDto, String subject, String text) {
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(empDto.getPEmail());
-        simpleMailMessage.setSubject(subject); // 제목
-        simpleMailMessage.setText(text); // 내용
-        javaMailSender.send(simpleMailMessage);
+        try {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+        messageHelper.setSubject(subject);
+        messageHelper.setTo(empDto.getCEmail());
+        javaMailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String setAddText(String title, String text) {
@@ -51,7 +55,7 @@ public class MailService {
         sb.append("<meta http-equiv='Content-Type' content='text/html'; charset=euc-kr>");
         sb.append("<h1>" + title + "</h1><br>");
         sb.append("<h3>안녕하세요 메타넷 입니다.</h3><br>");
-        sb.append("<div>임시 비밀번호는 '" + text + "' 입니다.</div>");
+        sb.append("<div>" + text + "</div>");
         sb.append("<div>메타넷 디지털 : 인사팀</div>");
         sb.append("</body></html>");
         String str = sb.toString();
