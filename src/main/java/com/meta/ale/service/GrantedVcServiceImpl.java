@@ -5,7 +5,6 @@ import com.meta.ale.mapper.GrantedVcMapper;
 import com.meta.ale.mapper.VcTypeMapper;
 import com.meta.ale.mapper.VcTypeTotalMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -152,11 +151,12 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
 
     /* ------------------------- Private Method ------------------------- */
-    private void toMessage(EmpDto empDto){
+    private void toMessage(EmpDto empDto) {
         mailService.sendToCEmail(empDto, "<메타넷> 연차휴가 발급 안내",
                 empDto.getName() + "님의 연차 휴가를 발급했습니다." +
                         "자세한 내용은 홈페이지에서 확인해주시길 바랍니다.");
     }
+
     // 1년이 지난 사람들중 오늘 날짜와 1년이 된 사람 대한 연차계산 방법
     private boolean addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception {
         List<EmpDto> empOverOneYrList = empService.findEmpOverOneYr();
@@ -225,7 +225,6 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                     grantedVcDtoToDB.setRemainDays(vcDays + 1L);
                     grantedVcDtoToDB.setRemainDays(remainDays + 1L);
                     grantedVcDtoToDB.setVcTypeDto(vcTypeDto);
-                    System.out.println(grantedVcDtoToDB);
                     vcMapper.updateAnnualGranted(grantedVcDtoToDB);
 
                 } else {
@@ -251,7 +250,6 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
         return vacationDays > 25 ? 25L : vacationDays;
     }
-
 
     // 전체 부여휴가 row count
     private int getGrantedVcCount() {

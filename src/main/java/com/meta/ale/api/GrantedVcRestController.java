@@ -3,6 +3,7 @@ package com.meta.ale.api;
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.GrantedVcDto;
 import com.meta.ale.service.GrantedVcService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,38 +13,35 @@ import java.util.Map;
 
 @RequestMapping("admin/vacations/")
 @RestController
+@RequiredArgsConstructor
 public class GrantedVcRestController {
 
-    @Autowired
-    private GrantedVcService grantedVcService;
+    private final GrantedVcService grantedVcService;
 
     /* 임의휴가생성 */
     @PostMapping("granted")
-    public ResponseEntity<String> insertGrantedVc(@RequestBody GrantedVcDto grantedVcDto){
-        try{
+    public ResponseEntity<String> insertGrantedVc(@RequestBody GrantedVcDto grantedVcDto) {
+        try {
             boolean result = grantedVcService.insertGrantedVc(grantedVcDto);
-            if (result){
+            if (result) {
                 return new ResponseEntity<>("DATA INSERT SUCCESS", HttpStatus.CREATED);
-            } else{
+            } else {
                 return new ResponseEntity<>("DATA INSERT FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     /* 임의휴가내역 전체조회 */
     @GetMapping("granted")
-    public Map<String, Object> getListGrantedVc(@RequestParam(required = false, defaultValue = "1") int page,
-                                                @RequestParam(required = false, defaultValue = "10") int pageNum, Criteria criteria){
-        criteria.setPageNum(page);
-        criteria.setAmount(pageNum);
-
+    public Map<String, Object> getListGrantedVc(Criteria criteria) {
         return grantedVcService.getListGrantedVc(criteria);
     }
 
     /* 임의휴가내역 상세조회 */
     @GetMapping("granted/{vcId}")
-    public ResponseEntity<Object> getGrantedVc(@PathVariable("vcId") Long vcId){
+    public ResponseEntity<Object> getGrantedVc(@PathVariable("vcId") Long vcId) {
         GrantedVcDto gvDto = grantedVcService.getGrantedVc(vcId);
         if (gvDto != null) {
             System.out.println(gvDto);
@@ -54,9 +52,9 @@ public class GrantedVcRestController {
 
     /* 임의휴가내역 삭제 */
     @DeleteMapping("granted/{vcId}")
-    public ResponseEntity<String> deleteGrantedVc(@PathVariable("vcId") Long vcId){
+    public ResponseEntity<String> deleteGrantedVc(@PathVariable("vcId") Long vcId) {
         boolean result = grantedVcService.deleteGrantedVc(vcId);
-        if(result){
+        if (result) {
             return new ResponseEntity<>("DELETE SUCCESS", HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -67,7 +65,7 @@ public class GrantedVcRestController {
     /* 임의휴가내역 수정 */
     @PutMapping("/granted/{vcId}")
     public ResponseEntity<String> updateGrantedVc(@PathVariable("vcId") Long vcId,
-                                                  @RequestBody GrantedVcDto gvDto){
+                                                  @RequestBody GrantedVcDto gvDto) {
 
         gvDto.setVcId(vcId);
 

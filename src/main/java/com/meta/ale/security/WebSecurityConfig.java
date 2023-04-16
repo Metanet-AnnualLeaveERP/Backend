@@ -3,6 +3,7 @@ package com.meta.ale.security;
 import com.meta.ale.jwt.AuthEntryPointJwt;
 import com.meta.ale.jwt.AuthTokenFilter;
 import com.meta.ale.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,13 +33,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //        jsr250Enabled = true
          prePostEnabled = true)
 @Configuration
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {

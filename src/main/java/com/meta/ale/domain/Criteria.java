@@ -1,13 +1,10 @@
 package com.meta.ale.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 
 @ToString
-@Setter
-@Getter
+@Data
 public class Criteria {
 
   private int pageNum;
@@ -24,7 +21,7 @@ public class Criteria {
     this.pageNum = pageNum;
     this.amount = amount;
   }
-  
+
 	public String[] getTypeArr() {
 
 		return type == null ? new String[] {} : type.split("");

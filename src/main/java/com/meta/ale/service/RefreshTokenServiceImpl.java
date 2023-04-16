@@ -4,7 +4,7 @@ import com.meta.ale.domain.RefreshTokenDto;
 import com.meta.ale.jwt.TokenRefreshException;
 import com.meta.ale.mapper.RefreshTokenMapper;
 import com.meta.ale.mapper.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +13,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RefreshTokenServiceImpl implements RefreshTokenService{
+@RequiredArgsConstructor
+public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Value("${ale.jwt.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationMs;
 
-    @Autowired
-    private RefreshTokenMapper refreshTokenMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final RefreshTokenMapper refreshTokenMapper;
+
+    private final UserMapper userMapper;
 
     @Override
     public Optional<RefreshTokenDto> getByToken(String token) {

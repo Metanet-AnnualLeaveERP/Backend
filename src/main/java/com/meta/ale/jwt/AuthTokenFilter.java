@@ -1,6 +1,7 @@
 package com.meta.ale.jwt;
 
 import com.meta.ale.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,17 +18,15 @@ import java.io.IOException;
 
 @Slf4j
 public class AuthTokenFilter extends OncePerRequestFilter {
-
     @Autowired
     private JwtUtils jwtUtils;
-
     @Autowired
     private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try{
+        try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);

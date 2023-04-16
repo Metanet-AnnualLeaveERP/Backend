@@ -8,11 +8,9 @@ import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.UserInfoResponse;
 import com.meta.ale.jwt.JwtUtils;
 import com.meta.ale.jwt.TokenRefreshException;
-import com.meta.ale.service.EmpService;
 import com.meta.ale.service.RefreshTokenService;
 import com.meta.ale.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +18,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -38,15 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 public class UserRestController {
 
     private final AuthenticationManager authenticationManager;
-
     private final UserService userService;
-
-    private final EmpService empService;
-
-    private final PasswordEncoder passwordEncoder;
-
     private final JwtUtils jwtUtils;
-
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/user/login")
@@ -54,7 +42,8 @@ public class UserRestController {
 
         // Spring Security의 인증 매니저를 사용하여 로그인 요청을 인증
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(LoginUserDto.getUsername(), LoginUserDto.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(LoginUserDto.getUsername(),
+                        LoginUserDto.getPassword()));
 
         // pring Security의 SecurityContextHolder를 사용하여 인증된 사용자 정보를 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -74,7 +63,7 @@ public class UserRestController {
 //                .header("refreshToken", jwtRefreshCookie.getValue())
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                 .header("role", userDto.getRole())
-                .header("empNum", userDto.getEmpNum())
+                .header("empnum", userDto.getEmpNum())
                 .body(new UserInfoResponse(userDto.getEmpNum(), userDto.getRole()));
     }
 
@@ -82,7 +71,7 @@ public class UserRestController {
     public ResponseEntity<?> logout() {
         Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principle.toString() != "anonymousUser") {
-            Long userId = ((UserDto)principle).getUserId();
+            Long userId = ((UserDto) principle).getUserId();
             refreshTokenService.deleteByUserId(userId);
         }
 

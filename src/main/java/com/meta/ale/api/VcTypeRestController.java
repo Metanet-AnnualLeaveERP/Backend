@@ -2,6 +2,7 @@ package com.meta.ale.api;
 
 import com.meta.ale.domain.VcTypeDto;
 import com.meta.ale.service.VcTypeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,11 @@ import java.util.List;
 /* 휴가유형관리 RestController */
 @RequestMapping("/admin")
 @RestController
+@RequiredArgsConstructor
 public class VcTypeRestController {
 
-    @Autowired
-    private VcTypeService vcTypeService;
+
+    private final VcTypeService vcTypeService;
 
     /* 휴가 유형 추가 */
     @PostMapping("/vacations/type")
@@ -51,8 +53,7 @@ public class VcTypeRestController {
 
     /* 휴가 유형 삭제 */
     @DeleteMapping("/vacations/type/{typeId}")
-    public ResponseEntity<String> deleteVcType(
-            @PathVariable("typeId") Long typeId){
+    public ResponseEntity<String> deleteVcType(@PathVariable("typeId") Long typeId){
         boolean result = vcTypeService.deleteVcType(typeId);
         if(result){
             return new ResponseEntity<>("SUCCESS", HttpStatus.OK);

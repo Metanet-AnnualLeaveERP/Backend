@@ -27,7 +27,7 @@
 		VALUES (dept_sq.nextval, #{deptName}, #{vcTo})
 	</insert>
 
-	<select id="selectByempId" resultType="DeptDto">
+	<select id="selectByEmpId" resultType="DeptDto">
 		select d.*
 		from dept d
 				 join emp e

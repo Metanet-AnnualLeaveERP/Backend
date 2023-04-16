@@ -23,10 +23,6 @@ public class VcTypeDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date startEnableDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd") //안씀
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date expiredDate;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date creationDate;

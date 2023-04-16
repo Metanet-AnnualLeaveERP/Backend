@@ -5,12 +5,10 @@ import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.service.VcReqService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,16 +26,11 @@ public class VcReqRestController {
 
     /*휴가 신청 내역 조회*/
     @GetMapping("/vacations")
-    public Map<String, Object> vcReqList(@RequestParam(required = false, defaultValue = "1") int page,
-                                         @RequestParam(required = false, defaultValue = "10") int pagenum,
-                                         @AuthenticationPrincipal UserDto user,
+    public Map<String, Object> vcReqList(@AuthenticationPrincipal UserDto user,
                                          Criteria cri) {
 
-        cri.setPageNum(page);
-        cri.setAmount(pagenum);
-
         /* ADMIN or EMP 판별
-            userId == 0 -> admin */
+        userId == 0 -> admin */
         return vcReqService.getVcReqList(cri, user.getUserId());
     }
 
@@ -82,20 +75,17 @@ public class VcReqRestController {
     public ResponseEntity approvalVcReq(@AuthenticationPrincipal UserDto userDto,
                                         @PathVariable("vacation_request_id") Long vcReqId,
                                         @RequestParam("status") String status,
-                                        @RequestParam("comment")String comment) {
+                                        @RequestParam("comment") String comment) {
         // 잘못된 VcReq일 경우
-        if (!vcReqService.approvalVcRequestStatus(userDto, vcReqId, status,comment)) {
+        if (!vcReqService.approvalVcRequestStatus(userDto, vcReqId, status, comment)) {
             return ResponseEntity.badRequest().body("잘못된 요청입니다.");
         }
-        ;
-
         return ResponseEntity.ok("정상처리 되었습니다.");
     }
 
     /*휴가 결재 내역 조회*/
     @GetMapping("/manager/vacations/approval")
-    public ResponseEntity teamApprovalList(Criteria cri,
-                                           @AuthenticationPrincipal UserDto userDto) {
+    public ResponseEntity teamApprovalList(Criteria cri,@AuthenticationPrincipal UserDto userDto) {
         Map<String, Object> result = vcReqService.getApprovalVcRequestList(userDto, cri);
 
         return ResponseEntity.ok(result);
@@ -104,7 +94,6 @@ public class VcReqRestController {
     /*팀원 휴가 승인내역 조회 (캘린더용) */
     @GetMapping("/vacations/my-team")
     public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto) {
-
         return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto));
     }
 }
