@@ -2,6 +2,7 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.AnpDocMapper;
+import com.meta.ale.mapper.EmpMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ public class AnpDocServiceImpl implements AnpDocService {
 
     private final AnpDocMapper anpDocMapper;
     private final GrantedVcService gvService;
+    private final MailServiceForGrantedVc mailServiceForGrantedVc;
 
     @Override
     @Transactional
@@ -38,6 +40,7 @@ public class AnpDocServiceImpl implements AnpDocService {
                 anpDocDto.setAll(empDto, totalAnv, occurDate, remainAnv, usedAnv, annualOccurDate);
 
                 anpDocMapper.insertAnpDocMapper(anpDocDto);
+
             }
 
         } else {
@@ -49,7 +52,8 @@ public class AnpDocServiceImpl implements AnpDocService {
     @Override
     public void insertAnpDocManually(AnpDocDto anpDocDto) throws Exception {
         anpDocMapper.insertAnpDocMapper(anpDocDto);
-
+        mailServiceForGrantedVc.sendAnpDocToCompanyEmail(anpDocDto,
+                "<메타넷>미사용 연차휴가일수 통지 및 휴가사용시기 지정 요청 안내");
     }
 
     @Override
@@ -79,5 +83,6 @@ public class AnpDocServiceImpl implements AnpDocService {
     private int getGrantedVcCount(){
         return anpDocMapper.getAnpDocCount().intValue();
     }
+
 
 }

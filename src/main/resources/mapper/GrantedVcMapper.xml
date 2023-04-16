@@ -46,7 +46,7 @@
                                       #{grantedDate},
                                       #{expiredDate},
                                       #{vcDays},
-                                      #{remainDays},
+                                      #{vcDays},
                                       #{vcTypeDto.typeId},
                                       #{empDto.empId})
     </insert>
