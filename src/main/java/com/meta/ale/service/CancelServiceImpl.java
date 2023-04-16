@@ -44,9 +44,13 @@ public class CancelServiceImpl implements CancelService {
     public CancelDto getCancel(Long cancelId, Long currUserId) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         CancelDto dto = cancelMapper.getCancel(cancelId);
+        if(dto !=null && dto.getVcReqDto() != null){
+
         EmpDto dbEmp = dto.getVcReqDto().getEmpDto();
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
+        }
+        return null;
     }
 
     /*휴가 취소*/

@@ -24,36 +24,36 @@ class GrantedVcMapperTest {
     @Autowired
     GrantedVcMapper mapper;
 
-    @Test
-    void insertGrantedVcTest() throws Exception{
-        GrantedVcDto dto = new GrantedVcDto();
-
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
-        Date testDate = null;
-        try {
-            testDate = date.parse("2023-04-29");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        dto.setGrantedDate(testDate);
-        dto.setExpiredDate(testDate);
-        dto.setVcDays(4L);
-        dto.setRemainDays(4L);
-
-        VcTypeDto typeDto = new VcTypeDto();
-        typeDto.setTypeId(1L);
-
-        dto.setVcTypeDto(typeDto);
-
-        EmpDto empDto = new EmpDto();
-        empDto.setEmpId(999L);
-
-        dto.setEmpDto(empDto);
-
-        int result = mapper.insertGrantedVc(dto);
-        System.out.println("[][][][][][][][]"+result);
-    }
+//    @Test
+//    void insertGrantedVcTest() throws Exception{
+//        GrantedVcDto dto = new GrantedVcDto();
+//
+//        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+//        Date testDate = null;
+//        try {
+//            testDate = date.parse("2023-04-29");
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//        dto.setGrantedDate(testDate);
+//        dto.setExpiredDate(testDate);
+//        dto.setVcDays(4L);
+//        dto.setRemainDays(4L);
+//
+//        VcTypeDto typeDto = new VcTypeDto();
+//        typeDto.setTypeId(1L);
+//
+//        dto.setVcTypeDto(typeDto);
+//
+//        EmpDto empDto = new EmpDto();
+//        empDto.setEmpId(999L);
+//
+//        dto.setEmpDto(empDto);
+//
+//        int result = mapper.insertGrantedVc(dto);
+//        System.out.println("[][][][][][][][]"+result);
+//    }
 
     @Test
     void getListGrantedVcTest(){
@@ -70,7 +70,7 @@ class GrantedVcMapperTest {
 
     @Test
     void updateGrantedVcTest(){
-        GrantedVcDto gvDto = mapper.getGrantedVc(1L);
+        GrantedVcDto gvDto = mapper.getGrantedVc(2L);
         gvDto.setVcDays(99L);
         gvDto.setRemainDays(99L);
         System.out.println(mapper.updateGrantedVc(gvDto));

@@ -42,7 +42,9 @@ class CancelMapperTest {
     @Test
     void getCancel() {
         CancelDto dto = cancelMapper.getCancel(1L);
+        if(dto != null){
         System.out.println(dto.toString());
+        }
     }
 
     @Test

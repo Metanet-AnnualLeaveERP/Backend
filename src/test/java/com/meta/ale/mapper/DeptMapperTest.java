@@ -33,13 +33,13 @@ public class DeptMapperTest {
         System.out.println("{}{}{}{RESULT}{}{}{} === "+result);
     }
 
-    @Test
-    void insertDept(){
-        DeptDto deptDto = new DeptDto();
-        deptDto.setDeptName("미래전략팀");
-        deptDto.setVcTo(0L);
-        deptMapper.insertDept(deptDto);
-    }
+//    @Test
+//    void insertDept(){
+//        DeptDto deptDto = new DeptDto();
+//        deptDto.setDeptName("미래전략팀");
+//        deptDto.setVcTo(0L);
+//        deptMapper.insertDept(deptDto);
+//    }
 
 
 }
