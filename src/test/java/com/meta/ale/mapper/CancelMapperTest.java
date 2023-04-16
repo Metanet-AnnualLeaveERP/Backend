@@ -46,7 +46,7 @@ class CancelMapperTest {
         VcReqDto req = vcReqMapper.getVcReq(1L);
 
         CancelDto dto = new CancelDto();
-        dto.setStatus("취소요청");
+//        dto.setStatus("취소요청");
         dto.setReqComm("일정 변경");
         dto.setVcReqDto(req);
     }

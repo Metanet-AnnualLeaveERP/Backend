@@ -4,14 +4,14 @@
 
     <!--휴가 신청 내역 조회-->
     <!--페이징 처리-->
-    <select id="getVcReqList" resultType="VcReqDTO" parameterType="HashMap">
+    <select id="getVcReqList" resultMap="reqMap" parameterType="HashMap">
         SELECT
         *
         FROM (
             SELECT
                 ROWNUM RN,
-                v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id
+                v.req_id, v.vc_type, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
             FROM
                 vc_req v JOIN emp e ON v.emp_id = e.emp_id
             WHERE

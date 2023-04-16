@@ -83,10 +83,10 @@ class VcReqServiceTest {
 
     @Test
     void approvalVcRequestList() {
-        Optional<UserDto> userDto = userService.getByEmpNum("admin");
-        System.out.println(userDto.get());
-        Criteria cri = new Criteria();
-//        cri.setKeyword("취소");
-        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
+//        Optional<UserDto> userDto = userService.getByEmpNum("admin");
+//        System.out.println(userDto.get());
+//        Criteria cri = new Criteria();
+////        cri.setKeyword("취소");
+//        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
     }
 }

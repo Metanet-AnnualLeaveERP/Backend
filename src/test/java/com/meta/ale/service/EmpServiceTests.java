@@ -1,5 +1,6 @@
 package com.meta.ale.service;
 
+import com.meta.ale.domain.EmpDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,5 +18,13 @@ public class EmpServiceTests {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Test
+    void getEmpByMgrId() {
+        EmpDto dto = empService.getEmpByMgrId(11L);
+
+        System.out.println(dto);
+
     }
 }

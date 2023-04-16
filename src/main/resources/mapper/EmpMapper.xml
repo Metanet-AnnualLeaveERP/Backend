@@ -66,12 +66,13 @@
     </select>
 
     <select id="findEmpByUserId" resultMap="empMap">
-        SELECT e.*
+        SELECT e.emp_id, e.name, e.position, e.hire_date, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
         FROM EMP e,
              DEPT d
         WHERE e.dept_id = d.dept_id
           AND e.user_id = #{userId}
     </select>
+
     <insert id="insertEmp">
         <selectKey resultType="long" order="BEFORE" keyProperty="empId">
             select emp_sq.nextval from dual
@@ -199,5 +200,13 @@
         select count(*)
         from emp
         where p_email = #{email}
+    </select>
+
+    <!--상사 정보-->
+    <select id="getEmpByMgrId" resultType="EmpDto">
+        SELECT e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel
+        FROM emp e
+        WHERE emp_id = #{mgrId}
+        AND leave_date IS NULL
     </select>
 </mapper>
