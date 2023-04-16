@@ -21,11 +21,7 @@ import java.util.Map;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
-    private final PasswordEncoder passwordEncoder;
 
-    /*
-    *
-    * */
     // 패스워드를 재발급 받을 때 쓰는 것으로 empDto에 새롭게 인코딩 되기 전 발급한 패스워드를 넘겨줘야함.
     public void sendToPEmail(EmpDto empDto, String subject) {
         try {
