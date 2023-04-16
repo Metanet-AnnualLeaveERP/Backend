@@ -48,7 +48,7 @@ public class VcReqRestController {
         VcReqDto dto = vcReqService.getVcReqCompared(reqId, user.getUserId());
 
         if (dto != null) {
-            dto.getEmpDto().setUserDto(null);
+            dto.getEmpDto().setUserDto(null); // userDto
             return ResponseEntity.status(HttpStatus.OK).body(dto);
         }
         // 자기가 작성하지 않은 휴가 신청에 접근하면 403 에러와 null 반환
