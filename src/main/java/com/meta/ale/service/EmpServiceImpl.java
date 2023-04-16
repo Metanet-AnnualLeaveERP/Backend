@@ -137,7 +137,7 @@ public class EmpServiceImpl implements EmpService {
     public boolean modifyEmp(EmpDto empDto) throws Exception {
         System.out.println(empDto.toString());
         DeptDto newDeptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName());  // 변경하는 부서정보
-        DeptDto originDeptDto = deptMapper.selectByempId(empDto.getEmpId());    // 기존의 부서 정보
+        DeptDto originDeptDto = deptMapper.selectByEmpId(empDto.getEmpId());    // 기존의 부서 정보
 
         Long newDeptMgrId = empMapper.selectDeptMgr(newDeptDto.getDeptId()); // 변경하는 부서의 팀장아이디
         UserDto userDto = userMapper.selectByEmpId(empDto.getEmpId());

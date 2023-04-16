@@ -7,7 +7,6 @@ import com.meta.ale.domain.EmpDto;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.service.EmpService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-//@RequestMapping("/api")
 @RequiredArgsConstructor
 public class EmpRestController {
 
@@ -23,14 +21,14 @@ public class EmpRestController {
 
     // 사용자 계정 생성
     @PostMapping("/admin/emp/create")
-    public ResponseEntity<?> createEmp(@RequestBody ObjectNode objectNode) throws Exception{
+    public ResponseEntity<?> createEmp(@RequestBody ObjectNode objectNode) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         UserDto userDto = objectMapper.treeToValue(objectNode.get("userDto"), UserDto.class);
         EmpDto empDto = objectMapper.treeToValue(objectNode.get("empDto"), EmpDto.class);
 
         if (empService.register(userDto, empDto)) {
             return ResponseEntity.ok().body(empDto); // body(employeeDto) 바꿔야햐ㅏㅁ. 테스트중
-        }else {
+        } else {
             return ResponseEntity.badRequest().body("잘못된 요청입니다.");
         }
     }
@@ -54,12 +52,8 @@ public class EmpRestController {
 
     // 사원 내역 조회 (paging)
     @GetMapping("/admin/emp")
-    public Map<String, Object> getEmpList(@RequestParam(required = false, defaultValue = "1") int page,
-                                          @RequestParam(required = false, defaultValue = "10") int pagenum,
-                                          @RequestParam(required = false, defaultValue = "all") String keyword,
-                                          Criteria criteria) throws Exception{
-        criteria.setPageNum(page);
-        criteria.setAmount(pagenum);
+    public Map<String, Object> getEmpList(@RequestParam(required = false, defaultValue = "all") String keyword,
+                                          Criteria criteria) throws Exception {
         criteria.setKeyword(keyword);
         return empService.getEmpList(criteria);
 

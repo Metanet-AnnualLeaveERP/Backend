@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface DeptMapper {
     public DeptDto selectByDeptName(String deptName);
-    public DeptDto selectByempId(Long empId);
+    public DeptDto selectByEmpId(Long empId);
 
     List<DeptDto> getListDept();
 

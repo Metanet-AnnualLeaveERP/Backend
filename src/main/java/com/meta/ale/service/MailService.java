@@ -55,7 +55,6 @@ public class MailService {
         }
     }
 
-
     private String setAddText(String title, String text) {
         StringBuffer sb = new StringBuffer();
         sb.append("<html><body style='width:300px; height:300px;'>");

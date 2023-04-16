@@ -7,6 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface VcTypeMapper {
+
     int insertVcType(VcTypeDto vcTypeDto);
 
     List<VcTypeDto> getListVcType();

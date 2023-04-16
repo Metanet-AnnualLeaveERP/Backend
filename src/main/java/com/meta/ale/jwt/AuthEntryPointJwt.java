@@ -21,8 +21,8 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
     // 이 메서드는 인증되지 않은 사용자가 보호된 HTTP 리소스를 요청거나 인증 예외가 발생할 때마다 트리거
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-            throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
         log.error("Unauthorized error: {}", authException.getMessage());    // 인증 예외의 메시지를 로그로 출력
 
         // 응답으로 전달할 JSON 형식의 메시지를 생성

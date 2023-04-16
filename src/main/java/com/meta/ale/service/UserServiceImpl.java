@@ -7,7 +7,6 @@ import com.meta.ale.mapper.DeptMapper;
 import com.meta.ale.mapper.EmpMapper;
 import com.meta.ale.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,15 +18,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     private final EmpMapper empMapper;
     private final DeptMapper deptMapper;
-//    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-//    private final PasswordEncoder passwordEncoder;
-//    private final JwtTokenProvider jwtTokenProvider;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 //        return userMapper.selectByEmpNum(username)

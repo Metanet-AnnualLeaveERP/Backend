@@ -16,12 +16,8 @@ public class CpHolidayRestController {
     private final CpHolidayService cpHolidayService;
 
     @GetMapping("/cpholiday")
-    public Map<String, Object> getCpHolidayList(@RequestParam(required = false, defaultValue = "1") int page,
-                                                @RequestParam(required = false, defaultValue = "10") int pagenum,
-                                                @RequestParam(required = false, defaultValue = "all") String keyword,
+    public Map<String, Object> getCpHolidayList(@RequestParam(required = false, defaultValue = "all") String keyword,
                                                 Criteria criteria) throws Exception {
-        criteria.setPageNum(page);
-        criteria.setAmount(pagenum);
         criteria.setKeyword(keyword);
         return cpHolidayService.getCpHolidayList(criteria);
     }
@@ -48,7 +44,7 @@ public class CpHolidayRestController {
     }
 
     @PutMapping("/admin/cpholiday")
-    public ResponseEntity<?> modifyCpHoliday(@RequestBody CpHolidayDto cpHolidayDto) throws Exception{
+    public ResponseEntity<?> modifyCpHoliday(@RequestBody CpHolidayDto cpHolidayDto) throws Exception {
         if (cpHolidayService.modifyCpHoliday(cpHolidayDto)) {
             return ResponseEntity.ok().body("사내 공휴일 수정 완료");
         }
