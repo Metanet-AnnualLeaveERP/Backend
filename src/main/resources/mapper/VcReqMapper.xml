@@ -10,11 +10,13 @@
         FROM (
             SELECT
                 ROWNUM RN,
-                v.req_id,v.type_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
+
+                v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+                v.aprv_date,v.file_path, v.type_id, t.type_name, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
             FROM
                 vc_req v JOIN emp e ON v.emp_id = e.emp_id
-            JOIN vc_type t ON v.type_id =t.type_id
+            JOIN vc_type t on v.type_id = t.type_id
+
             WHERE
             <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
             <if test="user_id != 0">
