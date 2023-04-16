@@ -3,7 +3,7 @@
 <mapper namespace="com.meta.ale.mapper.VcTypeMapper">
 
 	<select id="getListVcType" resultType="VcTypeDto">
-		    SELECT type_id, type_name, pto, max_granted_days, description
+		    SELECT *
 		    FROM vc_type
 	</select>
 
