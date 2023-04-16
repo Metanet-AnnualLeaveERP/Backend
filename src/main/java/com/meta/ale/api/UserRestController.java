@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 // CORS(Cross-Origin Resource Sharing) 정책을 지원하기 위한 것

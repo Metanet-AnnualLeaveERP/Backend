@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/admin/")
+@RequestMapping("/admin/")
 @RestController
 public class DeptRestController {
 

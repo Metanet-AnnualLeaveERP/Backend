@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/year-remain")
+@RequestMapping("/year-remain")
 public class YearRemainAlRestContrller {
 
     private final YearRemainAlService yearRemainAlService;
