@@ -40,4 +40,9 @@
         SELECT * FROM VC_TYPE
         WHERE type_name = #{typeName}
     </select>
+
+	<select id="findVcTypeDtoByTypeId" resultType="VcTypeDto" parameterType="Long">
+		SELECT * FROM vc_type
+		WHERE type_id = #{typeId}
+	</select>
 </mapper>

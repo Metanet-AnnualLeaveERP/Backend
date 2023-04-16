@@ -2,6 +2,7 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.GrantedVcMapper;
+import com.meta.ale.mapper.VcTypeMapper;
 import com.meta.ale.mapper.VcTypeTotalMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,12 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     private final GrantedVcMapper mapper;
     private final VcTypeTotalMapper totalMapper;
     private final GrantedVcMapper vcMapper;
+    private final VcTypeMapper vcTypeMapper;
     private final EmpService empService;
     private final VcTypeService vcTypeService;
 
     private final MailService mailService;
+    private final MailServiceForGrantedVc mailServiceForGrantedVc;
 
     /* 임의휴가부여내역 조회 */
     @Override
@@ -77,12 +80,22 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean insertGrantedVc(GrantedVcDto grantedVc) {
         try {
-            mapper.insertGrantedVc(grantedVc);
-
+            int result = mapper.insertGrantedVc(grantedVc);
             Long typeId = grantedVc.getVcTypeDto().getTypeId();
-            Long count = grantedVc.getVcDays();
-            Long empId = grantedVc.getEmpDto().getEmpId();
+            VcTypeDto typeDto = vcTypeMapper.findVcTypeDtoByTypeId(typeId);
+            grantedVc.setVcTypeDto(typeDto);
 
+            Long count = grantedVc.getVcDays();
+
+            Long empId = grantedVc.getEmpDto().getEmpId();
+            EmpDto empDto = empService.getEmpInfo(empId);
+            grantedVc.setEmpDto(empDto);
+
+            // 메일링 서비스
+            mailServiceForGrantedVc.sendGrantedVacationToCompanyEmail(grantedVc,
+                    "<메타넷>휴가 생성 안내");
+
+            // total 휴가내역 추가
             VcTypeTotalDto vcTypeTotal = new VcTypeTotalDto();
             vcTypeTotal.setCnt(count);
 
@@ -90,12 +103,10 @@ public class GrantedVcServiceImpl implements GrantedVcService {
             vcTypeDto.setTypeId(typeId);
             vcTypeTotal.setVcTypeDto(vcTypeDto);
 
-            EmpDto empDto = new EmpDto();
-            empDto.setEmpId(empId);
             vcTypeTotal.setEmpDto(empDto);
 
             totalMapper.plusVcTypeTotal(vcTypeTotal);
-            return true;
+            return result != 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
