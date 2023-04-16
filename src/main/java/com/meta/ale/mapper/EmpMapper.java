@@ -47,4 +47,7 @@ public interface EmpMapper {
 
     /*UserId로 사원 조회 */
     public EmpDto findEmpByUserId(Long userId);
+
+    /* MgrId로 상사 정보 조회 */
+    public EmpDto getEmpByMgrId(Long mgrId);
 }

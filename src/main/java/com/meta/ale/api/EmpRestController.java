@@ -9,6 +9,7 @@ import com.meta.ale.service.EmpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -79,4 +80,18 @@ public class EmpRestController {
         }
     }
 
+    // 상사 정보 조회
+    @GetMapping("/emp/manager-info/{mgr_id}")
+    public ResponseEntity managerInfo(@PathVariable(value = "mgr_id") Long mgrId) {
+        EmpDto empDto = empService.getEmpByMgrId(mgrId);
+        return ResponseEntity.ok().body(empDto);
+    }
+
+    // userId로 emp 정보 리턴
+    @GetMapping("/emp/my-info")
+    public ResponseEntity myInfo(@AuthenticationPrincipal UserDto userDto) {
+        Long userId = userDto.getUserId();
+        EmpDto empDto = empService.findEmpByUserId(userId);
+        return ResponseEntity.ok().body(empDto);
+    }
 }

@@ -315,4 +315,10 @@ public class EmpServiceImpl implements EmpService {
     public EmpDto findEmpByUserId(Long userId) {
         return empMapper.findEmpByUserId(userId);
     }
+
+    /* MgrId로 상사 정보 조회 */
+    @Override
+    public EmpDto getEmpByMgrId(Long mgrId) {
+        return empMapper.getEmpByMgrId(mgrId);
+    }
 }

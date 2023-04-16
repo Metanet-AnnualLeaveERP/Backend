@@ -29,6 +29,51 @@
         <association property="deptDto" resultMap="deptMap"/>
     </resultMap>
 
+
+    <select id="findEmpOverOneYrList" resultType="EmpDto">
+    <![CDATA[
+        SELECT *
+        FROM EMP
+        WHERE HIRE_DATE < SYSDATE - INTERVAL '1' YEAR
+          AND NOT (TO_CHAR(HIRE_DATE) = TO_CHAR(SYSDATE - 365))
+          AND TO_CHAR(HIRE_DATE, 'MM/DD') = TO_CHAR(SYSDATE, 'MM/DD')
+          AND LEAVE_DATE IS NULL
+        ]]>
+    </select>
+
+    <select id="findEmpOneYrList" resultType="EmpDto">
+        <![CDATA[
+        SELECT *
+        FROM EMP
+        WHERE TO_CHAR(HIRE_DATE) = TO_CHAR(SYSDATE - 365)
+          AND LEAVE_DATE IS NULL
+        ]]>
+    </select>
+
+    <select id="findEmpUnderOneYrList" resultType="EmpDto">
+        SELECT *
+        FROM EMP
+        WHERE HIRE_DATE > SYSDATE - INTERVAL '1' YEAR
+          AND TO_CHAR(HIRE_DATE, 'DD') = TO_CHAR(SYSDATE, 'DD')
+          AND TO_CHAR(HIRE_DATE) !=TO_CHAR(SYSDATE)
+          AND LEAVE_DATE IS NULL
+    </select>
+
+    <select id="findEmpOverTwoYrLeaveDate" resultType="EmpDto">
+        SELECT *
+        FROM EMP
+        WHERE LEAVE_DATE IS NOT NULL
+          AND (TO_CHAR(LEAVE_DATE) = TO_CHAR(SYSDATE - 730))
+    </select>
+
+    <select id="findEmpByUserId" resultMap="empMap">
+        SELECT e.emp_id, e.name, e.position, e.hire_date, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
+        FROM EMP e,
+             DEPT d
+        WHERE e.dept_id = d.dept_id
+          AND e.user_id = #{userId}
+    </select>
+
     <insert id="insertEmp">
         <selectKey resultType="long" order="BEFORE" keyProperty="empId">
             select emp_sq.nextval from dual
@@ -162,11 +207,11 @@
         where p_email = #{email}
     </select>
 
-
-    <select id="findEmpOverTwoYrLeaveDate" resultType="EmpDto">
-        SELECT *
-        FROM EMP
-        WHERE LEAVE_DATE IS NOT NULL
-        AND (TO_CHAR(LEAVE_DATE) = TO_CHAR(SYSDATE - 730))
+    <!--상사 정보-->
+    <select id="getEmpByMgrId" resultType="EmpDto">
+        SELECT e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel
+        FROM emp e
+        WHERE emp_id = #{mgrId}
+        AND leave_date IS NULL
     </select>
 </mapper>

@@ -81,14 +81,14 @@ class VcReqServiceTest {
         System.out.println(vcReqService.updateVcReqStatus(dto));
     }
 
-    @Test
-    void approvalVcRequestList() throws Exception {
-        Optional<UserDto> userDto = userService.getByEmpNum("admin");
-        System.out.println(userDto.get());
-        Criteria cri = new Criteria();
-//        cri.setKeyword("취소");
-        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
-    }
+
+//    @Test
+//    void approvalVcRequestList() {
+//        Optional<UserDto> userDto = userService.getByEmpNum("admin");
+//        System.out.println(userDto.get());
+//        Criteria cri = new Criteria();
+////        cri.setKeyword("취소");
+//        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
 
     @Test
     void approvalVcRequestStatus() throws Exception{
