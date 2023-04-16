@@ -21,8 +21,12 @@ public class GrantedVcRestController {
     @PostMapping("granted")
     public ResponseEntity<String> insertGrantedVc(@RequestBody GrantedVcDto grantedVcDto){
         try{
-            grantedVcService.insertGrantedVc(grantedVcDto);
-            return new ResponseEntity<>("DATA INSERT SUCCESS", HttpStatus.CREATED);
+            boolean result = grantedVcService.insertGrantedVc(grantedVcDto);
+            if (result){
+                return new ResponseEntity<>("DATA INSERT SUCCESS", HttpStatus.CREATED);
+            } else{
+                return new ResponseEntity<>("DATA INSERT FAILED", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch(Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

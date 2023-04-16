@@ -38,8 +38,8 @@ class GrantedVcMapperTest {
 
         dto.setGrantedDate(testDate);
         dto.setExpiredDate(testDate);
-        dto.setVcDays(4L);
-        dto.setRemainDays(4L);
+        dto.setVcDays(8L);
+//        dto.setRemainDays(4L);
 
         VcTypeDto typeDto = new VcTypeDto();
         typeDto.setTypeId(1L);
@@ -47,7 +47,7 @@ class GrantedVcMapperTest {
         dto.setVcTypeDto(typeDto);
 
         EmpDto empDto = new EmpDto();
-        empDto.setEmpId(999L);
+        empDto.setEmpId(3L);
 
         dto.setEmpDto(empDto);
 

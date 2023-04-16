@@ -20,7 +20,7 @@ public class MailServiceTests {
     public void MailToSendFromPEmail() {
         try {
             EmpDto empDto = new EmpDto();
-            empDto.setPEmail("sj120712@gmail.com");
+            empDto.setPEmail("michaelyoon0948@gmail.com");
             UserDto user = new UserDto();
             user.setPwd("qwer");
             empDto.setUserDto(user);
