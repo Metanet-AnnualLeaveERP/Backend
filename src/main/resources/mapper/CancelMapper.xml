@@ -108,7 +108,7 @@
     </select>
     <resultMap id="cancelMap" type="CancelDto">
         <id property="cancelId" column="cancel_id"/>
-        <result property="status" column="status"/>
+        <result property="cancelStatus" column="cancel_status"/>
         <result property="reqDate" column="req_date"/>
         <result property="resDate" column="res_date"/>
         <result property="reqComm" column="req_comm"/>

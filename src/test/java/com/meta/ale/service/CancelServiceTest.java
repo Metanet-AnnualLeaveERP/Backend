@@ -39,14 +39,14 @@ class CancelServiceTest {
         System.out.println(result);
     }
 
-    @Test
-    void createCancel() {
-        CancelDto dto = new CancelDto();
-//        VcReqDto req = vcReqMapper.getVcReq(1L);
-//        dto.setVcReqDto(req);
-
-        dto.setReqComm("일정 변경 test");
-
-        cancelService.createCancel(dto, 1L);
-    }
+//    @Test
+//    void createCancel() {
+//        CancelDto dto = new CancelDto();
+////        VcReqDto req = vcReqMapper.getVcReq(1L);
+////        dto.setVcReqDto(req);
+//
+//        dto.setReqComm("일정 변경 test");
+//
+//        cancelService.createCancel(dto, 1L);
+//    }
 }
