@@ -8,13 +8,41 @@
 		select * from dept where dept_name = #{deptName}
 	</select>
 
+	<select id="getListDept" resultMap="deptMap">
+		SELECT d.dept_id, d.dept_name, d.vc_to, COUNT(e.emp_id) AS emp_count
+		FROM dept d
+				 LEFT JOIN emp e ON d.dept_id = e.dept_id
+		GROUP BY d.dept_id, d.dept_name, d.vc_to
+	</select>
+
+	<update id="updateDept" parameterType="deptDto">
+		UPDATE dept
+		SET	dept_name = #{deptName},
+		    vc_to = #{vcTo}
+		WHERE dept_id = #{deptId}
+	</update>
+
+	<insert id="insertDept" parameterType="DeptDto">
+		INSERT INTO dept
+		VALUES (dept_sq.nextval, #{deptName}, #{vcTo})
+	</insert>
+
 	<select id="selectByempId" resultType="DeptDto">
 		select d.*
 		from dept d
-		join emp e
-		  on d.dept_id = e.dept_id
+				 join emp e
+					  on d.dept_id = e.dept_id
 		where
-		    e.emp_id = #{empId}
+			e.emp_id = #{empId}
 
-  </select>
+	</select>
+
+	<resultMap id="deptMap" type="DeptDto">
+		<id property="deptId"			column="dept_id"/>
+		<result property="deptName"		column="dept_name"/>
+		<result property="vcTo"			column="vc_to"/>
+		<result property="deptEmpCount" column="emp_count"/>
+	</resultMap>
+
+
 </mapper>

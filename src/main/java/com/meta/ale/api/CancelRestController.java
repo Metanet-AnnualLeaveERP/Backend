@@ -3,16 +3,13 @@ package com.meta.ale.api;
 import com.meta.ale.domain.CancelDto;
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.UserDto;
-import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.service.CancelService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -25,9 +22,9 @@ public class CancelRestController {
     /*휴가 취소 내역 조회*/
     @GetMapping("/vacations/cancel")
     public Map<String, Object> cancelList(@RequestParam(required = false, defaultValue = "1") int page,
-                                         @RequestParam(required = false, defaultValue = "10") int pagenum,
-                                         @AuthenticationPrincipal UserDto user,
-                                         Criteria cri) {
+                                          @RequestParam(required = false, defaultValue = "10") int pagenum,
+                                          @AuthenticationPrincipal UserDto user,
+                                          Criteria cri) {
 
         cri.setPageNum(page);
         cri.setAmount(pagenum);
@@ -40,7 +37,7 @@ public class CancelRestController {
     /*휴가 취소 내역 상세 조회*/
     @GetMapping("/vacations/cancel/{cancel_id}")
     public ResponseEntity<Object> cancelDetail(@PathVariable("cancel_id") Long cancelId,
-                                              @AuthenticationPrincipal UserDto user) {
+                                               @AuthenticationPrincipal UserDto user) {
         CancelDto dto = cancelService.getCancel(cancelId, user.getUserId());
 
         if (dto != null) {
@@ -63,7 +60,27 @@ public class CancelRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
-    /*휴가 취소 결재(승인/반려)*/
+    /*휴가취소 승인 / 휴가취소 반려 관리자 조회*/
+    @GetMapping("/manager/vacations/cancel")
+    public ResponseEntity cancelListByMgr(@AuthenticationPrincipal UserDto userDto,
+                                          Criteria cri) {
+
+        Map<String,Object> result= cancelService.getApprovalCancelList(userDto, cri);
+
+        return ResponseEntity.ok(result);
+    }
 
     /*휴가취소 승인 / 휴가취소 반려*/
+    @PutMapping("/manager/vacations/cancel/{cancel_id}")
+    public ResponseEntity approvalCancel(@PathVariable("cancel_id") Long cancelId,
+                                         @RequestParam("status") String status,
+                                         @RequestParam("comment")String comment) {
+
+        if (!cancelService.approvalCancel(cancelId, status,comment)) {
+            return ResponseEntity.badRequest().body("비정상적인 처리입니다.");
+        } ;
+        return ResponseEntity.ok("정상 처리 되었습니다.");
+    }
+
+
 }

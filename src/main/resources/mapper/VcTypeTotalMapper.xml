@@ -13,7 +13,11 @@
         WHERE type_id = #{vcTypeDto.typeId}
         AND emp_id = #{empDto.empId}
     </update>
-
+    <update id="updateVcTypeTotalByTotalId">
+        UPDATE vc_type_total
+        SET cnt = #{cnt}
+        WHERE TOTAL_ID = #{totalId}
+    </update>
     <update id="plusVcTypeTotal" parameterType="VcTypeTotalDto">
         UPDATE vc_type_total
         SET cnt = cnt + #{cnt}
@@ -41,6 +45,14 @@
             FROM vc_type_total
             WHERE type_id = #{vcTypeDto.typeId})
     </insert>
+
+    <select id="getVcTotalByTypeAndEmpId" resultType="VcTypeTotalDto">
+        SELECT *
+        FROM VC_TYPE_TOTAL
+                 WHERE
+                     TYPE_ID=#{vcTypeDto.typeId} AND
+                     EMP_ID =#{empDto.empId}
+    </select>
 
 
     <resultMap type="VcTypeTotalDto" id="vcTypeTotal">

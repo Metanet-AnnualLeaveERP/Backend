@@ -3,6 +3,7 @@ package com.meta.ale.service;
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.CancelMapper;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,12 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CancelServiceImpl implements CancelService {
 
-    private CancelMapper cancelMapper;
+    private final CancelMapper cancelMapper;
 
-    private VcReqService vcReqService;
+    private final VcReqService vcReqService;
+
+    private final EmpService empService;
+
+    private final VcTypeTotalService totalService;
 
     /*휴가 취소 내역 조회*/
     @Override
@@ -72,20 +77,68 @@ public class CancelServiceImpl implements CancelService {
         cancelMapper.insertCancel(dto); // 휴가 취소 테이블에 추가
     }
 
-    /*휴가 취소 결재(승인/반려)*/
-
     /*휴가취소 승인 / 휴가취소 반려*/
+    @Override
+    public boolean approvalCancel(Long cancelId, String status, String comment) {
+        CancelDto cancelDto = cancelMapper.getCancel(cancelId);
+        if ((status == null || status.equals("")) || cancelDto.getCancelId() == null) {
+            return false;
+        }
+
+        cancelDto.setCancelStatus(status);
+        cancelDto.setResDate(new Date());
+        cancelDto.setResComm(comment);
+
+        if (status.equals("승인")) {
+            VcReqDto vcReqDto = cancelDto.getVcReqDto();
+            VcTypeTotalDto total = totalService.getVcTotalByTypeAndEmpId(vcReqDto);
+            total.setCnt(total.getCnt()+vcReqDto.getReqDays());
+            totalService.updateVcTypeTotalByTotalId(total);
+        }
+
+        return cancelMapper.updateCancelStatus(cancelDto) != 0;
+
+    }
+
+    /*휴가취소 승인 / 휴가취소 반려 관리자 조회*/
+    @Override
+    public Map<String, Object> getApprovalCancelList(UserDto userDto, Criteria cri) {
+        String role = userDto.getRole();
+        Long mgrDeptId = null;
+        if (role.equals("ROLE_MANAGER")) {
+            Long userId = userDto.getUserId();
+            EmpDto managerDto = empService.findEmpByUserId(userId);
+            mgrDeptId = managerDto.getDeptDto().getDeptId();
+        }
+        HashMap<String, Object> vo = new HashMap();
+        vo.put("pageNum", cri.getPageNum());
+        vo.put("amount", cri.getAmount());
+        vo.put("keyword", cri.getKeyword());
+        vo.put("deptId", mgrDeptId);
+
+        int count = getCancelCountByMgr(vo);
+        Map<String, Object> map = new HashMap();
+        map.put("paging", new PagenationDTO(cri, count));
+        map.put("cancel", cancelMapper.getCancelListByMgr(vo));
+
+        return map;
+    }
 
     /*휴가 취소 상태 변경*/
     @Override
     public boolean updateCancelStatus(CancelDto dto) {
-        return cancelMapper.updateCancelStatus(dto) != 0 ? true: false;
+        return cancelMapper.updateCancelStatus(dto) != 0 ? true : false;
     }
-
     /* ------------서비스 내부에서 쓸 메소드 -------------- */
 
     /*휴가 신청 개수 (페이징 처리용)*/
     private int getCancelCount(Long userId) {
         return cancelMapper.getCancelCount(userId).intValue();
+    }
+
+    /*휴가취소 신청 개수 [관리자, 매니저 ] (페이징 처리용)*/
+    private int getCancelCountByMgr(HashMap<String, Object> hashMap) {
+
+        return cancelMapper.getCancelCountByMgr(hashMap).intValue();
     }
 }

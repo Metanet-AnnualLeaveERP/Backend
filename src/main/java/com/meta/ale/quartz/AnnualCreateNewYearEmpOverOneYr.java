@@ -1,6 +1,6 @@
 package com.meta.ale.quartz;
 
-import com.meta.ale.service.GrantedVacationService;
+import com.meta.ale.service.GrantedVcService;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
@@ -8,7 +8,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 public class AnnualCreateNewYearEmpOverOneYr extends QuartzJobBean {
 
-    private static GrantedVacationService grantedVacationService;
+    private static GrantedVcService GrantedVcService;
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -16,9 +16,9 @@ public class AnnualCreateNewYearEmpOverOneYr extends QuartzJobBean {
         // Autowired를 사용할 수 없으므로 ApplicationContext를 Quartz의 Job으로 등록하여
         // 사용할 수 있도록 설정한 부분
 
-        grantedVacationService = appCtx.getBean(GrantedVacationService.class);
+        GrantedVcService = appCtx.getBean(GrantedVcService.class);
         try {
-            if (grantedVacationService.insertAnnualByEmpOverOneYr()) {
+            if (GrantedVcService.insertAnnualByEmpOverOneYr()) {
                 System.out.println("정상적으로 연차 생성이 완료되었습니다.");
             }
         } catch (Exception e) {

@@ -59,7 +59,7 @@ class VcReqServiceTest {
         endDate.setDate((dto.getStartDate().getDate()) + 1);
         dto.setEndDate(endDate);
 
-        dto.setVcType("연차");
+//        dto.setVcType("연차");
         dto.setReqDays(2L);
         dto.setComments(null);
         dto.setStatus("자동승인");
@@ -81,12 +81,19 @@ class VcReqServiceTest {
         System.out.println(vcReqService.updateVcReqStatus(dto));
     }
 
-    @Test
-    void approvalVcRequestList() {
+
+//    @Test
+//    void approvalVcRequestList() {
 //        Optional<UserDto> userDto = userService.getByEmpNum("admin");
 //        System.out.println(userDto.get());
 //        Criteria cri = new Criteria();
 ////        cri.setKeyword("취소");
 //        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
+
+    @Test
+    void approvalVcRequestStatus() throws Exception{
+        UserDto userDto= userService.getByEmpNum("admin").get();
+        vcReqService.approvalVcRequestStatus(userDto,1L,"반려","반려내용~~");
+
     }
 }

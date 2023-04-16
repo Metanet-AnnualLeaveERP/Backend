@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.meta.ale.mapper.EmpMapper">
+
     <resultMap id="userMap" type="UserDto">
         <id property="userId" column="user_id"/>
         <result property="empNum" column="emp_num"/>
@@ -94,17 +95,18 @@
 
     <update id="updateEmp">
         update emp
-        set dept_id  = #{deptDto.deptId},
-            position = #{position},
-            mgr_id   = #{mgrId, jdbcType=NULL}
-        where emp_id = #{empId}
+        set
+        dept_id = #{deptDto.deptId},
+        position = #{position},
+        mgr_id = #{mgrId, jdbcType=NULL}
+        where
+        emp_id = #{empId}
     </update>
 
     <select id="selectDeptMgr" resultType="Long">
         select emp_id
         from emp
-        where position = '팀장'
-          and dept_id = #{deptId}
+        where position = '팀장' and dept_id = #{deptId}
     </select>
 
     <select id="selectListByDeptId">
@@ -117,14 +119,14 @@
         update emp
         set mgr_id = #{mgrId, jdbcType=NULL}
         where dept_id = #{deptId}
-          and position = '사원'
+        and position = '사원'
     </update>
 
     <select id="selectDeptEmpCnt" resultType="Long">
         select count(*)
         from emp
         where dept_id = #{deptId}
-          and position = '사원'
+        and position = '사원'
     </select>
 
     <select id="selectPositionByEmpId" resultType="String">
@@ -136,17 +138,18 @@
     <select id="selectEmpByEmpId" resultMap="empMap">
         select e.*, u.user_id, u.role, u.emp_num, d.dept_name
         from emp e
-                 join users u
-                      on e.user_id = u.user_id
-                 join dept d
-                      on e.dept_id = d.dept_id
+        join users u
+        on e.user_id = u.user_id
+        join dept d
+        on e.dept_id = d.dept_id
         where emp_id = #{empId}
     </select>
 
     <select id="selectEmpListCnt" resultType="Integer">
         select count(*)
         from emp
-        where emp_id != 0
+        where
+        emp_id != 0
     </select>
 
     <select id="selectEmpList" resultMap="empMap">
@@ -162,17 +165,17 @@
         join dept d
         on e.dept_id = d.dept_id
         where
+        <choose>
+            <when test="keyWord == 'resign'">
+                leave_date is not null and
+            </when>
+            <when test="keyWord == 'active'">
+                leave_date is null and
+            </when>
+        </choose>
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         and
         emp_id != 0
-        <choose>
-            <when test="keyWord != null and keyWord == 'resign'">
-                and leave_date is not null
-            </when>
-            <when test="keyWord != null and keyWord == 'active'">
-                and leave_date is null
-            </when>
-        </choose>
         )
         <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
 
@@ -181,7 +184,8 @@
     <update id="updateEmpInfo">
         update emp
         set p_email = #{pEmail}
-        where emp_id = #{empId}
+        where
+        emp_id = #{empId}
     </update>
 
     <select id="selectHireOrder" resultType="Integer">
@@ -193,7 +197,8 @@
     <update id="updateLeaveDate">
         update emp
         set leave_date = sysdate
-        where emp_id = #{empId}
+        where
+        emp_id = #{empId}
     </update>
 
     <select id="selectDuplicatedEmail" resultType="Integer">

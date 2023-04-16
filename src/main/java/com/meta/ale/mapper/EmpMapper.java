@@ -32,7 +32,7 @@ public interface EmpMapper {
 
     public Integer updateLeaveDate(EmpDto empDto);
 
-    public Integer selectDuplicatedEmail(String email); // 진행중
+    public Integer selectDuplicatedEmail(String email);
 
     //근속 년수가 1년 초과인 사람 조회
     public List<EmpDto> findEmpOverOneYrList();

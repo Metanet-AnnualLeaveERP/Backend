@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.meta.ale.mapper.YearRemainAlMapper">
+
+    <resultMap id="deptMap" type="deptDto">
+        <id property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="vcTo" column="vc_to"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="UserDto">
+        <id property="userId" column="user_id"/>
+        <result property="empNum" column="emp_num"/>
+        <result property="role" column="role"/>
+    </resultMap>
+
+    <resultMap id="empMap" type="EmpDto">
+        <id property="empId" column="emp_id"/>
+        <result property="name" column="name"/>
+        <result property="hireDate" column="hire_date"/>
+        <result property="position" column="position"/>
+        <result property="pEmail" column="p_email"/>
+        <result property="cEmail" column="c_email"/>
+        <result property="tel" column="tel"/>
+        <result property="mgrId" column="mgr_id"/>
+        <result property="leaveDate" column="leave_date"/>
+        <association property="userDto" resultMap="userMap"/>
+        <association property="deptDto" resultMap="deptMap"/>
+    </resultMap>
+
+    <resultMap id="yearRemainAlMap" type="YearRemainAlDto">
+        <id property="alId" column="al_id"/>
+        <result property="year" column="year"/>
+        <result property="remainAl" column="remain_al"/>
+        <association property="empDto" resultMap="empMap"/>
+    </resultMap>
+
+    <select id="selectYearRemainAlCnt" parameterType="UserDto" resultType="Integer">
+        select count(*)
+        from year_remain_al y
+        <if test="role != 'ROLE_ADMIN'">
+            join emp e
+                 on y.emp_id = e.emp_id
+            join users u
+                 on e.user_id = u.user_id
+            where u.user_id = #{userId}
+        </if>
+    </select>
+
+    <select id="selectYearRemainAlList" resultMap="yearRemainAlMap" parameterType="hashmap">
+        select *
+        from (
+            select rownum rn, y.*, e.name, u.emp_num, d.dept_name, u.role
+            from year_remain_al y
+                 join emp e
+                      on y.emp_id = e.emp_id
+                 join users u
+                      on u.user_id = e.user_id
+                 join dept d
+                      on e.dept_id = d.dept_id
+            where
+                <choose>
+                    <when test="userDto.role == 'ROLE_ADMIN'">
+                        u.enabled != 0 and
+                    </when>
+                    <otherwise>
+                        u.user_id = #{userDto.userId} and
+                    </otherwise>
+                </choose>
+
+                <if test="keyWord != 'all'">
+                    e.name = #{keyWord} and
+                </if>
+        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+            )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
+
+    <select id="selectYearRemainAlByAlId" resultMap="yearRemainAlMap">
+        select
+            y.*, e.name, u.emp_num, d.dept_name, u.role
+        from
+            year_remain_al y
+            join emp e
+                 on y.emp_id = e.emp_id
+            join users u
+                 on u.user_id = e.user_id
+            join dept d
+                 on e.dept_id = d.dept_id
+        where
+            y.al_id = #{alId}
+    </select>
+
+</mapper>
