@@ -1,20 +1,12 @@
 package com.meta.ale.service;
 
-import com.meta.ale.domain.AnpDocDto;
 import com.meta.ale.domain.EmpDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +19,11 @@ public class MailService {
         try {
 
             MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"UTF-8");
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
             messageHelper.setSubject(subject);
             messageHelper.setTo(empDto.getPEmail());
-            String body = setAddText("<메타넷> 임시 비밀번호 생성", "임시 비밀번호는 " + empDto.getUserDto().getPwd() + "입니다.");
+            String body = setAddText("<메타넷> 임시 비밀번호 생성", "임시 비밀번호는 " +
+                    empDto.getUserDto().getPwd() + "입니다.");
             messageHelper.setText(body, true);
             javaMailSender.send(message);
         } catch (Exception e) {
@@ -41,11 +34,11 @@ public class MailService {
     // 휴가 관련 메일을 발송해야함.(사내이메일 발송)
     public void sendToCEmail(EmpDto empDto, String subject, String text) {
         try {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
-        messageHelper.setSubject(subject);
-        messageHelper.setTo(empDto.getCEmail());
-        javaMailSender.send(message);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+            messageHelper.setSubject(subject);
+            messageHelper.setTo(empDto.getCEmail());
+            javaMailSender.send(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,7 +57,6 @@ public class MailService {
         String str = sb.toString();
         return str;
     }
-
 
 
 }
