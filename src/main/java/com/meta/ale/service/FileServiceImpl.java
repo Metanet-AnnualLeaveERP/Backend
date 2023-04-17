@@ -98,15 +98,11 @@ public class FileServiceImpl implements FileService {
             System.out.println("fileName = " + fileName);
 
             File file = multipartToFile(uploadFile, fileName);
-//            System.out.println("108line");
-//            System.out.println(file.length());
             FileInputStream in = new FileInputStream(file);
             try {
                 if (uploadFile.isEmpty()) {
                     throw new Exception("ERROR : File is empty.");
                 }
-//                Path root = Paths.get(uploadPath);
-//                System.out.println("uploadroot = " + root);
 
                 // ---------- zipEntry를 생성하여 zipPath에 파일 업로드 -----------
                 try {
@@ -147,7 +143,6 @@ public class FileServiceImpl implements FileService {
         //LocalDate를 문자열로 포멧
 //        String folderPath = str.replace("/", File.separator);
         String folderPath = str.replace("/", "_");
-//        System.out.println("folderPath = " + folderPath);
         //만약 Data 밑에 exam.jpg라는 파일을 원한다고 할때,
         //윈도우는 "Data\\"eaxm.jpg", 리눅스는 "Data/exam.jpg"라고 씁니다.
         //그러나 자바에서는 "Data" +File.separator + "exam.jpg" 라고 쓰면 됩니다.
