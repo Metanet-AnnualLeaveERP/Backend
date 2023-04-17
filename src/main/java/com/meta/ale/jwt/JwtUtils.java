@@ -19,13 +19,10 @@ public class JwtUtils {
 
     @Value("${ale.jwt.jwtSecret}")
     private String jwtSecret;
-
     @Value("${ale.jwt.jwtExpirationMs}")
     private Long jwtExpirationMs;
-
     @Value("${ale.jwt.jwtCookieName}")
     private String jwtCookie;
-
     @Value("${ale.jwt.jwtRefreshCookieName}")
     private String jwtRefreshCookie;
 
@@ -43,16 +40,10 @@ public class JwtUtils {
         return generateCookie(jwtCookie, jwt, "/");
     }
 
-//    public ResponseCookie generateJwtCookie(User user) {
-//        String jwt = generateTokenFromUsername(user.getUsername());    // JWT 토큰을 생성
-//        return generateCookie(jwtCookie, jwt, "/api");
-//    }
-
     public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
 //        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
         return generateCookie(jwtRefreshCookie, refreshToken, "/");
     }
-
 
 
     public ResponseCookie getCleanJwtCookie() {
@@ -80,8 +71,10 @@ public class JwtUtils {
         try {
             System.out.println("토큰 유효 검사");
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-//eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMTExIiwiaWF0IjoxNjgxMjc5NTg5LCJleHAiOjE2ODEyNzk2NDl9.7PuH2sd5XFvQo0_JPYimvrwBsiy8NRzv2UF1
-// u5xQUuBgT0IrbbEeNk1NZqLRnHZWwbNz4AjnmzkU8KqwRFEWGg
+            //eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMTExIiwiaWF0IjoxNjgxMjc5NTg5LCJleHAiOjE2ODEyNz
+            // k2NDl9.7PuH2sd5XFvQo0_JPYimvrwBsiy8NRzv2UF1
+
+            // u5xQUuBgT0IrbbEeNk1NZqLRnHZWwbNz4AjnmzkU8KqwRFEWGg
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());

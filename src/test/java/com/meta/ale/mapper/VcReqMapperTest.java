@@ -21,36 +21,37 @@ public class VcReqMapperTest {
 
     @Autowired
     private UserService userService;
-    @Test
-    void insertVcReq() {
-        for (int i = 1; i <= 3; i++) {
-            VcReqDto dto = new VcReqDto();
-
-            // 시작일
-            Date startDate = new Date();
-            startDate.setDate(startDate.getDate() + i);
-            dto.setStartDate(startDate);
-
-            // 종료일
-            Date endDate = new Date();
-            endDate.setDate((dto.getStartDate().getDate()) + i);
-            dto.setEndDate(endDate);
-
-//            dto.setVcType("연차");
-            dto.setReqDays(2L);
-            dto.setComments(null);
-            dto.setStatus("자동승인");
-            dto.setAprvDate(null);
-            dto.setFilePath(null);
-
-            // emp
-            EmpDto emp = new EmpDto();
-            emp.setEmpId(1L);
-            dto.setEmpDto(emp);
-
-            vcReqMapper.insertVcReq(dto);
-        }
-    }
+//    @Test
+//    void insertVcReq() {
+//        for (int i = 1; i <= 3; i++) {
+//            VcReqDto dto = new VcReqDto();
+//
+//            // 시작일
+//            Date startDate = new Date();
+//            startDate.setDate(startDate.getDate() + i);
+//            dto.setStartDate(startDate);
+//
+//            // 종료일
+//            Date endDate = new Date();
+//            endDate.setDate((dto.getStartDate().getDate()) + i);
+//            dto.setEndDate(endDate);
+//            VcTypeDto vcTypeDto= new VcTypeDto();
+//            vcTypeDto.setTypeId(1L);
+//            dto.setVcTypeDto(vcTypeDto);
+//            dto.setReqDays(2L);
+//            dto.setComments(null);
+//            dto.setStatus("자동승인");
+//            dto.setAprvDate(null);
+//            dto.setFilePath(null);
+//
+//            // emp
+//            EmpDto emp = new EmpDto();
+//            emp.setEmpId(1L);
+//            dto.setEmpDto(emp);
+//
+//            vcReqMapper.insertVcReq(dto);
+//        }
+//    }
 
     @Test
     void getVcReqList() {

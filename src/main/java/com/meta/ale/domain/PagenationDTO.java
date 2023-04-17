@@ -8,7 +8,6 @@ public class PagenationDTO {
 	private int startPage;
 	private int endPage;
 	private boolean prev, next;
-
 	private int total;
 	private Criteria cri;
 

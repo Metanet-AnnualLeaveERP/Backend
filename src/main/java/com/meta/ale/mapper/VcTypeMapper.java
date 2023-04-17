@@ -7,6 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface VcTypeMapper {
+
     int insertVcType(VcTypeDto vcTypeDto);
 
     List<VcTypeDto> getListVcType();
@@ -16,4 +17,6 @@ public interface VcTypeMapper {
     int deleteVcType(Long typeId);
 
     public VcTypeDto findVcTypeByTypeName(String typeName);
+
+    VcTypeDto findVcTypeDtoByTypeId(Long typeId);
 }

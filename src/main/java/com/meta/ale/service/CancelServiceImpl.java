@@ -2,7 +2,6 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.CancelMapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,9 +43,13 @@ public class CancelServiceImpl implements CancelService {
     public CancelDto getCancel(Long cancelId, Long currUserId) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         CancelDto dto = cancelMapper.getCancel(cancelId);
-        EmpDto dbEmp = dto.getVcReqDto().getEmpDto();
-        Long dbUserId = dbEmp.getUserDto().getUserId();
-        return currUserId == dbUserId ? dto : null;
+        if (dto != null && dto.getVcReqDto() != null) {
+
+            EmpDto dbEmp = dto.getVcReqDto().getEmpDto();
+            Long dbUserId = dbEmp.getUserDto().getUserId();
+            return currUserId == dbUserId ? dto : null;
+        }
+        return null;
     }
 
     /*휴가 취소*/
@@ -92,7 +95,7 @@ public class CancelServiceImpl implements CancelService {
         if (status.equals("승인")) {
             VcReqDto vcReqDto = cancelDto.getVcReqDto();
             VcTypeTotalDto total = totalService.getVcTotalByTypeAndEmpId(vcReqDto);
-            total.setCnt(total.getCnt()+vcReqDto.getReqDays());
+            total.setCnt(total.getCnt() + vcReqDto.getReqDays());
             totalService.updateVcTypeTotalByTotalId(total);
         }
 
@@ -138,7 +141,6 @@ public class CancelServiceImpl implements CancelService {
 
     /*휴가취소 신청 개수 [관리자, 매니저 ] (페이징 처리용)*/
     private int getCancelCountByMgr(HashMap<String, Object> hashMap) {
-
         return cancelMapper.getCancelCountByMgr(hashMap).intValue();
     }
 }

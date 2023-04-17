@@ -11,6 +11,5 @@ public class DeptDto {
     private Long deptId;
     private String deptName;
     private Long vcTo;
-
     private Long deptEmpCount; // 부서인원수 계산용
 }

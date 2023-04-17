@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class CpHolidayServiceImpl implements CpHolidayService{
+public class CpHolidayServiceImpl implements CpHolidayService {
 
     private final CpHolidayMapper cpHolidayMapper;
 

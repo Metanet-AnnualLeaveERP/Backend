@@ -42,11 +42,11 @@
     </select>
 
     <insert id="insertGrantedVc" parameterType="GrantedVcDto">
-        INSERT INTO granted_vc VALUES(gv_sq.nextval,
+        INSERT INTO granted_vc VALUES(vc_sq.nextval,
                                       #{grantedDate},
                                       #{expiredDate},
                                       #{vcDays},
-                                      #{remainDays},
+                                      #{vcDays},
                                       #{vcTypeDto.typeId},
                                       #{empDto.empId})
     </insert>

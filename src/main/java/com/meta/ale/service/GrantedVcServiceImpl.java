@@ -2,9 +2,9 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.GrantedVcMapper;
+import com.meta.ale.mapper.VcTypeMapper;
 import com.meta.ale.mapper.VcTypeTotalMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +25,12 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     private final GrantedVcMapper mapper;
     private final VcTypeTotalMapper totalMapper;
     private final GrantedVcMapper vcMapper;
+    private final VcTypeMapper vcTypeMapper;
     private final EmpService empService;
     private final VcTypeService vcTypeService;
 
     private final MailService mailService;
+    private final MailServiceForGrantedVc mailServiceForGrantedVc;
 
     /* 임의휴가부여내역 조회 */
     @Override
@@ -77,12 +79,22 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean insertGrantedVc(GrantedVcDto grantedVc) {
         try {
-            mapper.insertGrantedVc(grantedVc);
-
+            int result = mapper.insertGrantedVc(grantedVc);
             Long typeId = grantedVc.getVcTypeDto().getTypeId();
-            Long count = grantedVc.getVcDays();
-            Long empId = grantedVc.getEmpDto().getEmpId();
+            VcTypeDto typeDto = vcTypeMapper.findVcTypeDtoByTypeId(typeId);
+            grantedVc.setVcTypeDto(typeDto);
 
+            Long count = grantedVc.getVcDays();
+
+            Long empId = grantedVc.getEmpDto().getEmpId();
+            EmpDto empDto = empService.getEmpInfo(empId);
+            grantedVc.setEmpDto(empDto);
+
+            // 메일링 서비스
+            mailServiceForGrantedVc.sendGrantedVacationToCompanyEmail(grantedVc,
+                    "<메타넷>휴가 생성 안내");
+
+            // total 휴가내역 추가
             VcTypeTotalDto vcTypeTotal = new VcTypeTotalDto();
             vcTypeTotal.setCnt(count);
 
@@ -90,12 +102,10 @@ public class GrantedVcServiceImpl implements GrantedVcService {
             vcTypeDto.setTypeId(typeId);
             vcTypeTotal.setVcTypeDto(vcTypeDto);
 
-            EmpDto empDto = new EmpDto();
-            empDto.setEmpId(empId);
             vcTypeTotal.setEmpDto(empDto);
 
             totalMapper.plusVcTypeTotal(vcTypeTotal);
-            return true;
+            return result != 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -141,11 +151,12 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
 
     /* ------------------------- Private Method ------------------------- */
-    private void toMessage(EmpDto empDto){
+    private void toMessage(EmpDto empDto) {
         mailService.sendToCEmail(empDto, "<메타넷> 연차휴가 발급 안내",
                 empDto.getName() + "님의 연차 휴가를 발급했습니다." +
                         "자세한 내용은 홈페이지에서 확인해주시길 바랍니다.");
     }
+
     // 1년이 지난 사람들중 오늘 날짜와 1년이 된 사람 대한 연차계산 방법
     private boolean addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception {
         List<EmpDto> empOverOneYrList = empService.findEmpOverOneYr();
@@ -214,7 +225,6 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                     grantedVcDtoToDB.setRemainDays(vcDays + 1L);
                     grantedVcDtoToDB.setRemainDays(remainDays + 1L);
                     grantedVcDtoToDB.setVcTypeDto(vcTypeDto);
-                    System.out.println(grantedVcDtoToDB);
                     vcMapper.updateAnnualGranted(grantedVcDtoToDB);
 
                 } else {
@@ -240,7 +250,6 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
         return vacationDays > 25 ? 25L : vacationDays;
     }
-
 
     // 전체 부여휴가 row count
     private int getGrantedVcCount() {

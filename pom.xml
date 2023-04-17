@@ -106,6 +106,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
@@ -117,11 +121,77 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>2.3.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.7</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*_Generated*</exclude>
+                        <exclude>com/meta/ale/domain/**</exclude>
+                    </excludes>
+<!--                    <includes>-->
+<!--                        <include>com/meta/ale/mapper/**/*CancelMapperTest*</include>-->
+<!--                    </includes>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+<!--                                            자바의 바이트코드 명령수-->
+                                            <value>COVEREDRATIO</value>
+<!--                                            커버된 비율-->
+                                            <minimum>0.80</minimum>
+<!--                                         패키지 번들 단위로 바이트코드 명령 수를 기준으로-->
+<!--                                         커버리지가 최소한 80% 달서하는 것을 LIMITS로 설정-->
+                                        </limit>
+                                    </limits>
+                                    <element>METHOD</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>TOTALCOUNT</value>
+                                            <maximum>150</maximum>
+<!--                                            메서드 단위로 전체 라인 수를 최대 150줄로 설정-->
+<!--                                            벗어나면 에러 발생-->
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

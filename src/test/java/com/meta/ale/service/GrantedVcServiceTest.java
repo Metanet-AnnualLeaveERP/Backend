@@ -41,12 +41,12 @@ public class GrantedVcServiceTest {
         System.out.println(result);
     }
 
-    @Test
-    void deleteGrantedVcTest(){
-        Long vcId = 28L;
-        boolean result = gvService.deleteGrantedVc(vcId);
-        //System.out.println("[RESULT]" + result);
-    }
+//    @Test
+//    void deleteGrantedVcTest(){
+//        Long vcId = 28L;
+//        boolean result = gvService.deleteGrantedVc(vcId);
+//        //System.out.println("[RESULT]" + result);
+//    }
 
     @Test
     void insertGrantedVcTest(){

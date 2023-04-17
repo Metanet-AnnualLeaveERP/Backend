@@ -3,7 +3,7 @@
 <mapper namespace="com.meta.ale.mapper.VcTypeMapper">
 
 	<select id="getListVcType" resultType="VcTypeDto">
-		    SELECT type_id, type_name, pto, max_granted_days, description, expired_date
+		    SELECT type_id, type_name, pto, max_granted_days, description
 		    FROM vc_type
 	</select>
 
@@ -40,4 +40,9 @@
         SELECT * FROM VC_TYPE
         WHERE type_name = #{typeName}
     </select>
+
+	<select id="findVcTypeDtoByTypeId" resultType="VcTypeDto" parameterType="Long">
+		SELECT * FROM vc_type
+		WHERE type_id = #{typeId}
+	</select>
 </mapper>

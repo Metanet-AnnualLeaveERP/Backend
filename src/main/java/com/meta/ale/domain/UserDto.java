@@ -18,7 +18,6 @@ import java.util.Collections;
 public class UserDto implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-
     private Long userId;
     private String empNum;
     //@JsonIgnore     // JSON 직렬화/역직렬화 시에 해당 필드를 무시하도록 지정
@@ -30,7 +29,6 @@ public class UserDto implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role));
     }
-
     @Override
     public String getUsername() {
         return empNum;

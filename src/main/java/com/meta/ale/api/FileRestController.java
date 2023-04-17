@@ -2,6 +2,7 @@ package com.meta.ale.api;
 
 import com.meta.ale.service.FileService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
@@ -17,11 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-//@RequestMapping("/api")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileRestController {
 
-    FileService fileService;
+    private final FileService fileService;
 
     @PostMapping("/files/upload")
     public ResponseEntity<Map<String, Object>> uploadFile(MultipartFile[] uploadFiles) throws IOException {

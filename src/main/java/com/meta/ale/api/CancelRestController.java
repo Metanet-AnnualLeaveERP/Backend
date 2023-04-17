@@ -5,6 +5,7 @@ import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.service.CancelService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,21 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@AllArgsConstructor
-//@RequestMapping("/api")
+@RequiredArgsConstructor
 public class CancelRestController {
 
     private CancelService cancelService;
 
     /*휴가 취소 내역 조회*/
     @GetMapping("/vacations/cancel")
-    public Map<String, Object> cancelList(@RequestParam(required = false, defaultValue = "1") int page,
-                                          @RequestParam(required = false, defaultValue = "10") int pagenum,
-                                          @AuthenticationPrincipal UserDto user,
-                                          Criteria cri) {
-
-        cri.setPageNum(page);
-        cri.setAmount(pagenum);
+    public Map<String, Object> cancelList(@AuthenticationPrincipal UserDto user, Criteria cri) {
 
         /* ADMIN or EMP 판별
             userId == 0 -> admin */
@@ -47,10 +41,10 @@ public class CancelRestController {
         // 자기가 작성하지 않은 휴가 신청에 접근하면 403 에러와 null 반환
         // 혹은 커스텀 예외 처리
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다");
-// 예외 처리 예시
-//        if (user == null) {
-//            throw new UserNotFoundException(String.format("ID[%s] not found", id));
-//        }
+        // 예외 처리 예시
+        //        if (user == null) {
+        //            throw new UserNotFoundException(String.format("ID[%s] not found", id));
+        //        }
     }
 
     /*휴가 취소*/
@@ -62,10 +56,9 @@ public class CancelRestController {
 
     /*휴가취소 승인 / 휴가취소 반려 관리자 조회*/
     @GetMapping("/manager/vacations/cancel")
-    public ResponseEntity cancelListByMgr(@AuthenticationPrincipal UserDto userDto,
-                                          Criteria cri) {
+    public ResponseEntity cancelListByMgr(@AuthenticationPrincipal UserDto userDto, Criteria cri) {
 
-        Map<String,Object> result= cancelService.getApprovalCancelList(userDto, cri);
+        Map<String, Object> result = cancelService.getApprovalCancelList(userDto, cri);
 
         return ResponseEntity.ok(result);
     }
@@ -74,11 +67,12 @@ public class CancelRestController {
     @PutMapping("/manager/vacations/cancel/{cancel_id}")
     public ResponseEntity approvalCancel(@PathVariable("cancel_id") Long cancelId,
                                          @RequestParam("status") String status,
-                                         @RequestParam("comment")String comment) {
+                                         @RequestParam("comment") String comment) {
 
-        if (!cancelService.approvalCancel(cancelId, status,comment)) {
+        if (!cancelService.approvalCancel(cancelId, status, comment)) {
             return ResponseEntity.badRequest().body("비정상적인 처리입니다.");
-        } ;
+        }
+        ;
         return ResponseEntity.ok("정상 처리 되었습니다.");
     }
 

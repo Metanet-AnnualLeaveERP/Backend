@@ -2,16 +2,17 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.DeptDto;
 import com.meta.ale.mapper.DeptMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DeptServiceImpl implements DeptService{
 
-    @Autowired
-    private DeptMapper deptMapper;
+    private final DeptMapper deptMapper;
 
     @Override
     public DeptDto getByDeptName(String deptName) {

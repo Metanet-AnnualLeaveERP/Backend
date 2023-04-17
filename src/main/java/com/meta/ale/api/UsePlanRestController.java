@@ -9,24 +9,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/useplan")
+@RequestMapping("/useplan")
 public class UsePlanRestController {
 
     private final UsePlanService usePlanService;
 
-    @GetMapping("")
-    public Map<String, Object> getUsePlanList(@RequestParam(required = false, defaultValue = "1") int page,
-                                              @RequestParam(required = false, defaultValue = "10") int pagenum,
-                                              @RequestParam(required = false, defaultValue = "all") String keyword,
+    @GetMapping
+    public Map<String, Object> getUsePlanList(@RequestParam(required = false, defaultValue = "all") String keyword,
                                               @AuthenticationPrincipal UserDto userDto,
                                               Criteria criteria) throws Exception {
-        criteria.setPageNum(page);
-        criteria.setAmount(pagenum);
         criteria.setKeyword(keyword);
         return usePlanService.getUsePlanList(criteria, userDto);
     }
@@ -36,7 +31,7 @@ public class UsePlanRestController {
         return usePlanService.getUsePlanByPlanId(planId);
     }
 
-    @PutMapping("")
+    @PutMapping
     public ResponseEntity<?> modifyUsePlan(@RequestBody UsePlanDto usePlanDto) throws Exception {
         if (usePlanService.modifyUsePlan(usePlanDto)) {
             return ResponseEntity.ok().body("사용 계획이 수정되었습니다.");
@@ -44,7 +39,7 @@ public class UsePlanRestController {
         return ResponseEntity.badRequest().body("잘못된 요청입니다.");
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<?> addUsePlan(@RequestBody UsePlanDto usePlanDto) throws Exception {
         if (usePlanService.addUsePlan(usePlanDto)) {
             return ResponseEntity.ok().body("사용 계획이 추가되었습니다.");
