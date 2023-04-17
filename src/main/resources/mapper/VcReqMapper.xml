@@ -10,8 +10,9 @@
         FROM (
             SELECT
                 ROWNUM RN,
-                v.req_id, v.vc_type, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
+                v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email,
+                e.c_email, e.tel, e.mgr_id, e.dept_id, vt.*
             FROM
                 vc_req v JOIN emp e ON v.emp_id = e.emp_id
                          JOIN vc_type vt ON v.type_id = vt.type_id
@@ -114,10 +115,11 @@
 
     <!--  캘린더용 우리팀 부서의 휴가 뿌리기 위한 것  -->
     <select id="getVcReqByDept" resultMap="reqMap">
-        SELECT  V.*,E.name,E.C_EMAIL,E.POSITION
+        SELECT  V.*,E.name,E.C_EMAIL,E.POSITION, VT.*
         FROM VC_REQ V,
-             EMP E
-        WHERE V.EMP_ID = E.EMP_ID
+             EMP E,
+             VC_TYPE VT
+        WHERE V.EMP_ID = E.EMP_ID AND V.TYPE_ID = VT.TYPE_ID
           AND E.LEAVE_DATE IS NULL
           AND V.STATUS IN ('자동승인', '승인완료')
           AND E.DEPT_ID = (SELECT DEPT_ID
