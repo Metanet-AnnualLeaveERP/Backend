@@ -41,18 +41,16 @@
     <insert id="insertVcReq" parameterType="VcReqDto">
         INSERT INTO
         vc_req
-        (REQ_ID, REQ_DATE, START_DATE, END_DATE, VC_TYPE, REQ_DAYS, COMMENTS, STATUS, APRV_DATE, FILE_PATH, EMP_ID)
+        (REQ_ID, REQ_DATE, START_DATE, END_DATE, REQ_DAYS, COMMENTS, STATUS, APRV_DATE, FILE_PATH, EMP_ID, TYPE_ID)
         VALUES
-        (REQ_SQ.nextval, SYSDATE, #{startDate}, #{endDate}, #{vcType}, #{reqDays}, #{comments}, #{status}, #{aprvDate},
-        #{filePath}, #{empDto.empId})
+        (REQ_SQ.nextval, SYSDATE, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE},
+         #{reqDays,jdbcType=INTEGER}, #{comments,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{aprvDate,jdbcType=DATE},
+        #{filePath,jdbcType=VARCHAR}, #{empDto.empId}, #{vcTypeDto.typeId})
 
         <selectKey keyProperty="reqId" order="AFTER" resultType="long">
             SELECT REQ_SQ.currval FROM dual
         </selectKey>
     </insert>
-
-
-    <!--휴가 결재(승인/반려)-->
 
     <!--휴가 결재 내역 조회-->
     <select id="getVcReqListByMgr" resultMap="reqMap" parameterType="HashMap">
@@ -83,7 +81,7 @@
             , APRV_DATE = #{aprvDate}
         </if>
         <if test="deniedComments != null">
-            , DENIED_COMMENTs = #{deniedComments}
+            , DENIED_COMMENTS = #{deniedComments}
         </if>
         WHERE req_id = #{reqId}
     </update>
