@@ -12,6 +12,7 @@ import com.meta.ale.service.EmpService;
 import com.meta.ale.service.RefreshTokenService;
 import com.meta.ale.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -28,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 // CORS(Cross-Origin Resource Sharing) 정책을 지원하기 위한 것
@@ -52,6 +53,7 @@ public class UserRestController {
 
     @PostMapping("/user/login")
     public ResponseEntity<?> login(@RequestBody UserDto LoginUserDto) {
+        System.out.println(LoginUserDto);
 
         // Spring Security의 인증 매니저를 사용하여 로그인 요청을 인증
         Authentication authentication = authenticationManager
