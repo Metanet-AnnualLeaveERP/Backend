@@ -43,7 +43,7 @@ public class FileRestController {
     }
 
     @PostMapping("/files/download")
-    public ResponseEntity<Resource> download(@RequestBody String filePath) throws IOException {
+    public ResponseEntity download(@RequestBody String filePath) throws IOException {
         System.out.println("============파일 다운로드 api===========");
         System.out.println("filePath 인코딩 된 상태로 들어온 것 : " + filePath);
 
@@ -61,7 +61,15 @@ public class FileRestController {
         String fileName = decodedPath.split("\\\\")[3];
         System.out.println("file name : " + fileName);
 
-        Resource resource = new UrlResource(path.toUri());
+        Resource resource = null;
+        try {
+            resource = new UrlResource(path.toUri());
+
+        } catch (Exception e) {
+            System.out.println("여기 에러");
+            return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+//        e.printStackTrace();
+        }
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM) // 응답 데이터가 binary 데이터
