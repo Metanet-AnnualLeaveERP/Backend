@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +17,9 @@ public class CancelServiceImpl implements CancelService {
     private final VcReqService vcReqService;
 
     private final EmpService empService;
-
     private final VcTypeTotalService totalService;
+
+    private final GrantedVcService gvService;
 
     /*휴가 취소 내역 조회*/
     @Override
@@ -67,11 +66,9 @@ public class CancelServiceImpl implements CancelService {
 
         // 시작일이 현재일 이전이라면
         if (compare > 0) {
-//            System.out.println("자동 취소 가능");
             dto.setCancelStatus("자동취소");
         } // 시작일이 현재일이거나 이후라면 (지났다면)
         else if (compare == 0 || compare < 0) {
-//            System.out.println("취소 요청 필요");
             dto.setCancelStatus("대기중");
         }
         req.setStatus("취소");
@@ -82,21 +79,33 @@ public class CancelServiceImpl implements CancelService {
 
     /*휴가취소 승인 / 휴가취소 반려*/
     @Override
+    @Transactional
     public boolean approvalCancel(Long cancelId, String status, String comment) {
         CancelDto cancelDto = cancelMapper.getCancel(cancelId);
         if ((status == null || status.equals("")) || cancelDto.getCancelId() == null) {
             return false;
         }
-
         cancelDto.setCancelStatus(status);
         cancelDto.setResDate(new Date());
         cancelDto.setResComm(comment);
-
+        // (연차,반차)/나머지 따라 로직변경
+        VcReqDto vcReqDto = cancelDto.getVcReqDto();
+        Long typeId = vcReqDto.getVcTypeDto().getTypeId();
+        List<Long> types = new ArrayList<>();
+        types.add(1L);
+        types.add(2L);
         if (status.equals("승인")) {
-            VcReqDto vcReqDto = cancelDto.getVcReqDto();
-            VcTypeTotalDto total = totalService.getVcTotalByTypeAndEmpId(vcReqDto);
-            total.setCnt(total.getCnt() + vcReqDto.getReqDays());
-            totalService.updateVcTypeTotalByTotalId(total);
+            if (types.contains(typeId)) {
+                typeId = 1L;
+                vcReqDto.getVcTypeDto().setTypeId(typeId);
+                GrantedVcDto gvDto = gvService.findByExpiredDateAndEmpIdAndTypeId(vcReqDto);
+                gvDto.setRemainDays(gvDto.getRemainDays() + vcReqDto.getReqDays());
+                gvService.updateAnnualCnt(gvDto);
+            } else {
+                VcTypeTotalDto total = totalService.getVcTotalByTypeAndEmpId(vcReqDto);
+                total.setCnt(total.getCnt() + vcReqDto.getReqDays());
+                totalService.updateVcTypeTotalByTotalId(total);
+            }
         }
 
         return cancelMapper.updateCancelStatus(cancelDto) != 0;
