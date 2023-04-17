@@ -2,7 +2,7 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.GrantedVcDto;
-import com.meta.ale.domain.VcTypeDto;
+import com.meta.ale.domain.VcReqDto;
 
 import java.util.List;
 import java.util.Map;
@@ -17,8 +17,13 @@ public interface GrantedVcService {
 
     boolean insertGrantedVc(GrantedVcDto grantedVc);
 
-    public boolean insertAnnualByEmpOverOneYr() throws Exception;
+    boolean insertAnnualByEmpOverOneYr() throws Exception;
 
-    public List<GrantedVcDto> findPromoteAnnualLeave() throws Exception;
+    List<GrantedVcDto> findPromoteAnnualLeave() throws Exception;
+
+    boolean updateAnnualCnt(GrantedVcDto grantedVcDto);
+
+    // 올해 부여된 연차 부여를 찾기 위한 서비스
+    GrantedVcDto findByExpiredDateAndEmpIdAndTypeId(VcReqDto vcReqDto);
 
 }

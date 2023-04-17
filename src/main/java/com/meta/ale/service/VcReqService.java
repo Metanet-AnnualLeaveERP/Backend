@@ -21,7 +21,7 @@ public interface VcReqService {
     public VcReqDto getVcReq(Long reqId);
 
     /*휴가 신청*/
-    public void createVcReq(VcReqDto dto, MultipartFile[] uploadFiles) throws IOException;
+    public void createVcReq(VcReqDto dto, MultipartFile[] uploadFiles) throws Exception;
 
     /*휴가 신청 상태 변경*/
     public boolean updateVcReqStatus(VcReqDto dto);

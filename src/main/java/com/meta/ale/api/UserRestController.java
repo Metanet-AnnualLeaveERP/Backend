@@ -50,7 +50,6 @@ public class UserRestController {
 
         // 인증된 사용자 정보를 가져옴
         UserDto userDto = (UserDto) authentication.getPrincipal();
-        System.out.println(LoginUserDto.toString());
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDto);
 
         RefreshTokenDto refreshTokenDto = refreshTokenService.createRefreshToken(userDto.getUserId());

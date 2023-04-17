@@ -21,14 +21,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GrantedVcServiceImpl implements GrantedVcService {
 
-
-    private final GrantedVcMapper mapper;
     private final VcTypeTotalMapper totalMapper;
     private final GrantedVcMapper vcMapper;
     private final VcTypeMapper vcTypeMapper;
     private final EmpService empService;
     private final VcTypeService vcTypeService;
-
     private final MailService mailService;
     private final MailServiceForGrantedVc mailServiceForGrantedVc;
 
@@ -41,26 +38,26 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
         Map<String, Object> map = new HashMap<>();
         map.put("paging", new PagenationDTO(criteria, getGrantedVcCount()));
-        map.put("grantedVcs", mapper.getListGrantedVc(dto));
+        map.put("grantedVcs", vcMapper.getListGrantedVc(dto));
         return map;
     }
 
     /* 임의휴가부여내역 상세조회 */
     @Override
     public GrantedVcDto getGrantedVc(Long vcId) {
-        return mapper.getGrantedVc(vcId);
+        return vcMapper.getGrantedVc(vcId);
     }
 
     /* 임의휴가부여내역 삭제 */
     @Override
     @Transactional
     public boolean deleteGrantedVc(Long vcId) {
-        GrantedVcDto gvDto = mapper.getGrantedVc(vcId);
+        GrantedVcDto gvDto = vcMapper.getGrantedVc(vcId);
         Long remainDays = gvDto.getRemainDays();
         EmpDto empDto = gvDto.getEmpDto();
         VcTypeDto typeDto = gvDto.getVcTypeDto();
 
-        int result = mapper.deleteGrantedVc(vcId);
+        int result = vcMapper.deleteGrantedVc(vcId);
         if (result != 0) {
             VcTypeTotalDto totalDto = new VcTypeTotalDto();
             totalDto.setCnt(remainDays);
@@ -79,7 +76,7 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean insertGrantedVc(GrantedVcDto grantedVc) {
         try {
-            int result = mapper.insertGrantedVc(grantedVc);
+            int result = vcMapper.insertGrantedVc(grantedVc);
             Long typeId = grantedVc.getVcTypeDto().getTypeId();
             VcTypeDto typeDto = vcTypeMapper.findVcTypeDtoByTypeId(typeId);
             grantedVc.setVcTypeDto(typeDto);
@@ -127,19 +124,12 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         Date expiredDate = new Date(date.getTime() + (365 * 24 * 60 * 60 * 1000L));
         //휴가 타입에 대한 정보 받아오기
         VcTypeDto vcTypeDto = vcTypeService.getVcType("연차");
-
         // 1년 이상 사람에 대한 연차 계산 후 부여
         boolean overOneYrList = addEmpOverOneYrList(date, expiredDate, today, vcTypeDto);
-        if (overOneYrList) System.out.println("1년 이상 사람 존재 연차부여완료");
-        if (!overOneYrList) System.out.println("1년 이상 사람 존재안함");
         // 1년이 된 사람들에 대한 연차 부여
         boolean oneYrList = addEmpOneYrList(date, expiredDate, vcTypeDto);
-        if (oneYrList) System.out.println("1년이 된 사람 존재 : 연차 부여 완료");
-        if (!oneYrList) System.out.println("1년 된 사람 존재안함");
         // 1년이 안된 사람들에 대한 연차 계산
         boolean underOneYrList = addEmpUnderOneYrList(date, expiredDate, vcTypeDto);
-        if (underOneYrList) System.out.println("1년 안된 사람들 : 연차 부여 완료");
-        if (!underOneYrList) System.out.println("1년 안된 사람들 존재안함");
         return true;
     }
 
@@ -147,6 +137,15 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     public List<GrantedVcDto> findPromoteAnnualLeave() throws Exception {
         VcTypeDto vcTypeDto = vcTypeService.getVcType("연차");
         return vcMapper.findPromoteAnnualLeaveList(vcTypeDto);
+    }
+    @Override
+    public boolean updateAnnualCnt(GrantedVcDto grantedVcDto){
+        return vcMapper.updateAnnualGranted(grantedVcDto) == 0;
+    }
+
+    @Override // 올해 부여된 연차 부여를 찾기 위한 서비스
+    public GrantedVcDto findByExpiredDateAndEmpIdAndTypeId(VcReqDto vcReqDto){
+        return vcMapper.findByEmpIdVcTypeAndExpiredDate(vcReqDto);
     }
 
 
@@ -253,7 +252,7 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
     // 전체 부여휴가 row count
     private int getGrantedVcCount() {
-        return mapper.getGrantedVcCount().intValue();
+        return vcMapper.getGrantedVcCount().intValue();
     }
 
 

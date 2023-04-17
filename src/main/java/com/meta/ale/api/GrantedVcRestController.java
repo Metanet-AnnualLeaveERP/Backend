@@ -44,7 +44,6 @@ public class GrantedVcRestController {
     public ResponseEntity<Object> getGrantedVc(@PathVariable("vcId") Long vcId) {
         GrantedVcDto gvDto = grantedVcService.getGrantedVc(vcId);
         if (gvDto != null) {
-            System.out.println(gvDto);
             return ResponseEntity.status(HttpStatus.OK).body(gvDto);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다");

@@ -10,13 +10,11 @@
         FROM (
             SELECT
                 ROWNUM RN,
-
-                v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-                v.aprv_date,v.file_path, v.type_id, t.type_name, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
+                v.req_id, v.vc_type, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
             FROM
                 vc_req v JOIN emp e ON v.emp_id = e.emp_id
-            JOIN vc_type t on v.type_id = t.type_id
-
+                         JOIN vc_type vt ON v.type_id = vt.type_id
             WHERE
             <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
             <if test="user_id != 0">
@@ -29,9 +27,11 @@
     <!--휴가 신청 내역 상세 조회-->
     <select id="getVcReq" resultMap="reqMap" parameterType="Long">
         SELECT
-            v.*, e.*
+            v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+            v.aprv_date,v.file_path, e.*, vt.*
         FROM
             vc_req v JOIN emp e ON v.emp_id = e.emp_id
+                     JOIN vc_type vt ON v.type_id = vt.type_id
         WHERE
             req_id = #{reqId}
     </select>
@@ -41,18 +41,16 @@
     <insert id="insertVcReq" parameterType="VcReqDto">
         INSERT INTO
         vc_req
-        (REQ_ID, REQ_DATE, START_DATE, END_DATE, VC_TYPE, REQ_DAYS, COMMENTS, STATUS, APRV_DATE, FILE_PATH, EMP_ID)
+        (REQ_ID, REQ_DATE, START_DATE, END_DATE, REQ_DAYS, COMMENTS, STATUS, APRV_DATE, FILE_PATH, EMP_ID, TYPE_ID)
         VALUES
-        (REQ_SQ.nextval, SYSDATE, #{startDate}, #{endDate}, #{vcType}, #{reqDays}, #{comments}, #{status}, #{aprvDate},
-        #{filePath}, #{empDto.empId})
+        (REQ_SQ.nextval, SYSDATE, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE},
+         #{reqDays,jdbcType=INTEGER}, #{comments,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{aprvDate,jdbcType=DATE},
+        #{filePath,jdbcType=VARCHAR}, #{empDto.empId}, #{vcTypeDto.typeId})
 
         <selectKey keyProperty="reqId" order="AFTER" resultType="long">
             SELECT REQ_SQ.currval FROM dual
         </selectKey>
     </insert>
-
-
-    <!--휴가 결재(승인/반려)-->
 
     <!--휴가 결재 내역 조회-->
     <select id="getVcReqListByMgr" resultMap="reqMap" parameterType="HashMap">
@@ -83,7 +81,7 @@
             , APRV_DATE = #{aprvDate}
         </if>
         <if test="deniedComments != null">
-            , DENIED_COMMENTs = #{deniedComments}
+            , DENIED_COMMENTS = #{deniedComments}
         </if>
         WHERE req_id = #{reqId}
     </update>

@@ -135,7 +135,6 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public boolean modifyEmp(EmpDto empDto) throws Exception {
-        System.out.println(empDto.toString());
         DeptDto newDeptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName());  // 변경하는 부서정보
         DeptDto originDeptDto = deptMapper.selectByEmpId(empDto.getEmpId());    // 기존의 부서 정보
 
