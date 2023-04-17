@@ -29,7 +29,6 @@ public class VcTypeServiceTest {
         vcTypeDto.setDescription("테스트유형4입니다");
         vcTypeDto.setMaxGrantedDays(10L);
         vcTypeDto.setPto(0L);
-        vcTypeDto.setExpiredDate(new Date());
         service.insertVcType(vcTypeDto);
     }
 
@@ -41,7 +40,6 @@ public class VcTypeServiceTest {
         vcTypeDto.setDescription("제이유닛으로테스트");
         vcTypeDto.setPto(0L);
         vcTypeDto.setMaxGrantedDays(999L);
-        vcTypeDto.setExpiredDate(new Date());
         vcTypeDto.setTypeId(36L);
         service.updateVcType(vcTypeDto);
     }

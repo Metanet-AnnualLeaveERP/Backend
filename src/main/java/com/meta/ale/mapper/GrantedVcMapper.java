@@ -27,5 +27,7 @@ public interface GrantedVcMapper {
     int deleteGrantedVc(Long vcId);
     Long getGrantedVcCount();
 
+    List<GrantedVcDto> getListAnnualLeave(HashMap<String, Object> hashMap);
+
 
 }

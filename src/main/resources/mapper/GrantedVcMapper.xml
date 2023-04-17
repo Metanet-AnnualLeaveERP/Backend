@@ -25,9 +25,32 @@
                          JOIN dept d ON d.dept_id = e.dept_id
                  WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-
     )
     <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
+
+    <select id="getListAnnualLeave" resultMap="grantedVc" parameterType="HashMap">
+    SELECT *
+    FROM
+        (SELECT
+            ROWNUM RN,
+            d.dept_name,
+            e.emp_id,
+            e.name,
+            vt.type_name,
+            gv.vc_id,
+            gv.granted_date,
+            gv.expired_date,
+            gv.remain_days,
+            gv.type_id
+        FROM granted_vc gv
+            JOIN emp e ON e.emp_id = gv.emp_id
+            JOIN dept d ON d.dept_id = e.dept_id
+            JOIN vc_type vt ON d.dept_id = e.dept_id
+        WHERE vt.type_name = '연차'
+            <![CDATA[ ROWNUM <= #{pageNum} ]]>
+        )
+    WHERE <![CDATA[ RN > (#{pageNum}-1) * #{amount}]]>
     </select>
 
     <select id="getGrantedVc" resultMap="grantedVc" parameterType="Long">
@@ -39,6 +62,18 @@
                  JOIN users u on e.user_id = u.user_id
         WHERE
             vc_id = #{vcId}
+    </select>
+
+    <select id="getAnnualLeave" resultMap="grantedVc" parameterType="Long">
+        SElECT e.*, gv.*, vt.*, d.*, u.role
+        FROM granted_vc gv
+                 JOIN emp e ON e.emp_id = gv.emp_id
+                 JOIN vc_type vt ON gv.type_id = vt.type_id
+                 JOIN dept d ON d.dept_id = e.dept_id
+                 JOIN users u on e.user_id = u.user_id
+        WHERE
+            vc_id = #{vcId}
+        AND vt.type_name = '연차'
     </select>
 
     <insert id="insertGrantedVc" parameterType="GrantedVcDto">
@@ -121,6 +156,7 @@
         <association property="vcTypeDto"   resultMap="vcType" />
         <association property="empDto"      resultMap="emp"/>
     </resultMap>
+
 
     <resultMap type="VcTypeDto" id="vcType">
         <id property="typeId"               column="type_id" />

@@ -92,4 +92,17 @@ class GrantedVcMapperTest {
     void getVcReqCount() {
         System.out.println(mapper.getGrantedVcCount());
     }
+
+    @Test
+    public void getListAnnualLeave(){
+        HashMap<String, Object> map = new HashMap<>();
+        Criteria criteria = new Criteria();
+
+        map.put("pageNum", criteria.getPageNum());
+        map.put("amount", criteria.getAmount());
+        map.put("userId", 1L);
+
+        List<GrantedVcDto> list = mapper.getListAnnualLeave(map);
+        list.forEach(item -> System.out.println("[[연차휴가내역]]"+ item));
+    }
 }
