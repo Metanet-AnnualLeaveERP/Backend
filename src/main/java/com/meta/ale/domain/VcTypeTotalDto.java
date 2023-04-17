@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VcTypeTotalDto {
     private Long totalId;
+    private Long totalGvCnt;
     private Long cnt;
     private VcTypeDto vcTypeDto;
     private EmpDto empDto;

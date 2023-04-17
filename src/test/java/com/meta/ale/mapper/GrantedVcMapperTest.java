@@ -100,7 +100,6 @@ class GrantedVcMapperTest {
 
         map.put("pageNum", criteria.getPageNum());
         map.put("amount", criteria.getAmount());
-        map.put("userId", 1L);
 
         List<GrantedVcDto> list = mapper.getListAnnualLeave(map);
         list.forEach(item -> System.out.println("[[연차휴가내역]]"+ item));

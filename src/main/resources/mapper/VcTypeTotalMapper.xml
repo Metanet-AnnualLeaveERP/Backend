@@ -4,7 +4,7 @@
 
     <insert id="insertVcTypeTotal" parameterType="VcTypeTotalDto">
         INSERT INTO vc_type_total
-        VALUES      (total_sq.nextval, #{cnt}, #{vcTypeDto.typeId}, #{empDto.empId})
+        VALUES      (total_sq.nextval, #{cnt}, #{vcTypeDto.typeId}, #{empDto.empId}, #{total_gv_cnt})
     </insert>
 
     <update id="updateVcTypeTotal" parameterType="VcTypeTotalDto">
@@ -20,7 +20,8 @@
     </update>
     <update id="plusVcTypeTotal" parameterType="VcTypeTotalDto">
         UPDATE vc_type_total
-        SET cnt = cnt + #{cnt}
+        SET cnt = cnt + #{cnt},
+            total_gv_cnt = total_gv_cnt + #{totalGvCnt}
         WHERE type_id = #{vcTypeDto.typeId}
         AND emp_id = #{empDto.empId}
     </update>
@@ -34,8 +35,8 @@
 
     <!-- 휴가유형 신설 시 모든 emp 에게 생성된 휴가유형 개수 0 으로 컬럼 신설  -->
     <insert id ="insertVcTypeTotalByEmpIds" parameterType="VcTypeTotalDto">
-        INSERT INTO vc_type_total (total_id, cnt, type_id, emp_id)
-        SELECT total_sq.NEXTVAL, 0,
+        INSERT INTO vc_type_total (total_id, total_gv_cnt, cnt, type_id, emp_id)
+        SELECT total_sq.NEXTVAL, 0, 0,
             #{vcTypeDto.typeId},
             emp_id
         FROM emp
@@ -61,6 +62,7 @@
 
     <resultMap type="VcTypeTotalDto" id="vcTypeTotal">
         <id property="totalId"              column="total_id"/>
+        <result property="totalGvCnt"       column="total_gv_cnt"/>
         <result property="cnt"              column="cnt"/>
         <association property="vcTypeDto"   resultMap="vcType"/>
         <association property="empDto"      resultMap="emp"/>

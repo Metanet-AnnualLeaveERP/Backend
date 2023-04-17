@@ -38,7 +38,7 @@
                          JOIN dept d ON d.dept_id = e.dept_id
                  WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-    )
+        )
     <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
     </select>
 
@@ -60,10 +60,10 @@
             JOIN emp e ON e.emp_id = gv.emp_id
             JOIN dept d ON d.dept_id = e.dept_id
             JOIN vc_type vt ON d.dept_id = e.dept_id
-        WHERE vt.type_name = '연차'
-            <![CDATA[ ROWNUM <= #{pageNum} ]]>
+        WHERE vt.type_name = '연차' AND
+            <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         )
-    WHERE <![CDATA[ RN > (#{pageNum}-1) * #{amount}]]>
+    WHERE <![CDATA[ RN > ( #{pageNum}-1) * #{amount}]]>
     </select>
 
     <select id="getGrantedVc" resultMap="grantedVc" parameterType="Long">
@@ -90,13 +90,14 @@
     </select>
 
     <insert id="insertGrantedVc" parameterType="GrantedVcDto">
-        INSERT INTO granted_vc VALUES(vc_sq.nextval,
-                                      #{grantedDate},
-                                      #{expiredDate},
-                                      #{vcDays},
-                                      #{vcDays},
-                                      #{vcTypeDto.typeId},
-                                      #{empDto.empId})
+        INSERT INTO granted_vc(vc_id, granted_date, expired_date, vc_days, remain_days, type_id, emp_id)
+            VALUES(vc_sq.nextval,
+          #{grantedDate},
+          #{expiredDate},
+          #{vcDays},
+          #{vcDays},
+          #{vcTypeDto.typeId},
+          #{empDto.empId})
     </insert>
 
     <select id="findByEmpIdVcType" resultType="GrantedVcDto">
