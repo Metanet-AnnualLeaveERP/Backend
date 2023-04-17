@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Log4j2
@@ -92,5 +91,17 @@ class GrantedVcMapperTest {
     @Test
     void getVcReqCount() {
         System.out.println(mapper.getGrantedVcCount());
+    }
+
+    @Test
+    public void getListAnnualLeave(){
+        HashMap<String, Object> map = new HashMap<>();
+        Criteria criteria = new Criteria();
+
+        map.put("pageNum", criteria.getPageNum());
+        map.put("amount", criteria.getAmount());
+
+        List<GrantedVcDto> list = mapper.getListAnnualLeave(map);
+        list.forEach(item -> System.out.println("[[연차휴가내역]]"+ item));
     }
 }

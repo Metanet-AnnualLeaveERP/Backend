@@ -3,11 +3,10 @@
 <mapper namespace="com.meta.ale.mapper.VcTypeMapper">
 
 	<select id="getListVcType" resultType="VcTypeDto">
-		    SELECT type_id, type_name, pto, max_granted_days, description
+		    SELECT *
 		    FROM vc_type
 	</select>
 
-	<!-- insert 후 typeId 추가해서 dto 반환 -->
 	<insert id="insertVcType" parameterType="VcTypeDto">
 		<selectKey keyProperty="typeId" resultType="Long" order="BEFORE">
 			SELECT TYPE_SQ.nextval FROM DUAL

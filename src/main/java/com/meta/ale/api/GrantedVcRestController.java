@@ -46,7 +46,7 @@ public class GrantedVcRestController {
         if (gvDto != null) {
             return ResponseEntity.status(HttpStatus.OK).body(gvDto);
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다");
     }
 
     /* 임의휴가내역 삭제 */

@@ -34,7 +34,7 @@ public class VcTypeTotalServiceImpl implements VcTypeTotalService {
     @Override
     public Map<String,Object> findAllMyVacation(UserDto userDto) {
         Map<String,Object> remainVc=  new HashMap<>();
-        if (userDto.getRole().equals("ROLE_ADMIN")) {
+        if (userDto.getRole()!=null && userDto.getRole().equals("ROLE_ADMIN")) {
             return null;
         }
         EmpDto empDto= empService.findEmpByUserId(userDto.getUserId());

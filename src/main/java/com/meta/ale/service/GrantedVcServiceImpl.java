@@ -94,6 +94,7 @@ public class GrantedVcServiceImpl implements GrantedVcService {
             // total 휴가내역 추가
             VcTypeTotalDto vcTypeTotal = new VcTypeTotalDto();
             vcTypeTotal.setCnt(count);
+            vcTypeTotal.setTotalGvCnt(count);
 
             VcTypeDto vcTypeDto = new VcTypeDto();
             vcTypeDto.setTypeId(typeId);

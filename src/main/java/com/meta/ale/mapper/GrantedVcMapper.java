@@ -28,4 +28,8 @@ public interface GrantedVcMapper {
     int deleteGrantedVc(Long vcId);
     Long getGrantedVcCount();
     GrantedVcDto findByEmpIdVcTypeAndExpiredDate(VcReqDto vcReqDto);
+
+    List<GrantedVcDto> getListAnnualLeave(HashMap<String, Object> hashMap);
+
+
 }

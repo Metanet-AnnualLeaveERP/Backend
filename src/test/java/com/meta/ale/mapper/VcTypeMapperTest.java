@@ -25,7 +25,6 @@ class VcTypeMapperTest {
         vc.setPto(0L); // 유급여부
         vc.setMaxGrantedDays(20L);
         vc.setStartEnableDate(new Date());
-//        vc.setExpiredDate(new Date());
         mapper.insertVcType(vc);
     }
 
@@ -43,7 +42,6 @@ class VcTypeMapperTest {
         vc.setPto(0L); // 무급
         vc.setMaxGrantedDays(10L);
         vc.setStartEnableDate(new Date());
-//        vc.setExpiredDate(new Date());
         mapper.updateVcType(vc);
     }
 

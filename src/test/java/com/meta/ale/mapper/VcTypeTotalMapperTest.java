@@ -23,6 +23,7 @@ class VcTypeTotalMapperTest {
     void insertVcTypeTotal(){
         VcTypeTotalDto dto = new VcTypeTotalDto();
         dto.setCnt(99L);
+        dto.setTotalGvCnt(99L);
 
         VcTypeDto type = new VcTypeDto();
         type.setTypeId(1L);
