@@ -2,6 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.meta.ale.mapper.GrantedVcMapper">
 
+    <select id="findByEmpIdVcTypeAndExpiredDate" resultMap="grantedVc">
+        SELECT G.* FROM GRANTED_VC G ,EMP E, VC_TYPE V
+        WHERE
+            G.EMP_ID = E.EMP_ID
+          AND
+            G.TYPE_ID = V.TYPE_ID
+          AND TO_CHAR(G.EXPIRED_DATE,'yyyy') = TO_CHAR(SYSDATE,'yyyy')
+          AND E.EMP_ID = #{empDto.empId}
+          AND V.TYPE_ID = #{vcTypeDto.typeId}
+
+    </select>
+
+
     <select id="getListGrantedVc" resultMap="grantedVc" parameterType="hashMap">
         SELECT
             *
@@ -57,12 +70,18 @@
           AND   TYPE_ID = #{vcTypeDto.typeId}
     </select>
 
-    <update id="updateAnnualGranted" parameterType="GrantedVcDto">
+    <update id="updateAnnualGranted" parameterType="GrantedVcDto" >
         UPDATE GRANTED_VC
         SET GRANTED_DATE = #{grantedDate},
+            <if test="expiredDate != null">
             EXPIRED_DATE = #{expiredDate},
-            VC_DAYS      = #{vcDays},
+            </if>
+            <if test="vcDays != null or vcDays != 0">
+            VC_DAYS = #{vcDays},
+            </if>
+            <if test="remainDays !=null or remainDays lt 0">
             REMAIN_DAYS  = #{remainDays}
+            </if>
         WHERE VC_ID = #{vcId}
 
     </update>

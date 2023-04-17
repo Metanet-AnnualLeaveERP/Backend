@@ -5,6 +5,8 @@ import com.meta.ale.domain.VcTypeDto;
 import com.meta.ale.domain.VcTypeTotalDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface VcTypeTotalMapper {
     void insertVcTypeTotal(VcTypeTotalDto vcTypeTotalDto);
@@ -19,4 +21,6 @@ public interface VcTypeTotalMapper {
     void insertVcTypeTotalByEmpIds(VcTypeTotalDto vcTypeTotalDto);
 
     VcTypeTotalDto getVcTotalByTypeAndEmpId(VcReqDto vcReqDto);
+
+    List<VcTypeTotalDto> findAllMyVacation(Long empId);
 }

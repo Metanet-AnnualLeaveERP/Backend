@@ -44,7 +44,6 @@ public class GrantedVcRestController {
     public ResponseEntity<Object> getGrantedVc(@PathVariable("vcId") Long vcId) {
         GrantedVcDto gvDto = grantedVcService.getGrantedVc(vcId);
         if (gvDto != null) {
-            System.out.println(gvDto);
             return ResponseEntity.status(HttpStatus.OK).body(gvDto);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다");

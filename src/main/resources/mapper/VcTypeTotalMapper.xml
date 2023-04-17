@@ -53,7 +53,11 @@
                      TYPE_ID=#{vcTypeDto.typeId} AND
                      EMP_ID =#{empDto.empId}
     </select>
+    <select id="findAllMyVacation" resultMap="vcTypeTotal">
+        SELECT * FROM VC_TYPE_TOTAL T , VC_TYPE V
+        WHERE EMP_ID =#{empId} AND T.type_id = V.type_id
 
+    </select>
 
     <resultMap type="VcTypeTotalDto" id="vcTypeTotal">
         <id property="totalId"              column="total_id"/>
@@ -74,7 +78,7 @@
 
     <resultMap type="VcTypeDto" id="vcType">
         <id property="typeId"               column="type_id" />
-        <result property="name"             column="name" />
+        <result property="typeName"             column="TYPE_NAME" />
         <result property="description"      column="description" />
         <result property="pto"              column="pto" />
         <result property="maxGrantedDate"   column="max_granted_date" />
