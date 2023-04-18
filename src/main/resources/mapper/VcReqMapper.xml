@@ -59,23 +59,28 @@
         *
         FROM (
         SELECT
-        ROWNUM RN, v.*,u.EMP_NUM,u.ROLE, e.name,e.p_email,e.c_email, e.position,e.hire_date
+             ROWNUM RN, A.*
         FROM
-        vc_req v JOIN emp e ON v.emp_id = e.emp_id
-        JOIN USERS u ON u.USER_ID = e.USER_ID
+            (SELECT
+                 v.*,u.EMP_NUM,u.ROLE, e.name,e.p_email,e.c_email, e.position,e.hire_date
+                FROM
+                    vc_req v JOIN emp e ON v.emp_id = e.emp_id
+                    JOIN USERS u ON u.USER_ID = e.USER_ID
+                WHERE
+                    e.leave_date IS NULL
+                    AND u.role NOT IN ('ROLE_ADMIN')
+                <if test="deptId != null">
+                    AND e.dept_id = #{deptId}
+                </if>
+                <if test="keyword != null and !keyword.equals('')">
+                    AND v.STATUS = #{keyword}
+                </if>
+                ORDER BY REQ_DATE ASC
+            ) A
         WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-        AND e.leave_date IS NULL
-        AND u.role NOT IN ('ROLE_ADMIN')
-        <if test="deptId != null">
-            AND e.dept_id = #{deptId}
-        </if>
-        <if test="keyword != null and !keyword.equals('')">
-            AND v.STATUS = #{keyword}
-        </if>
-
         )
-        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+        <![CDATA[ WHERE ROWNUM > (#{pageNum}-1) * #{amount} ]]>
     </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
