@@ -47,6 +47,9 @@ public class VcReqServiceImpl implements VcReqService {
     public VcReqDto getVcReqCompared(Long reqId, Long currUserId) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
+        if(currUserId ==0){
+            return dto;
+        }
         EmpDto dbEmp = dto.getEmpDto();
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;

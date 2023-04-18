@@ -59,12 +59,14 @@
         *
         FROM (
         SELECT
-        ROWNUM RN, v.*, e.name,e.p_email,e.c_email, e.position,e.hire_date
+        ROWNUM RN, v.*,u.EMP_NUM,u.ROLE, e.name,e.p_email,e.c_email, e.position,e.hire_date
         FROM
         vc_req v JOIN emp e ON v.emp_id = e.emp_id
+        JOIN USERS u ON u.USER_ID = e.USER_ID
         WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         AND e.leave_date IS NULL
+        AND u.role NOT IN ('ROLE_ADMIN')
         <if test="deptId != null">
             AND e.dept_id = #{deptId}
         </if>
@@ -162,7 +164,7 @@
 
     <resultMap id="userMap" type="UserDto">
         <id property="userId" column="user_id" />
-<!--        <result property="empNum" column="emp_num" />-->
+        <result property="empNum" column="emp_num" />
         <result property="role" column="role" />
 
     </resultMap>
