@@ -20,7 +20,7 @@ public class GrantedVcDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date expiredDate;
     private Long vcDays;
-    private Long remainDays;
+    private Double remainDays;
     private VcTypeDto vcTypeDto;
     private EmpDto empDto;
 }

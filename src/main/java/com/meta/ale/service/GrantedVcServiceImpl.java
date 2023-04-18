@@ -53,14 +53,14 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean deleteGrantedVc(Long vcId) {
         GrantedVcDto gvDto = vcMapper.getGrantedVc(vcId);
-        Long remainDays = gvDto.getRemainDays();
+        Double remainDays = gvDto.getRemainDays();
         EmpDto empDto = gvDto.getEmpDto();
         VcTypeDto typeDto = gvDto.getVcTypeDto();
 
         int result = vcMapper.deleteGrantedVc(vcId);
         if (result != 0) {
             VcTypeTotalDto totalDto = new VcTypeTotalDto();
-            totalDto.setCnt(remainDays);
+            totalDto.setCnt(remainDays.longValue());
             totalDto.setVcTypeDto(typeDto);
             totalDto.setEmpDto(empDto);
             totalMapper.minusVcTypeTotal(totalDto);
@@ -165,7 +165,7 @@ public class GrantedVcServiceImpl implements GrantedVcService {
             for (EmpDto e : empOverOneYrList) {
                 //근속일수 계산
                 long duration = empCalcHireDate(today, e.getHireDate());
-                GrantedVcDto grantedVcDto = new GrantedVcDto(null, date, expiredDate, duration, duration, vcTypeDto, e);
+                GrantedVcDto grantedVcDto = new GrantedVcDto(null, date, expiredDate, duration, (double)duration, vcTypeDto, e);
                 vcMapper.insertAnnualGranted(grantedVcDto);
                 toMessage(e);
             }
@@ -189,12 +189,12 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                 GrantedVcDto grantedVcDtoToDB = vcMapper.findByEmpIdVcType(grantedVcDto);
 
                 Long vcDays = grantedVcDtoToDB.getVcDays();
-                Long remainDays = grantedVcDtoToDB.getRemainDays();
+                double remainDays = grantedVcDtoToDB.getRemainDays();
                 //휴가가 새롭게 부여되기 때문에 부여일자와 만료일자를 부여된 시점으로 부터 초기화
                 // 1년이 된 사람은 옛날엔 사용갯수에 대해 차감했는데 22년 5월 이후부턴 법적으로
                 // 기존에 대한 연차를 놔두고 15개가 부여되기 때문에 하드코딩으로 처리했음
                 grantedVcDtoToDB.setVcDays(vcDays + 15L);
-                grantedVcDtoToDB.setRemainDays(remainDays + 15L);
+                grantedVcDtoToDB.setRemainDays(remainDays + 15);
                 grantedVcDtoToDB.setGrantedDate(date);
                 grantedVcDtoToDB.setExpiredDate(expiredDate);
                 vcMapper.updateAnnualGranted(grantedVcDtoToDB);
@@ -219,16 +219,16 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                 GrantedVcDto grantedVcDtoToDB = vcMapper.findByEmpIdVcType(grantedVcDto);
                 if (grantedVcDtoToDB != null && grantedVcDtoToDB.getVcId() != null) {
                     Long vcDays = grantedVcDtoToDB.getVcDays();
-                    Long remainDays = grantedVcDtoToDB.getRemainDays();
+                    Double remainDays = grantedVcDtoToDB.getRemainDays();
                     grantedVcDtoToDB.setGrantedDate(date);
                     grantedVcDtoToDB.setExpiredDate(date);
-                    grantedVcDtoToDB.setRemainDays(vcDays + 1L);
+                    grantedVcDtoToDB.setRemainDays((double)vcDays + 1);
                     grantedVcDtoToDB.setRemainDays(remainDays + 1L);
                     grantedVcDtoToDB.setVcTypeDto(vcTypeDto);
                     vcMapper.updateAnnualGranted(grantedVcDtoToDB);
 
                 } else {
-                    grantedVcDto = new GrantedVcDto(null, date, expiredDate, 1L, 1L, vcTypeDto, e);
+                    grantedVcDto = new GrantedVcDto(null, date, expiredDate, 1L, 1.0, vcTypeDto, e);
                     vcMapper.insertAnnualGranted(grantedVcDto);
                 }
                 toMessage(e);

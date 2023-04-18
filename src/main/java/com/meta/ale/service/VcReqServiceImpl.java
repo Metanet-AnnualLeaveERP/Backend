@@ -76,7 +76,7 @@ public class VcReqServiceImpl implements VcReqService {
         // 연차 / 반차가 아닌 경우
         if (!vcType.contains(dto.getVcTypeDto().getTypeId())) {
             VcTypeTotalDto totalDto = totalService.getVcTotalByTypeAndEmpId(dto);
-            totalDto.setCnt(totalDto.getCnt() - dto.getReqDays());
+            totalDto.setCnt((long) (totalDto.getCnt() - dto.getReqDays()));
             totalService.updateVcTypeTotalByTotalId(totalDto);
         }else{
             // 반차가 들어올 수도 있어서 연차로 변환
@@ -116,7 +116,7 @@ public class VcReqServiceImpl implements VcReqService {
         if (status.equals("반려")) {
             VcTypeTotalDto vcTotal = totalService.getVcTotalByTypeAndEmpId(vcReq);
             Long cnt = vcTotal.getCnt();
-            cnt += vcReq.getReqDays();
+            cnt += vcReq.getReqDays().longValue();
             vcTotal.setCnt(cnt);
             totalService.updateVcTypeTotalByTotalId(vcTotal);
         }
