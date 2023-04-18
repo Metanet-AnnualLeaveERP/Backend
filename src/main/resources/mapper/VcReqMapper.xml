@@ -29,9 +29,10 @@
     <select id="getVcReq" resultMap="reqMap" parameterType="Long">
         SELECT
             v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-            v.aprv_date,v.file_path, e.*, vt.*
+            v.aprv_date,v.file_path, e.*, d.dept_name, vt.*
         FROM
             vc_req v JOIN emp e ON v.emp_id = e.emp_id
+                     JOIN dept d ON e.dept_id = d.dept_id
                      JOIN vc_type vt ON v.type_id = vt.type_id
         WHERE
             req_id = #{reqId}
@@ -169,6 +170,7 @@
 
     <resultMap id="deptMap" type="DeptDto">
         <id property="deptId" column="dept_id" />
+        <result property="deptName" column="dept_name" />
     </resultMap>
 
 
