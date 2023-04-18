@@ -1,5 +1,6 @@
 package com.meta.ale.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.VcReqMapper;
 import lombok.RequiredArgsConstructor;
@@ -66,21 +67,27 @@ public class VcReqServiceImpl implements VcReqService {
         dto.setFilePath(fileUpload(uploadFiles));
         dto.setAprvDate(null);
 
+        ObjectMapper objectMapper = new ObjectMapper();
+
         List<Long> vcType = new ArrayList();
-        vcType.add(1L);
-        vcType.add(2L);
+        vcType.add(1L); // 연차
+        vcType.add(2L); // 오전반차
+        vcType.add(3L); // 오후반차
+        // 연차 / 반차가 아닌 경우
         if (!vcType.contains(dto.getVcTypeDto().getTypeId())) {
             VcTypeTotalDto totalDto = totalService.getVcTotalByTypeAndEmpId(dto);
-            totalDto.setCnt(totalDto.getCnt() - dto.getReqDays());
+            totalDto.setCnt((long) (totalDto.getCnt() - dto.getReqDays()));
             totalService.updateVcTypeTotalByTotalId(totalDto);
         }else{
             // 반차가 들어올 수도 있어서 연차로 변환
-            dto.getVcTypeDto().setTypeId(1L);
+            VcReqDto vcReqDto = objectMapper.convertValue(dto, VcReqDto.class);
+            vcReqDto.getVcTypeDto().setTypeId(1L);
             // 올해에 대한 연차 정보 조회
-            GrantedVcDto gvDto= vcService.findByExpiredDateAndEmpIdAndTypeId(dto);
+            GrantedVcDto gvDto= vcService.findByExpiredDateAndEmpIdAndTypeId(vcReqDto);
             gvDto.setRemainDays(gvDto.getRemainDays() - dto.getReqDays());
             // 프론트에서 넘길때 같이 넘겨야하는데 잊어먹었을 경우 여기서 한 번 더 체크
             dto.setStatus("자동승인");
+            vcService.updateAnnualCnt(gvDto); //Granted_Vc Table의 RemainDays를 차감한다.
        }
         vcReqMapper.insertVcReq(dto);
     }
@@ -109,7 +116,7 @@ public class VcReqServiceImpl implements VcReqService {
         if (status.equals("반려")) {
             VcTypeTotalDto vcTotal = totalService.getVcTotalByTypeAndEmpId(vcReq);
             Long cnt = vcTotal.getCnt();
-            cnt += vcReq.getReqDays();
+            cnt += vcReq.getReqDays().longValue();
             vcTotal.setCnt(cnt);
             totalService.updateVcTypeTotalByTotalId(vcTotal);
         }

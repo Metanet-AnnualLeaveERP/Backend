@@ -103,7 +103,7 @@ public class CancelServiceImpl implements CancelService {
                 gvService.updateAnnualCnt(gvDto);
             } else {
                 VcTypeTotalDto total = totalService.getVcTotalByTypeAndEmpId(vcReqDto);
-                total.setCnt(total.getCnt() + vcReqDto.getReqDays());
+                total.setCnt(total.getCnt() + vcReqDto.getReqDays().longValue());
                 totalService.updateVcTypeTotalByTotalId(total);
             }
         }
