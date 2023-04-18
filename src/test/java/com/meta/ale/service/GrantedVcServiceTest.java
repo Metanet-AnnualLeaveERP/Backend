@@ -53,7 +53,7 @@ public class GrantedVcServiceTest {
         GrantedVcDto grantedVcDto = new GrantedVcDto();
         grantedVcDto.setGrantedDate(new Date());
         grantedVcDto.setExpiredDate(new Date());
-        grantedVcDto.setRemainDays(17L);
+        grantedVcDto.setRemainDays(17.0);
         grantedVcDto.setVcDays(17L);
 
         VcTypeDto typeDto = new VcTypeDto();

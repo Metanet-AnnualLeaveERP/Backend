@@ -71,7 +71,7 @@ class GrantedVcMapperTest {
     void updateGrantedVcTest(){
         GrantedVcDto gvDto = mapper.getGrantedVc(2L);
         gvDto.setVcDays(99L);
-        gvDto.setRemainDays(99L);
+        gvDto.setRemainDays(99.0);
         System.out.println(mapper.updateGrantedVc(gvDto));
         System.out.println(gvDto);
     }
