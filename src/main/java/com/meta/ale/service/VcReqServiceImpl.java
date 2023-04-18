@@ -70,9 +70,9 @@ public class VcReqServiceImpl implements VcReqService {
         ObjectMapper objectMapper = new ObjectMapper();
 
         List<Long> vcType = new ArrayList();
-        vcType.add(1L);
-        vcType.add(2L);
-        vcType.add(3L);
+        vcType.add(1L); // 연차
+        vcType.add(2L); // 오전반차
+        vcType.add(3L); // 오후반차
         // 연차 / 반차가 아닌 경우
         if (!vcType.contains(dto.getVcTypeDto().getTypeId())) {
             VcTypeTotalDto totalDto = totalService.getVcTotalByTypeAndEmpId(dto);

@@ -3,15 +3,13 @@
 <mapper namespace="com.meta.ale.mapper.GrantedVcMapper">
 
     <select id="findByEmpIdVcTypeAndExpiredDate" resultMap="grantedVc">
-        SELECT G.* FROM GRANTED_VC G ,EMP E, VC_TYPE V
+        SELECT g.*,v.type_id,v.type_name FROM granted_vc g, vc_type v , emp e
         WHERE
-            G.EMP_ID = E.EMP_ID
-          AND
-            G.TYPE_ID = V.TYPE_ID
-          AND TO_CHAR(G.EXPIRED_DATE,'yyyy') = TO_CHAR(SYSDATE,'yyyy')
-          AND E.EMP_ID = #{empDto.empId}
-          AND V.TYPE_ID = #{vcTypeDto.typeId}
-
+            g.type_id = v.type_id AND
+            g.emp_id = e.emp_id AND
+            v.type_id = #{vcTypeDto.typeId} AND
+            e.emp_id = #{empDto.empId} AND
+            sysdate BETWEEN g.granted_date AND g.expired_date
     </select>
 
 
