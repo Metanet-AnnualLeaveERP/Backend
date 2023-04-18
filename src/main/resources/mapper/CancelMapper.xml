@@ -11,10 +11,12 @@
         SELECT
         ROWNUM RN, cancel_id, cancel_status, cancel_req_date, res_date, req_comm,res_comm,
         v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-        v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id
+        v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id,
+        vt.*
         FROM
         cancel c JOIN vc_req v ON c.req_id = v.req_id
         JOIN emp e ON v.emp_id = e.emp_id
+        JOIN vc_type vt ON v.type_id = vt.type_id
 
         WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
@@ -68,6 +70,7 @@
             </if>
         </where>
     </select>
+
     <!--휴가취소 승인 / 휴가취소 반려 갯수 (페이징처리용) -->
     <select id="getCancelCountByMgr" resultType="Long">
         SELECT COUNT(*) FROM CANCEL c,VC_REQ v,EMP e
@@ -132,7 +135,7 @@
     </resultMap>
     <resultMap type="VcTypeDto" id="vcTypeMap">
         <id property="typeId"               column="type_id" />
-        <result property="name"             column="name" />
+        <result property="typeName"             column="name" />
         <result property="description"      column="description" />
         <result property="pto"              column="pto" />
         <result property="maxGrantedDate"   column="max_granted_date" />
