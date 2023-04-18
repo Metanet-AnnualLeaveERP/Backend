@@ -5,8 +5,9 @@
 
     <resultMap id="userMap" type="UserDto">
         <id property="userId" column="user_id"/>
-        <result property="empNum" column="emp_num"/>
-        <result property="role" column="role"/>
+        <result property="empNum"  column="emp_num"/>
+        <result property="role"    column="role"/>
+        <result property="enabled" column="enabled"/>
     </resultMap>
 
     <resultMap id="deptMap" type="deptDto">
@@ -136,7 +137,7 @@
     </select>
 
     <select id="selectEmpByEmpId" resultMap="empMap">
-        select e.*, u.user_id, u.role, u.emp_num, d.dept_name
+        select e.*, u.user_id, u.role, u.emp_num, u.enabled, d.dept_name
         from emp e
         join users u
         on e.user_id = u.user_id
