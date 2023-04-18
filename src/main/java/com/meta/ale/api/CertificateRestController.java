@@ -23,13 +23,7 @@ public class CertificateRestController {
 
     /*증명서 내역 조회 (페이징 처리)*/
     @GetMapping("/certificates")
-    public Map<String, Object> certificateList(@AuthenticationPrincipal UserDto user,
-                                               @RequestParam String paging, Criteria cri) {
-        if (paging.equals("false")) {
-            cri.setPageNum(1);
-            cri.setAmount(Integer.MAX_VALUE);
-        }
-
+    public Map<String, Object> certificateList(@AuthenticationPrincipal UserDto user, Criteria cri) {
         /* ADMIN or EMP 판별
         userId == 0 -> admin */
         return certificateService.getCertList(cri, user.getUserId());
