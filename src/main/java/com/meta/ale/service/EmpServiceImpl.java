@@ -292,7 +292,7 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public boolean modifyInfo(UserDto userDto, EmpDto empDto) throws Exception {
-
+        userDto.setUserId(userMapper.selectByEmpId(empDto.getEmpId()).getUserId());
         if (!userDto.getPwd().equals("")) {
             userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
             if (userMapper.updatePwd(userDto) <= 0) {
