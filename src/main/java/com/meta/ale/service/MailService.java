@@ -15,15 +15,14 @@ public class MailService {
     private final JavaMailSender javaMailSender;
 
     // 패스워드를 재발급 받을 때 쓰는 것으로 empDto에 새롭게 인코딩 되기 전 발급한 패스워드를 넘겨줘야함.
-    public void sendToPEmail(EmpDto empDto, String subject) {
+    public void sendToPEmail(EmpDto empDto, String subject,String title,String text) {
         try {
 
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
             messageHelper.setSubject(subject);
             messageHelper.setTo(empDto.getPEmail());
-            String body = setAddText("<메타넷> 임시 비밀번호 생성", "임시 비밀번호는 " +
-                    empDto.getUserDto().getPwd() + "입니다.");
+            String body = setAddText(title,text);
             messageHelper.setText(body, true);
             javaMailSender.send(message);
         } catch (Exception e) {
@@ -32,12 +31,14 @@ public class MailService {
     }
 
     // 휴가 관련 메일을 발송해야함.(사내이메일 발송)
-    public void sendToCEmail(EmpDto empDto, String subject, String text) {
+    public void sendToCEmail(EmpDto empDto, String subject,String title ,String text) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
             messageHelper.setSubject(subject);
             messageHelper.setTo(empDto.getCEmail());
+            String body = setAddText(title,text);
+            messageHelper.setText(body,true);
             javaMailSender.send(message);
         } catch (Exception e) {
             e.printStackTrace();
