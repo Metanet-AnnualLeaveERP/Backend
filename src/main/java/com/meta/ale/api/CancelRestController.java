@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CancelRestController {
 
-    private CancelService cancelService;
+    private final CancelService cancelService;
 
     /*휴가 취소 내역 조회*/
     @GetMapping("/vacations/cancel")

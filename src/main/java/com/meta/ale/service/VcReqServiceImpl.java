@@ -26,6 +26,7 @@ public class VcReqServiceImpl implements VcReqService {
 
     private final GrantedVcService vcService;
 
+    private final MailService mailService;
     /*휴가 신청 내역 조회*/
     @Override
     public Map<String, Object> getVcReqList(Criteria cri, Long userId) {
@@ -122,6 +123,11 @@ public class VcReqServiceImpl implements VcReqService {
             cnt += vcReq.getReqDays().longValue();
             vcTotal.setCnt(cnt);
             totalService.updateVcTypeTotalByTotalId(vcTotal);
+        }
+        if(status.equals("승인")){
+            mailService.sendToCEmail(vcReq.getEmpDto(),"<MetaNet>휴가를 정상 처리하였습니다.",
+                    "휴가신청이 승인되었습니다.",
+                    "자사 홈페이지를 통해 확인해주시면 감사하겠습니다.");
         }
         return true;
 
