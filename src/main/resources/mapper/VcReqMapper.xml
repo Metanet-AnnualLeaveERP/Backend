@@ -80,7 +80,7 @@
         WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         )
-        <![CDATA[ WHERE ROWNUM > (#{pageNum}-1) * #{amount} ]]>
+        <![CDATA[ WHERE rn > (#{pageNum}-1) * #{amount} ]]>
     </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
