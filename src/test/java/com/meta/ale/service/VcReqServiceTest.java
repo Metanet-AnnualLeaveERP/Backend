@@ -60,7 +60,7 @@ class VcReqServiceTest {
         dto.setEndDate(endDate);
 
 //        dto.setVcType("연차");
-        dto.setReqDays(2L);
+        dto.setReqDays(2.0);
         dto.setComments(null);
         dto.setStatus("자동승인");
         dto.setAprvDate(null);

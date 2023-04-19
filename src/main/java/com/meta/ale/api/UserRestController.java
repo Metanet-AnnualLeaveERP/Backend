@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -108,7 +109,6 @@ public class UserRestController {
         ObjectMapper objectMapper = new ObjectMapper();
         UserDto userDto = objectMapper.treeToValue(objectNode.get("userDto"), UserDto.class);
         EmpDto empDto = objectMapper.treeToValue(objectNode.get("empDto"), EmpDto.class);
-
         if (userService.modifyEnabled(userDto, empDto)) {
             return ResponseEntity.ok().body("계정 비활성화 완료");
         } else {
