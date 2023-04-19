@@ -60,21 +60,28 @@
         *
         FROM (
         SELECT
-        ROWNUM RN, v.*, e.name,e.p_email,e.c_email, e.position,e.hire_date
+             ROWNUM RN, A.*
         FROM
-        vc_req v JOIN emp e ON v.emp_id = e.emp_id
+            (SELECT
+                 v.*,u.EMP_NUM,u.ROLE, e.name,e.p_email,e.c_email, e.position,e.hire_date
+                FROM
+                    vc_req v JOIN emp e ON v.emp_id = e.emp_id
+                    JOIN USERS u ON u.USER_ID = e.USER_ID
+                WHERE
+                    e.leave_date IS NULL
+                    AND u.role NOT IN ('ROLE_ADMIN')
+                <if test="deptId != null">
+                    AND e.dept_id = #{deptId}
+                </if>
+                <if test="keyword != null and !keyword.equals('')">
+                    AND v.STATUS = #{keyword}
+                </if>
+                ORDER BY REQ_DATE ASC
+            ) A
         WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-        AND e.leave_date IS NULL
-        <if test="deptId != null">
-            AND e.dept_id = #{deptId}
-        </if>
-        <if test="keyword != null and !keyword.equals('')">
-            AND v.STATUS = #{keyword}
-        </if>
-
         )
-        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+        <![CDATA[ WHERE rn > (#{pageNum}-1) * #{amount} ]]>
     </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
@@ -128,6 +135,21 @@
                            WHERE E2.USER_ID = #{userId})
     </select>
 
+    <select id="getEntireReqsByTeam">
+        SELECT  *
+        FROM VC_REQ V,EMP E, VC_TYPE VT
+        WHERE
+            V.TYPE_ID = VT.TYPE_ID AND
+            V.EMP_ID = E.EMP_ID AND
+            START_DATE >= SYSDATE AND
+            STATUS NOT IN ('취소','반려') AND
+            E.DEPT_ID = (SELECT DEPT_ID
+                         FROM EMP E2
+                         WHERE E2.USER_ID =#{userId}
+                        )
+    </select>
+
+
     <resultMap id="reqMap" type="VcReqDto">
         <id property="reqId" column="req_id"/>
         <result property="reqDate" column="req_date" />
@@ -163,7 +185,7 @@
 
     <resultMap id="userMap" type="UserDto">
         <id property="userId" column="user_id" />
-<!--        <result property="empNum" column="emp_num" />-->
+        <result property="empNum" column="emp_num" />
         <result property="role" column="role" />
 
     </resultMap>
@@ -172,6 +194,7 @@
         <id property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name" />
     </resultMap>
+
 
 
 </mapper>

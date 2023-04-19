@@ -126,11 +126,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         //휴가 타입에 대한 정보 받아오기
         VcTypeDto vcTypeDto = vcTypeService.getVcType("연차");
         // 1년 이상 사람에 대한 연차 계산 후 부여
-        boolean overOneYrList = addEmpOverOneYrList(date, expiredDate, today, vcTypeDto);
+        addEmpOverOneYrList(date, expiredDate, today, vcTypeDto);
         // 1년이 된 사람들에 대한 연차 부여
-        boolean oneYrList = addEmpOneYrList(date, expiredDate, vcTypeDto);
+        addEmpOneYrList(date, expiredDate, vcTypeDto);
         // 1년이 안된 사람들에 대한 연차 계산
-        boolean underOneYrList = addEmpUnderOneYrList(date, expiredDate, vcTypeDto);
+        addEmpUnderOneYrList(date, expiredDate, vcTypeDto);
         return true;
     }
 
@@ -152,13 +152,13 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
     /* ------------------------- Private Method ------------------------- */
     private void toMessage(EmpDto empDto) {
-        mailService.sendToCEmail(empDto, "<메타넷> 연차휴가 발급 안내",
-                empDto.getName() + "님의 연차 휴가를 발급했습니다." +
-                        "자세한 내용은 홈페이지에서 확인해주시길 바랍니다.");
+        mailService.sendToCEmail(empDto, "<메타넷> 연차휴가 발급 안내", empDto.getName()
+                + "님의 연차 휴가를 발급했습니다.",
+                "자세한 내용은 홈페이지에서 확인해주시길 바랍니다.");
     }
 
     // 1년이 지난 사람들중 오늘 날짜와 1년이 된 사람 대한 연차계산 방법
-    private boolean addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception {
+    private void addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception {
         List<EmpDto> empOverOneYrList = empService.findEmpOverOneYr();
 
         if (empOverOneYrList.size() != 0) {
@@ -169,13 +169,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                 vcMapper.insertAnnualGranted(grantedVcDto);
                 toMessage(e);
             }
-            return true;
         }
-        return false;
     }
 
     // 오늘날로부터 딱 1년인 사람의 연차 부여
-    private boolean addEmpOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
+    private void addEmpOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
 
         List<EmpDto> empOneYrList = empService.findEmpOneYr();
         //1년인 사람에 대한 연차계산 방법
@@ -200,14 +198,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                 vcMapper.updateAnnualGranted(grantedVcDtoToDB);
                 toMessage(e);
             }
-            return true;
         }
-        return false;
-
     }
 
     // 오늘날로부터 1년이 안된 사람들 중 한 달 간격인 된 사람들
-    private boolean addEmpUnderOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
+    private void addEmpUnderOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
 
         // 사원들 중 1년이 안되었으면서 n달이 된 사람들
         List<EmpDto> empUnderOneYrList = empService.findEmpUnderOneYr();
@@ -233,9 +228,7 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                 }
                 toMessage(e);
             }
-            return true;
         }
-        return false;
     }
 
     //입사일로부터 현재까지 경력 계산하고 연차 갯수 계산

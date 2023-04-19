@@ -65,7 +65,6 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public boolean register(UserDto userDto, EmpDto empDto) throws Exception {
-        String pwd = userDto.getPwd();
         userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
 
         DeptDto deptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName()); // 부서정보
