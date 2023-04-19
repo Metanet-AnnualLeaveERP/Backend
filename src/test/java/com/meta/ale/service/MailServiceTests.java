@@ -25,11 +25,9 @@ public class MailServiceTests {
             user.setPwd("qwer");
             empDto.setUserDto(user);
 
-            mailService.sendToPEmail(empDto, "비밀번호찾기");
+//            mailService.sendToPEmail(empDto, "비밀번호찾기");
         } catch (Exception e) {
-
         }
-
     }
 
 
