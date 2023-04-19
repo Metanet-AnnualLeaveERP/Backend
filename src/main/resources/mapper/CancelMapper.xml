@@ -109,7 +109,7 @@
             AND e.dept_id = #{deptId}
         </if>
         <if test="keyword != null and !keyword.equals('')">
-            AND c.cancelStatus = #{keyword}
+            AND c.cancel_Status = #{keyword}
         </if>
 
         )

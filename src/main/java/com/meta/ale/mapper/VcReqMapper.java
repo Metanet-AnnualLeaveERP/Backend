@@ -34,4 +34,5 @@ public interface VcReqMapper {
 
     /* 팀원 자동승인, 승인완료 내역 조회  */
     public List<VcReqDto> getVcReqByDept(UserDto userDto);
+    public List<VcReqDto> getEntireReqsByTeam(UserDto userDto);
 }

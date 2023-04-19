@@ -26,6 +26,7 @@ public class VcReqServiceImpl implements VcReqService {
 
     private final GrantedVcService vcService;
 
+    private final MailService mailService;
     /*휴가 신청 내역 조회*/
     @Override
     public Map<String, Object> getVcReqList(Criteria cri, Long userId) {
@@ -47,6 +48,9 @@ public class VcReqServiceImpl implements VcReqService {
     public VcReqDto getVcReqCompared(Long reqId, Long currUserId) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
+        if(currUserId ==0){
+            return dto;
+        }
         EmpDto dbEmp = dto.getEmpDto();
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
@@ -119,6 +123,11 @@ public class VcReqServiceImpl implements VcReqService {
             cnt += vcReq.getReqDays().longValue();
             vcTotal.setCnt(cnt);
             totalService.updateVcTypeTotalByTotalId(vcTotal);
+        }
+        if(status.equals("승인")){
+            mailService.sendToCEmail(vcReq.getEmpDto(),"<MetaNet>휴가를 정상 처리하였습니다.",
+                    "휴가신청이 승인되었습니다.",
+                    "자사 홈페이지를 통해 확인해주시면 감사하겠습니다.");
         }
         return true;
 
@@ -193,4 +202,7 @@ public class VcReqServiceImpl implements VcReqService {
         return null;
     }
 
+    private List<VcReqDto> getEntireReqsByTeam(UserDto userDto){
+        return vcReqMapper.getEntireReqsByTeam(userDto);
+    }
 }

@@ -27,6 +27,8 @@ public class EmpServiceImpl implements EmpService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final MailService mailService;
+
     @Override
     public List<EmpDto> findEmpOverOneYr() {
         return empMapper.findEmpOverOneYrList();
@@ -58,6 +60,7 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public boolean register(UserDto userDto, EmpDto empDto) throws Exception {
+        String pwd = userDto.getPwd();
         userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
 
         DeptDto deptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName()); // 부서정보
@@ -114,6 +117,14 @@ public class EmpServiceImpl implements EmpService {
                 return false;
             }
         }
+        StringBuffer sb = new StringBuffer();
+        sb.append("가입 완료했습니다.\n"+"아이디"+userDto.getEmpNum()+"\n비밀번호 : " +pwd+" 입니다.\n");
+        sb.append("로그인 후 비밀번호를 변경해주세요.");
+        sb.append("이상입니다.");
+        mailService.sendToPEmail(empDto,"<Metanet> 인사팀_ 계정 생성 완료되었습니다."
+                ,"메타넷에 입사하신 것을 환영합니다."
+                ,sb.toString());
+
         return false;
     }
 

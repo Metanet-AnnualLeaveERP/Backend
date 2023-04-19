@@ -19,7 +19,7 @@ public class AnnualCreateNewYearEmpOverOneYr extends QuartzJobBean {
         GrantedVcService = appCtx.getBean(GrantedVcService.class);
         try {
             if (GrantedVcService.insertAnnualByEmpOverOneYr()) {
-                System.out.println("정상적으로 연차 생성이 완료되었습니다.");
+                System.out.println("시스템 정상 동작");
             }
         } catch (Exception e) {
             e.printStackTrace();
