@@ -69,7 +69,7 @@
 
     <select id="findEmpByUserId" resultMap="empMap">
         SELECT e.emp_id, e.name, e.position, e.hire_date, e.p_email,
-               e.c_email, e.tel, e.mgr_id, e.dept_id, d.dept_name
+               e.c_email, e.tel, e.mgr_id, d.*
         FROM EMP e,
              DEPT d
         WHERE e.dept_id = d.dept_id
@@ -121,14 +121,14 @@
         update emp
         set mgr_id = #{mgrId, jdbcType=NULL}
         where dept_id = #{deptId}
-        and position = '사원'
+        and position = '팀원'
     </update>
 
     <select id="selectDeptEmpCnt" resultType="Long">
         select count(*)
         from emp
         where dept_id = #{deptId}
-        and position = '사원'
+        and position = '팀원'
     </select>
 
     <select id="selectPositionByEmpId" resultType="String">

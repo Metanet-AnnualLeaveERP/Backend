@@ -101,6 +101,6 @@ public class VcReqRestController {
     /*팀원 휴가 승인내역 조회 (캘린더용) */
     @GetMapping("/vacations/my-team")
     public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto) {
-        return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto));
+        return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto.getUserId()));
     }
 }

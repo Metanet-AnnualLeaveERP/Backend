@@ -89,7 +89,7 @@ public class VcReqMapperTest {
     @Test
     void getVcReqByDeptTest() throws Exception {
         Optional<UserDto> user = userService.getByEmpNum("emp_3");
-        List<VcReqDto> data =vcReqMapper.getVcReqByDept(user.get());
+        List<VcReqDto> data =vcReqMapper.getVcReqByDept(user.get().getUserId());
         for(VcReqDto v: data){
             System.out.println(v);
         }

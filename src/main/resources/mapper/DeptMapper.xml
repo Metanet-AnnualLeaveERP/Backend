@@ -8,6 +8,10 @@
 		select * from dept where dept_name = #{deptName}
 	</select>
 
+	<select id="getByDeptId" resultType="DeptDto">
+		select * from dept where dept_id = #{deptId}
+	</select>
+
 	<select id="getListDept" resultMap="deptMap">
 		SELECT d.dept_id, d.dept_name, d.vc_to, COUNT(e.emp_id) AS emp_count
 		FROM dept d

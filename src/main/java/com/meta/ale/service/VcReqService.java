@@ -32,5 +32,5 @@ public interface VcReqService {
     Map<String, Object> getApprovalVcRequestList(UserDto userDto, Criteria cri);
 
     /*팀 휴가 승인된 내역 조회*/
-    List<VcReqDto> findMyTeamVacation(UserDto userDto);
+    List<VcReqDto> findMyTeamVacation(Long userId);
 }

@@ -155,8 +155,8 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*팀 휴가 승인된 내역 조회*/
     @Override
-    public List<VcReqDto> findMyTeamVacation(UserDto userDto) {
-        return vcReqMapper.getVcReqByDept(userDto);
+    public List<VcReqDto> findMyTeamVacation(Long userId) {
+        return vcReqMapper.getVcReqByDept(userId);
     }
 
 

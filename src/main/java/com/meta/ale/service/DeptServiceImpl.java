@@ -19,6 +19,12 @@ public class DeptServiceImpl implements DeptService{
         return deptMapper.selectByDeptName(deptName);
     }
 
+    /*deptId 로 부서 정보 조회*/
+    @Override
+    public DeptDto getByDeptId(Long deptId) {
+        return deptMapper.getByDeptId(deptId);
+    }
+
     @Override
     public List<DeptDto> getListDept() {
         return deptMapper.getListDept();
