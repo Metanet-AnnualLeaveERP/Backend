@@ -202,4 +202,7 @@ public class VcReqServiceImpl implements VcReqService {
         return null;
     }
 
+    private List<VcReqDto> getEntireReqsByTeam(UserDto userDto){
+        return vcReqMapper.getEntireReqsByTeam(userDto);
+    }
 }

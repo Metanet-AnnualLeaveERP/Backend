@@ -135,6 +135,21 @@
                            WHERE E2.USER_ID = #{userId})
     </select>
 
+    <select id="getEntireReqsByTeam">
+        SELECT  *
+        FROM VC_REQ V,EMP E, VC_TYPE VT
+        WHERE
+            V.TYPE_ID = VT.TYPE_ID AND
+            V.EMP_ID = E.EMP_ID AND
+            START_DATE >= SYSDATE AND
+            STATUS NOT IN ('취소','반려') AND
+            E.DEPT_ID = (SELECT DEPT_ID
+                         FROM EMP E2
+                         WHERE E2.USER_ID =#{userId}
+                        )
+    </select>
+
+
     <resultMap id="reqMap" type="VcReqDto">
         <id property="reqId" column="req_id"/>
         <result property="reqDate" column="req_date" />
@@ -179,6 +194,7 @@
         <id property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name" />
     </resultMap>
+
 
 
 </mapper>
