@@ -98,4 +98,10 @@ class VcReqServiceTest {
         vcReqService.approvalVcRequestStatus(userDto,1L,"반려","반려내용~~");
 
     }
+
+    @Test
+    void calcRemainTOByVcReqs() throws Exception {
+        UserDto userDto = userService.getByEmpNum("emp_2").get();
+        vcReqService.calcRemainTOByVcReqs(userDto);
+    }
 }

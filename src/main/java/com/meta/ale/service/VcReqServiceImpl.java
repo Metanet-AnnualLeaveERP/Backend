@@ -10,7 +10,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
+
+import static com.meta.ale.service.EmpServiceImpl.getDatesBetweenTwoDates;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +32,10 @@ public class VcReqServiceImpl implements VcReqService {
     private final GrantedVcService vcService;
 
     private final MailService mailService;
+
+    private final DeptService deptService;
+
+
     /*휴가 신청 내역 조회*/
     @Override
     public Map<String, Object> getVcReqList(Criteria cri, Long userId) {
@@ -84,17 +93,17 @@ public class VcReqServiceImpl implements VcReqService {
             VcTypeTotalDto totalDto = totalService.getVcTotalByTypeAndEmpId(dto);
             totalDto.setCnt((long) (totalDto.getCnt() - dto.getReqDays()));
             totalService.updateVcTypeTotalByTotalId(totalDto);
-        }else{
+        } else {
             // 반차가 들어올 수도 있어서 연차로 변환
             VcReqDto vcReqDto = objectMapper.convertValue(dto, VcReqDto.class);
             vcReqDto.getVcTypeDto().setTypeId(1L);
             // 올해에 대한 연차 정보 조회
-            GrantedVcDto gvDto= vcService.findByExpiredDateAndEmpIdAndTypeId(vcReqDto);
+            GrantedVcDto gvDto = vcService.findByExpiredDateAndEmpIdAndTypeId(vcReqDto);
             gvDto.setRemainDays(gvDto.getRemainDays() - dto.getReqDays());
             // 프론트에서 넘길때 같이 넘겨야하는데 잊어먹었을 경우 여기서 한 번 더 체크
             dto.setStatus("자동승인");
             vcService.updateAnnualCnt(gvDto); //Granted_Vc Table의 RemainDays를 차감한다.
-       }
+        }
         vcReqMapper.insertVcReq(dto);
     }
 
@@ -126,10 +135,8 @@ public class VcReqServiceImpl implements VcReqService {
             vcTotal.setCnt(cnt);
             totalService.updateVcTypeTotalByTotalId(vcTotal);
         }
-        if(status.equals("승인")){
-            mailService.sendToCEmail(vcReq.getEmpDto(),"<MetaNet>휴가를 정상 처리하였습니다.",
-                    "휴가신청이 승인되었습니다.",
-                    "자사 홈페이지를 통해 확인해주시면 감사하겠습니다.");
+        if (status.equals("승인")) {
+            mailService.sendToCEmail(vcReq.getEmpDto(), "<MetaNet>휴가를 정상 처리하였습니다.", "휴가신청이 승인되었습니다.", "자사 홈페이지를 통해 확인해주시면 감사하겠습니다.");
         }
         return true;
 
@@ -170,6 +177,86 @@ public class VcReqServiceImpl implements VcReqService {
         return vcReqMapper.getVcReqByDept(userDto);
     }
 
+    /*휴가 신청 일자별로 잔여 TO 계산*/
+    @Override
+    public List<RemainVcTo> calcRemainTOByVcReqs(UserDto userDto) throws Exception {
+        Long calcTO = deptService.calculateVcToByDept(userDto.getUserId());
+        List<VcReqDto> vcReqDtoList = getEntireReqsByTeam(userDto);
+
+        List<LocalDate> dates = new ArrayList<>();
+        List<Long> finalTO = new ArrayList<>();
+
+        System.out.println("========날짜와 TO 배열 계산========");
+        for (VcReqDto vcReqDto : vcReqDtoList) {
+            // Date 객체를 LocalDate로 변환
+            LocalDate startDate = vcReqDto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate endDate = vcReqDto.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            List<LocalDate> dateBetweenTwoDates = new ArrayList<>(getDatesBetweenTwoDates(startDate, endDate));
+            List<Long> calcVcTO = new ArrayList<>();
+
+            // startDate와 endDate의 날짜 개수 차이가 0이면 (휴가 1일 사용 시) 하나만 넣어 준다
+            if (dateBetweenTwoDates.size() == 0) {
+                calcVcTO.add(calcTO);
+            } else {
+                // startDate와 endDate의 날짜 개수 만큼 To 배열에 잔여 TO를 넣는다
+                for (int j = 0; j < dateBetweenTwoDates.size(); j++) {
+                    calcVcTO.add(calcTO);
+                }
+            }
+            System.out.print(dateBetweenTwoDates.toString() + " ");
+            System.out.println();
+            System.out.print(calcVcTO.toString() + " ");
+            System.out.println();
+
+            /* vcReq의 시작일부터 종료일까지 To를 하나씩 차감하는 로직.
+             * if dates.contains(날짜) == false -> dates.add , caclTos.add()
+             *   else dates.contains(날짜) == true -> index를 구하고 calcTos 해당 index의 값을 -1 한다 */
+            System.out.println("========vcReqDto 안의 날짜 하나마다 to 계산하는 반복문 실행========");
+
+            /* 두 날짜 사이의 수가 0인 경우 ( 휴가 1일 사용 시 )
+             * forEach문을 돌리지 않고 바로 add 해 준다 */
+            if (dateBetweenTwoDates.size() == 0) {
+                dates.add(startDate);
+                finalTO.add(calcTO - 1);
+            } else {
+                // vcReqDto 하나마다 to 차감
+                for (LocalDate date : dateBetweenTwoDates) {
+                    int index;
+
+                    // 날짜 배열에 있으면
+                    if (dates.contains(date)) {
+                        // index를 찾는다
+                        index = dates.indexOf(date);
+                        // 해당 index의 TO를 한 개 차감한다
+                        Long currTO = finalTO.get(index);
+                        finalTO.set(index, currTO - 1);
+                    } else {
+                        // 날짜 배열에 없으면
+                        dates.add((date));
+                        // 하나 빠진 값을 넣는다
+                        finalTO.add(calcTO - 1);
+                    }
+                }
+            }
+        }
+        System.out.println("========모든 반복문 계산 끝========");
+        System.out.println("최종 날짜 배열 -> " + dates.toString());
+        System.out.println("최종 TO 배열 -> " + finalTO.toString());
+
+        System.out.println("======== remainToDtoList 가공 =======");
+        List<RemainVcTo> remainVcToList = new ArrayList<>();
+        for (int i = 0; i < dates.size(); i++) {
+            // LocalDate 객체를 ZonedDateTime 객체로 변환
+            ZonedDateTime zonedDateTime = dates.get(i).atStartOfDay(ZoneId.systemDefault());
+            // ZonedDateTime 객체를 Date 객체로 변환
+            Date date = Date.from(zonedDateTime.toInstant());
+            remainVcToList.add(new RemainVcTo(date, finalTO.get(i)));
+        }
+        remainVcToList.forEach(remainVcTo -> System.out.println(remainVcTo.toString()));
+        return remainVcToList;
+    }
+
 
     /* ------------서비스 내부에서 쓸 메소드 -------------- */
 
@@ -184,6 +271,7 @@ public class VcReqServiceImpl implements VcReqService {
         return vcReqMapper.getVcReqCountByMgr(hashMap).intValue();
     }
 
+    /*파일 업로드*/
     private String fileUpload(MultipartFile[] uploadFiles) throws IOException {
         Path filePath = null;
         if (uploadFiles == null || uploadFiles.length == 0) {
@@ -204,7 +292,10 @@ public class VcReqServiceImpl implements VcReqService {
         return null;
     }
 
-    private List<VcReqDto> getEntireReqsByTeam(UserDto userDto){
+    /*자신 포함 + 부서 전체의 휴가 신청 리스트*/
+    private List<VcReqDto> getEntireReqsByTeam(UserDto userDto) {
         return vcReqMapper.getEntireReqsByTeam(userDto);
     }
+
+
 }

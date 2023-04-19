@@ -5,14 +5,17 @@ import com.meta.ale.domain.*;
 import com.meta.ale.mapper.DeptMapper;
 import com.meta.ale.mapper.EmpMapper;
 import com.meta.ale.mapper.UserMapper;
+import com.meta.ale.mapper.VcReqMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,8 @@ public class EmpServiceImpl implements EmpService {
     private final PasswordEncoder passwordEncoder;
 
     private final MailService mailService;
+
+    private final VcReqMapper vcReqMapper;
 
     @Override
     public List<EmpDto> findEmpOverOneYr() {
@@ -60,9 +65,8 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public boolean register(UserDto userDto, EmpDto empDto) throws Exception {
-        String pwd = userDto.getPwd();
         userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
-
+        String pwd = userDto.getPwd();
         DeptDto deptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName()); // 부서정보
         Long deptMgrId = empMapper.selectDeptMgr(deptDto.getDeptId()); // 팀장아이디
         String position = empDto.getPosition();
@@ -118,13 +122,12 @@ public class EmpServiceImpl implements EmpService {
             }
         }
         StringBuffer sb = new StringBuffer();
-        sb.append("가입 완료했습니다.\n"+"아이디"+userDto.getEmpNum()+"\n비밀번호 : " +pwd+" 입니다.\n");
+        sb.append("가입 완료했습니다.\n" + "아이디" + userDto.getEmpNum() + "\n비밀번호 : " + pwd + " 입니다.\n");
         sb.append("로그인 후 비밀번호를 변경해주세요.");
         sb.append("이상입니다.");
-        mailService.sendToPEmail(empDto,"<Metanet> 인사팀_ 계정 생성 완료되었습니다."
-                ,"메타넷에 입사하신 것을 환영합니다."
-                ,sb.toString());
-
+        mailService.sendToPEmail(empDto, "<Metanet> 인사팀_ 계정 생성 완료되었습니다."
+                , "메타넷에 입사하신 것을 환영합니다."
+                , sb.toString());
         return false;
     }
 
@@ -262,13 +265,23 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public Map<String, Object> getEmpList(Criteria criteria) throws Exception {
+        String[] keyWordList = criteria.getKeyword().split(",");
+        for (String s:keyWordList) {
+            System.out.println(s);
+        }
+        String keyWordDept = keyWordList[0];
+        String keyWordName = keyWordList[1];
+        String keyWordActive = keyWordList[2];
+
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageNum", criteria.getPageNum());
         paramMap.put("amount", criteria.getAmount());
-        paramMap.put("keyWord", criteria.getKeyword());
+        paramMap.put("keyWordDept", keyWordDept);
+        paramMap.put("keyWordName", keyWordName);
+        paramMap.put("keyWordActive", keyWordActive);
 
         Map<String, Object> res = new HashMap<>();
-        res.put("paging", new PagenationDTO(criteria, getEmpCnt()));
+        res.put("paging", new PagenationDTO(criteria, getEmpCnt(paramMap)));
         res.put("empList", empMapper.selectEmpList(paramMap));
 
         return res;
@@ -294,8 +307,8 @@ public class EmpServiceImpl implements EmpService {
     }
 
     // 페이징용
-    private Integer getEmpCnt() throws Exception {
-        return empMapper.selectEmpListCnt();
+    private Integer getEmpCnt(Map<String, Object> parameterMap) throws Exception {
+        return empMapper.selectEmpListCnt(parameterMap);
     }
 
     // 사번 생성
@@ -331,4 +344,17 @@ public class EmpServiceImpl implements EmpService {
     public EmpDto getEmpByMgrId(Long mgrId) {
         return empMapper.getEmpByMgrId(mgrId);
     }
+
+    @Override
+    public Long selectDeptEmpCnt(Long deptId) throws Exception {
+        return empMapper.selectDeptEmpCnt(deptId);
+    }
+
+    /*LocalDate 클래스의 datesUntil 메소드를 이용해 시작일부터 종료일까지의 날짜를 반환*/
+    public static List<LocalDate> getDatesBetweenTwoDates(LocalDate startDate, LocalDate endDate) {
+        return startDate.datesUntil(endDate)
+                .collect(Collectors.toList());
+    }
+
+
 }
