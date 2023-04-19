@@ -59,7 +59,10 @@ public class VcReqServiceImpl implements VcReqService {
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
         String role = userDto.getRole();
         Long currUserId = userDto.getUserId();
-        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MANAGER")){
+        System.out.println(userDto);
+        System.out.println(role);
+        System.out.println(role.equals("ROLE_MGR"));
+        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")){
             return dto;
         }
         EmpDto dbEmp = dto.getEmpDto();
@@ -151,7 +154,7 @@ public class VcReqServiceImpl implements VcReqService {
         HashMap<String, Object> vo = new HashMap<String, Object>();
         Long managerDeptId = null;
         //팀장일 경우 자신의 팀원의 내용만 볼 수 있음 ( 관리자의 경우 managerId가 null)
-        if (role.equals("ROLE_MANAGER")) {
+        if (role.equals("ROLE_MGR")) {
             Long userId = userDto.getUserId();
             EmpDto managerDto = empService.findEmpByUserId(userId);
             managerDeptId = managerDto.getDeptDto().getDeptId();
@@ -159,6 +162,7 @@ public class VcReqServiceImpl implements VcReqService {
         vo.put("pageNum", cri.getPageNum());
         vo.put("amount", cri.getAmount());
         vo.put("keyword", cri.getKeyword());
+        System.out.println(managerDeptId);
         vo.put("deptId", managerDeptId);
 
         // 페이징 처리를 위한 전체 count 조회

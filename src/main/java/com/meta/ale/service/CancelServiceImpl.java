@@ -43,7 +43,7 @@ public class CancelServiceImpl implements CancelService {
         CancelDto dto = cancelMapper.getCancel(cancelId);
         Long currUserId = userDto.getUserId();
         String role = userDto.getRole();
-        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MANAGER")){
+        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")){
             return dto;
         }
         if (dto != null && dto.getVcReqDto() != null) {
@@ -121,7 +121,7 @@ public class CancelServiceImpl implements CancelService {
     public Map<String, Object> getApprovalCancelList(UserDto userDto, Criteria cri) {
         String role = userDto.getRole();
         Long mgrDeptId = null;
-        if (role.equals("ROLE_MANAGER")) {
+        if (role.equals("ROLE_MGR")) {
             Long userId = userDto.getUserId();
             EmpDto managerDto = empService.findEmpByUserId(userId);
             mgrDeptId = managerDto.getDeptDto().getDeptId();

@@ -41,7 +41,7 @@
     <!--휴가 취소-->
     <insert id="insertCancel" parameterType="CancelDto">
         INSERT INTO cancel (CANCEL_ID, CANCEL_STATUS, CANCEL_REQ_DATE, RES_DATE, REQ_COMM, RES_COMM, REQ_ID)
-        VALUES (CANCEL_SQ.nextval, #{status}, SYSDATE, null, #{reqComm}, null, #{vcReqDto.reqId})
+        VALUES (CANCEL_SQ.nextval, #{cancelStatus}, SYSDATE, null, #{reqComm}, null, #{vcReqDto.reqId})
 
         <selectKey keyProperty="cancelId" order="AFTER" resultType="long">
             SELECT CANCEL_SQ.currval FROM dual
@@ -50,7 +50,7 @@
 
     <!--휴가 신청 상태 변경-->
     <update id="updateCancelStatus" parameterType="CancelDto">
-        UPDATE cancel SET cancel_status = #{status}
+        UPDATE cancel SET cancel_status = #{cancelStatus}
         <if test="resDate != null">
             ,res_date =#{resDate}
         </if>
@@ -91,13 +91,14 @@
         *
         FROM (
         SELECT
-        ROWNUM RN,c.*, e.name,e.p_email,e.c_email, e.position,e.hire_date, d.DEPT_NAME
+        ROWNUM RN,c.*, e.name,e.p_email,e.c_email, e.position,e.hire_date, d.DEPT_NAME , vt.TYPE_NAME
         FROM
-        vc_req v, emp e, CANCEL c,Dept d
+        VC_REQ v, EMP e, CANCEL c,DEPT d,VC_TYPE vt
         WHERE
         v.EMP_ID = e.EMP_ID AND
         c.REQ_ID = v.REQ_ID AND
         d.DEPT_ID = e.DEPT_ID AND
+        v.type_id = vt.type_id AND
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         AND e.leave_date IS NULL
         <if test="deptId != null">

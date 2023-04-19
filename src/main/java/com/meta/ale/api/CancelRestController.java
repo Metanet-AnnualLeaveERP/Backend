@@ -67,7 +67,7 @@ public class CancelRestController {
     @PutMapping("/manager/vacations/cancel/{cancel_id}")
     public ResponseEntity approvalCancel(@PathVariable("cancel_id") Long cancelId,
                                          @RequestParam("status") String status,
-                                         @RequestParam("comment") String comment) {
+                                         @RequestParam(value = "comment" ,required = false) String comment) {
 
         if (!cancelService.approvalCancel(cancelId, status, comment)) {
             return ResponseEntity.badRequest().body("비정상적인 처리입니다.");
