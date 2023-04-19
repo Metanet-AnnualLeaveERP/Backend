@@ -262,13 +262,23 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public Map<String, Object> getEmpList(Criteria criteria) throws Exception {
+        String[] keyWordList = criteria.getKeyword().split(",");
+        for (String s:keyWordList) {
+            System.out.println(s);
+        }
+        String keyWordDept = keyWordList[0];
+        String keyWordName = keyWordList[1];
+        String keyWordActive = keyWordList[2];
+
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageNum", criteria.getPageNum());
         paramMap.put("amount", criteria.getAmount());
-        paramMap.put("keyWord", criteria.getKeyword());
+        paramMap.put("keyWordDept", keyWordDept);
+        paramMap.put("keyWordName", keyWordName);
+        paramMap.put("keyWordActive", keyWordActive);
 
         Map<String, Object> res = new HashMap<>();
-        res.put("paging", new PagenationDTO(criteria, getEmpCnt()));
+        res.put("paging", new PagenationDTO(criteria, getEmpCnt(paramMap)));
         res.put("empList", empMapper.selectEmpList(paramMap));
 
         return res;
@@ -294,8 +304,8 @@ public class EmpServiceImpl implements EmpService {
     }
 
     // 페이징용
-    private Integer getEmpCnt() throws Exception {
-        return empMapper.selectEmpListCnt();
+    private Integer getEmpCnt(Map<String, Object> parameterMap) throws Exception {
+        return empMapper.selectEmpListCnt(parameterMap);
     }
 
     // 사번 생성
