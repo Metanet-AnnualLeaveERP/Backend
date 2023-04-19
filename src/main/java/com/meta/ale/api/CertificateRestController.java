@@ -36,7 +36,7 @@ public class CertificateRestController {
         CertificateDto dto = certificateService.getCertCompared(certId, user.getUserId());
 
         if (dto != null) {
-            dto.getVcReqDto().getEmpDto().setUserDto(null); // userDto
+            dto.getEmpDto().setUserDto(null); // userDto
             return ResponseEntity.status(HttpStatus.OK).body(dto);
         }
         // 자기가 작성하지 않은 휴가 신청에 접근하면 403 에러와 null 반환
