@@ -147,10 +147,27 @@
         where emp_id = #{empId}
     </select>
 
-    <select id="selectEmpListCnt" resultType="Integer">
+    <select id="selectEmpListCnt" parameterType="hashmap" resultType="Integer">
         select count(*)
-        from emp
+        from
+        emp e
+        join users u
+        on e.user_id = u.user_id
+        join dept d
+        on e.dept_id = d.dept_id
         where
+        <if test="keyWordDept != '전체'">
+            d.dept_name = #{keyWordDept} and
+        </if>
+        <if test="keyWordName != '이름'">
+            e.name = #{keyWordName} and
+        </if>
+        <if test="keyWordActive == '퇴사자'">
+            e.leave_date is not null and
+        </if>
+        <if test="keyWordActive == '재직자'">
+            e.leave_date is null and
+        </if>
         emp_id != 0
     </select>
 
@@ -167,14 +184,18 @@
         join dept d
         on e.dept_id = d.dept_id
         where
-        <choose>
-            <when test="keyWord == 'resign'">
-                leave_date is not null and
-            </when>
-            <when test="keyWord == 'active'">
-                leave_date is null and
-            </when>
-        </choose>
+        <if test="keyWordDept != '전체'">
+            d.dept_name = #{keyWordDept} and
+        </if>
+        <if test="keyWordName != '이름'">
+            e.name = #{keyWordName} and
+        </if>
+        <if test="keyWordActive == '퇴사자'">
+            e.leave_date is not null and
+        </if>
+        <if test="keyWordActive == '재직자'">
+            e.leave_date is null and
+        </if>
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         and
         emp_id != 0
