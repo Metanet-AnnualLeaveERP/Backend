@@ -1,9 +1,6 @@
 package com.meta.ale.service;
 
-import com.meta.ale.domain.CertificateDto;
-import com.meta.ale.domain.Criteria;
-import com.meta.ale.domain.EmpDto;
-import com.meta.ale.domain.PagenationDTO;
+import com.meta.ale.domain.*;
 import com.meta.ale.mapper.CertificateMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,13 +31,15 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public CertificateDto getCertCompared(Long certId, Long currUserId) {
+        System.out.println("getCertCompared service");
         // getVcReqCompared와 동일 로직
         CertificateDto dto = certificateMapper.getCert(certId);
         // 관리자면
         if (currUserId == 0){
             return dto;
         }
-        EmpDto dbEmp = dto.getVcReqDto().getEmpDto();
+        EmpDto dbEmp = dto.getEmpDto();
+        System.out.println(dbEmp);
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
     }

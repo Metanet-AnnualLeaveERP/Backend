@@ -17,5 +17,9 @@ public class CertificateDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date issuedDate;
     private String purpose;
+
+    private EmpDto empDto;
     private VcReqDto vcReqDto;
+
+    private CancelDto cancelDto;
 }
