@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class DeptServiceImplTest {
 
-//    @Autowired
-//    DeptService deptService;
+    @Autowired
+    DeptService deptService;
 //
 //    @Test
 //    public void getListDept(){
@@ -39,6 +39,11 @@ class DeptServiceImplTest {
 //        deptDto.setVcTo(77L);
 //        deptService.insertDept(deptDto);
 //    }
+
+    @Test
+    void calculateRemainTO() throws Exception {
+        deptService.calculateVcToByDept(2L);
+    }
 
 
 

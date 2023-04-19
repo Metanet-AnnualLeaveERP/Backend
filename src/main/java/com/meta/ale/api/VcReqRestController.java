@@ -103,4 +103,10 @@ public class VcReqRestController {
     public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto) {
         return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto));
     }
+
+    /*부서별 잔여 TO (모든 팀원의 휴가들을 날짜별로 to에서 차감)*/
+    @GetMapping("/vacations/remain-to")
+    public ResponseEntity entireTeamRemainVcTo(@AuthenticationPrincipal UserDto userDto) throws Exception {
+        return ResponseEntity.ok(vcReqService.calcRemainTOByVcReqs(userDto));
+    }
 }

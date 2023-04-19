@@ -10,6 +10,8 @@ public interface DeptMapper {
     public DeptDto selectByDeptName(String deptName);
     public DeptDto selectByEmpId(Long empId);
 
+    public DeptDto getByDeptId(Long deptId);
+
     List<DeptDto> getListDept();
 
     int updateDept(DeptDto deptdto);
