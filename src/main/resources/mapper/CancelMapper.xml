@@ -97,12 +97,13 @@
         *
         FROM (
         SELECT
-        ROWNUM RN,c.*, e.name,e.p_email,e.c_email, e.position,e.hire_date
+        ROWNUM RN,c.*, e.name,e.p_email,e.c_email, e.position,e.hire_date, d.DEPT_NAME
         FROM
-        vc_req v, emp e, CANCEL c
+        vc_req v, emp e, CANCEL c,Dept d
         WHERE
         v.EMP_ID = e.EMP_ID AND
         c.REQ_ID = v.REQ_ID AND
+        d.DEPT_ID = e.DEPT_ID AND
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         AND e.leave_date IS NULL
         <if test="deptId != null">
@@ -111,14 +112,13 @@
         <if test="keyword != null and !keyword.equals('')">
             AND c.cancel_Status = #{keyword}
         </if>
-
         )
         <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
     </select>
     <resultMap id="cancelMap" type="CancelDto">
         <id property="cancelId" column="cancel_id"/>
         <result property="cancelStatus" column="cancel_status"/>
-        <result property="reqDate" column="req_date"/>
+        <result property="cancelReqDate" column="cancel_req_date"/>
         <result property="resDate" column="res_date"/>
         <result property="reqComm" column="req_comm"/>
         <result property="resComm" column="res_comm"/>
@@ -171,6 +171,7 @@
 
     <resultMap id="deptMap" type="DeptDto">
         <id property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
     </resultMap>
 
 </mapper>

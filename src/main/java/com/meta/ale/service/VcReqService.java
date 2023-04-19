@@ -14,7 +14,7 @@ public interface VcReqService {
     public Map<String, Object> getVcReqList(Criteria cri, Long userId);
 
     /*휴가 신청 내역 상세 (user id 비교)*/
-    public VcReqDto getVcReqCompared(Long reqId, Long currUserId);
+    public VcReqDto getVcReqCompared(Long reqId, UserDto userDto);
 
     /*휴가 신청 내역 상세*/
     public VcReqDto getVcReq(Long reqId);

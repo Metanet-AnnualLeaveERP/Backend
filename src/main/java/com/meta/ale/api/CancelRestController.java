@@ -32,7 +32,7 @@ public class CancelRestController {
     @GetMapping("/vacations/cancel/{cancel_id}")
     public ResponseEntity<Object> cancelDetail(@PathVariable("cancel_id") Long cancelId,
                                                @AuthenticationPrincipal UserDto user) {
-        CancelDto dto = cancelService.getCancel(cancelId, user.getUserId());
+        CancelDto dto = cancelService.getCancel(cancelId, user);
 
         if (dto != null) {
             dto.getVcReqDto().getEmpDto().setUserDto(null);

@@ -45,10 +45,12 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 신청 내역 상세 (user id 비교)*/
     @Override
-    public VcReqDto getVcReqCompared(Long reqId, Long currUserId) {
+    public VcReqDto getVcReqCompared(Long reqId, UserDto userDto) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
-        if(currUserId ==0){
+        String role = userDto.getRole();
+        Long currUserId = userDto.getUserId();
+        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MANAGER")){
             return dto;
         }
         EmpDto dbEmp = dto.getEmpDto();
