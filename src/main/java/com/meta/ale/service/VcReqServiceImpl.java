@@ -54,10 +54,15 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 신청 내역 상세 (user id 비교)*/
     @Override
-    public VcReqDto getVcReqCompared(Long reqId, Long currUserId) {
+    public VcReqDto getVcReqCompared(Long reqId, UserDto userDto) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
-        if (currUserId == 0) {
+        String role = userDto.getRole();
+        Long currUserId = userDto.getUserId();
+        System.out.println(userDto);
+        System.out.println(role);
+        System.out.println(role.equals("ROLE_MGR"));
+        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")){
             return dto;
         }
         EmpDto dbEmp = dto.getEmpDto();
@@ -149,7 +154,7 @@ public class VcReqServiceImpl implements VcReqService {
         HashMap<String, Object> vo = new HashMap<String, Object>();
         Long managerDeptId = null;
         //팀장일 경우 자신의 팀원의 내용만 볼 수 있음 ( 관리자의 경우 managerId가 null)
-        if (role.equals("ROLE_MANAGER")) {
+        if (role.equals("ROLE_MGR")) {
             Long userId = userDto.getUserId();
             EmpDto managerDto = empService.findEmpByUserId(userId);
             managerDeptId = managerDto.getDeptDto().getDeptId();
@@ -157,6 +162,7 @@ public class VcReqServiceImpl implements VcReqService {
         vo.put("pageNum", cri.getPageNum());
         vo.put("amount", cri.getAmount());
         vo.put("keyword", cri.getKeyword());
+        System.out.println(managerDeptId);
         vo.put("deptId", managerDeptId);
 
         // 페이징 처리를 위한 전체 count 조회

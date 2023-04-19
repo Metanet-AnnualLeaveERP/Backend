@@ -2,6 +2,7 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.CancelDto;
 import com.meta.ale.domain.Criteria;
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.mapper.VcReqMapper;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,9 @@ class CancelServiceTest {
 
     @Test
     void getCancel() {
-        CancelDto dto = cancelService.getCancel(1L, 5L);
+        UserDto user = new UserDto();
+        user.setUserId(5L);
+        CancelDto dto = cancelService.getCancel(1L, user);
         String result;
         result = dto == null ? "접근 실패" : dto.toString();
         System.out.println(result);

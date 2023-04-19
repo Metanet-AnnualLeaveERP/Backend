@@ -42,7 +42,7 @@ public class VcReqRestController {
     @GetMapping("/vacations/{vacation_request_id}")
     public ResponseEntity<Object> vcReqDetail(@PathVariable("vacation_request_id") Long reqId,
                                               @AuthenticationPrincipal UserDto user) {
-        VcReqDto dto = vcReqService.getVcReqCompared(reqId, user.getUserId());
+        VcReqDto dto = vcReqService.getVcReqCompared(reqId, user);
 
         if (dto != null) {
             dto.getEmpDto().setUserDto(null); // userDto

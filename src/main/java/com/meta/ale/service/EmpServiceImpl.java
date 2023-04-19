@@ -83,7 +83,7 @@ public class EmpServiceImpl implements EmpService {
             if (deptMgrId != null) {
                 return false;   // 팀장이 이미 있으면 팀장 가입 안됨
             }
-            userDto.setRole("ROLE_MANAGER");
+            userDto.setRole("ROLE_MGR");
             if (userMapper.insertUser(userDto) == 0) {
                 return false;
             }
@@ -161,7 +161,7 @@ public class EmpServiceImpl implements EmpService {
             if (newDeptMgrId != null) {
                 return false;   // 변경하려는 부서에 팀장이 이미 있으면 변경 불가
             }
-            userDto.setRole("ROLE_MANAGER");
+            userDto.setRole("ROLE_MGR");
             if (userMapper.updateRole(userDto) == 0) {
                 return false;
             }
@@ -292,7 +292,7 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public boolean modifyInfo(UserDto userDto, EmpDto empDto) throws Exception {
-
+        userDto.setUserId(userMapper.selectByEmpId(empDto.getEmpId()).getUserId());
         if (!userDto.getPwd().equals("")) {
             userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
             if (userMapper.updatePwd(userDto) <= 0) {

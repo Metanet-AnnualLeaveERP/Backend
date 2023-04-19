@@ -12,7 +12,7 @@ public interface CancelService {
     public Map<String, Object> getCancelList(Criteria cri, Long userId);
 
     /*휴가 취소 내역 상세 조회*/
-    public CancelDto getCancel(Long cancelId, Long currUserId);
+    public CancelDto getCancel(Long cancelId,UserDto userDto);
 
     /*휴가 취소*/
     public void createCancel(CancelDto dto, Long reqId);
