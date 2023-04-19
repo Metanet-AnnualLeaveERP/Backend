@@ -28,9 +28,8 @@
 
     <!--휴가 취소 내역 상세 조회-->
     <select id="getCancel" resultMap="cancelMap">
-        SELECT v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-               v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel,
-               e.mgr_id, e.user_id, d.dept_name, vt.*
+        SELECT c.*, v.*, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel,
+               e.mgr_id, e.user_id, d.dept_id, d.dept_name, vt.*
         FROM cancel c
                  JOIN vc_req v ON c.req_id = v.req_id
                  JOIN emp e ON v.emp_id = e.emp_id
@@ -165,7 +164,8 @@
     </resultMap>
 
     <resultMap id="deptMap" type="DeptDto">
-        <id property="deptId" column="dept_id"/>
+        <id property="deptId" column="dept_id" />
+        <result property="deptName" column="dept_name" />
     </resultMap>
 
 </mapper>

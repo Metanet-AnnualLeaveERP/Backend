@@ -135,7 +135,7 @@
                            WHERE E2.USER_ID = #{userId})
     </select>
 
-    <select id="getEntireReqsByTeam">
+    <select id="getEntireReqsByTeam" resultMap="reqMap">
         SELECT  *
         FROM VC_REQ V,EMP E, VC_TYPE VT
         WHERE

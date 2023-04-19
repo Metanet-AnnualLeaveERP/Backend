@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RemainToDto {
+public class RemainVcTo {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

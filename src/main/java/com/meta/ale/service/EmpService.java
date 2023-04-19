@@ -44,6 +44,6 @@ public interface EmpService {
     /* MgrId로 상사 정보 조회 */
     public EmpDto getEmpByMgrId(Long mgrId);
 
-    /* 부서의 잔여 TO 계산 */
-    public Long calculateVcToByDept(Long userId) throws Exception;
+    /* deptId로 emp count */
+    public Long selectDeptEmpCnt(Long deptId) throws Exception;
 }

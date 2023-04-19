@@ -28,8 +28,4 @@ public class EmpServiceTests {
 
     }
 
-    @Test
-    void calculateRemainTO() throws Exception {
-        empService.calculateVcToByDept(2L);
-    }
 }

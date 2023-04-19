@@ -66,7 +66,7 @@ public class EmpServiceImpl implements EmpService {
     @Transactional
     public boolean register(UserDto userDto, EmpDto empDto) throws Exception {
         userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
-
+        String pwd = userDto.getPwd();
         DeptDto deptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName()); // 부서정보
         Long deptMgrId = empMapper.selectDeptMgr(deptDto.getDeptId()); // 팀장아이디
         String position = empDto.getPosition();
@@ -335,19 +335,9 @@ public class EmpServiceImpl implements EmpService {
         return empMapper.getEmpByMgrId(mgrId);
     }
 
-    /* 부서의 잔여 TO 계산*/
     @Override
-    public Long calculateVcToByDept(Long userId) throws Exception {
-        EmpDto empDto = empMapper.findEmpByUserId(userId);
-
-        // + 1 은 팀장
-        Long empCnt = empMapper.selectDeptEmpCnt(empDto.getDeptDto().getDeptId()) + 1;
-        DeptDto deptDto = empDto.getDeptDto();
-        Double vcTo = deptDto.getVcTo() / 100.0;
-        Long calcTO = (long) Math.ceil(empCnt * vcTo); // 계산된 잔여 TO
-        System.out.println("calcTo: " + calcTO);
-
-        return calcTO;
+    public Long selectDeptEmpCnt(Long deptId) throws Exception {
+        return empMapper.selectDeptEmpCnt(deptId);
     }
 
     /*LocalDate 클래스의 datesUntil 메소드를 이용해 시작일부터 종료일까지의 날짜를 반환*/
@@ -355,4 +345,6 @@ public class EmpServiceImpl implements EmpService {
         return startDate.datesUntil(endDate)
                 .collect(Collectors.toList());
     }
+
+
 }

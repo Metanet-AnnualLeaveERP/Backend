@@ -15,4 +15,6 @@ public interface DeptService {
 
     void insertDept(DeptDto deptDto);
 
+    /* 부서의 잔여 TO 계산 */
+    public Long calculateVcToByDept(Long userId) throws Exception;
 }

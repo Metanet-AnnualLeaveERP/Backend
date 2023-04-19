@@ -1,6 +1,7 @@
 package com.meta.ale.service;
 
 import com.meta.ale.domain.Criteria;
+import com.meta.ale.domain.RemainVcTo;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,5 +33,9 @@ public interface VcReqService {
     Map<String, Object> getApprovalVcRequestList(UserDto userDto, Criteria cri);
 
     /*팀 휴가 승인된 내역 조회*/
-    List<VcReqDto> findMyTeamVacation(Long userId);
+    List<VcReqDto> findMyTeamVacation(UserDto userDto);
+
+    /*휴가 신청 일자별로 잔여 TO 계산*/
+    public List<RemainVcTo> calcRemainTOByVcReqs(UserDto userDto) throws Exception;
+
 }
