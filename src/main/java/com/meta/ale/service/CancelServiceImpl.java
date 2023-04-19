@@ -18,7 +18,6 @@ public class CancelServiceImpl implements CancelService {
 
     private final EmpService empService;
     private final VcTypeTotalService totalService;
-
     private final GrantedVcService gvService;
 
     /*휴가 취소 내역 조회*/
@@ -39,9 +38,14 @@ public class CancelServiceImpl implements CancelService {
 
     /*휴가 취소 내역 상세 조회*/
     @Override
-    public CancelDto getCancel(Long cancelId, Long currUserId) {
+    public CancelDto getCancel(Long cancelId,UserDto userDto) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         CancelDto dto = cancelMapper.getCancel(cancelId);
+        Long currUserId = userDto.getUserId();
+        String role = userDto.getRole();
+        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")){
+            return dto;
+        }
         if (dto != null && dto.getVcReqDto() != null) {
 
             EmpDto dbEmp = dto.getVcReqDto().getEmpDto();
@@ -117,7 +121,7 @@ public class CancelServiceImpl implements CancelService {
     public Map<String, Object> getApprovalCancelList(UserDto userDto, Criteria cri) {
         String role = userDto.getRole();
         Long mgrDeptId = null;
-        if (role.equals("ROLE_MANAGER")) {
+        if (role.equals("ROLE_MGR")) {
             Long userId = userDto.getUserId();
             EmpDto managerDto = empService.findEmpByUserId(userId);
             mgrDeptId = managerDto.getDeptDto().getDeptId();

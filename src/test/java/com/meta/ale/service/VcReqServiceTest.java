@@ -38,7 +38,9 @@ class VcReqServiceTest {
 
     @Test
     void getVcReq() {
-        VcReqDto dto = vcReqService.getVcReqCompared(5L, 1L);
+        UserDto user = new UserDto();
+        user.setUserId(1L);
+        VcReqDto dto = vcReqService.getVcReqCompared(5L, user);
         String result;
         result = dto == null ? "접근 실패" : dto.toString();
         System.out.println(result);
