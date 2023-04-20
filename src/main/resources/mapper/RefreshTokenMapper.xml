@@ -18,7 +18,10 @@
 	</resultMap>
 
 	<select id="selectByToken" resultMap="RefreshTokenMap">
-		select * from refresh_token where token = #{token}
+		select rt.*,u.emp_num,u.role from refresh_token rt , users u
+		         where
+		             u.user_id = rt.user_id and
+		             token = #{token}
 	</select>
 
 	<insert id="insertToken">

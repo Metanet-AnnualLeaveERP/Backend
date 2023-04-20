@@ -82,10 +82,10 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-//                .antMatchers("/api/user/**").permitAll()
-//                .antMatchers("/api/admin/**").hasRole("ADMIN")
-//                .antMatchers("/api/manager/**").hasRole("MANAGER")
-//                .antMatchers("/api/emp/**").hasRole("EMP")
+                .antMatchers("/user/**").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/manager/**").hasAnyRole("MGR", "ADMIN")
+                .antMatchers("/emp/**").hasAnyRole("EMP", "MGR", "ADMIN")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
         // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'

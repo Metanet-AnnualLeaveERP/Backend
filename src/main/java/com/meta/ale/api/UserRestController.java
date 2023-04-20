@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -94,7 +95,6 @@ public class UserRestController {
                     .map(RefreshTokenDto::getUserDto)
                     .map(userDto -> {
                         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDto);
-
                         return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                                 .body("Token is refreshed successfully!");
