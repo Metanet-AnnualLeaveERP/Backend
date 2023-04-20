@@ -77,6 +77,11 @@ public class UsePlanServiceImpl implements UsePlanService{
         return result > 0;
     }
 
+    @Override
+    public List<UsePlanDto> selectUserPlanListByDocId(Long docId) {
+        return usePlanMapper.selectUserPlanListByDocId(docId);
+    }
+
     // 페이징 용
     private Integer getUsePlanCnt(UserDto userDto) throws Exception {
         return usePlanMapper.selectUsePlanCnt(userDto);

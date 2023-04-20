@@ -19,5 +19,5 @@ public interface UsePlanMapper {
 
     public Integer insertUsePlan(UsePlanDto usePlanDto) throws Exception;
 
-    //Integer insertUsePlanList(List<UsePlanDto> usePlanDtoList) throws Exception;
+    List<UsePlanDto> selectUserPlanListByDocId(Long docId);
 }

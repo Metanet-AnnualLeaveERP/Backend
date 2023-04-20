@@ -17,4 +17,6 @@ public interface UsePlanService {
     public boolean addUsePlan(UsePlanDto usePlanDto) throws Exception;
 
     public boolean addUsePlanList(List<UsePlanDto> usePlanDtoList) throws Exception;
+
+    List<UsePlanDto> selectUserPlanListByDocId(Long docId);
 }
