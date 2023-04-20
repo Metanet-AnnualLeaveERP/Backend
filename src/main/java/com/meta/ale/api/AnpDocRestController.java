@@ -2,10 +2,12 @@ package com.meta.ale.api;
 
 import com.meta.ale.domain.AnpDocDto;
 import com.meta.ale.domain.Criteria;
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.service.AnpDocService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -29,8 +31,8 @@ public class AnpDocRestController {
 
     // 연차사용요청서 전체조회 //
     @GetMapping("/annual-promote")
-    public Map<String, Object> getListAnpDoc(Criteria criteria) {
-        return anpDocService.getListAnpDoc(criteria);
+    public Map<String, Object> getListAnpDoc(@AuthenticationPrincipal UserDto userDto, Criteria cri) {
+        return anpDocService.getListAnpDoc(userDto,cri);
     }
 
     // 사용요청서 삭제 //
