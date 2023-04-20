@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class GrantedVcServiceImpl implements GrantedVcService {
@@ -31,13 +33,13 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
     /* 임의휴가부여내역 조회 */
     @Override
-    public Map<String, Object> getListGrantedVc(Criteria criteria) {
+    public Map<String, Object> getListGrantedVc(Criteria cri) {
         HashMap<String, Object> dto = new HashMap<>();
-        dto.put("pageNum", criteria.getPageNum());
-        dto.put("amount", criteria.getAmount());
+        dto.put("pageNum", cri.getPageNum());
+        dto.put("amount", cri.getAmount());
 
         Map<String, Object> map = new HashMap<>();
-        map.put("paging", new PagenationDTO(criteria, getGrantedVcCount()));
+        map.put("paging", new PagenationDTO(cri, getGrantedVcCount()));
         map.put("grantedVcs", vcMapper.getListGrantedVc(dto));
         return map;
     }

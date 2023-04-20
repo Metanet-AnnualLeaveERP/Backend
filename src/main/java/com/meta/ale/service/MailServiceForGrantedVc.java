@@ -35,7 +35,7 @@ public class MailServiceForGrantedVc {
             String body = setMail("<메타넷> 휴가 생성 알림",
                     grantedVcdto.getEmpDto().getName()+"님의 휴가가 생성되었습니다.<br>" +
                             "휴가유형 : "+grantedVcdto.getVcTypeDto().getTypeName()+"<br>"+
-                            "휴가일수 : "+grantedVcdto.getVcDays());
+                            "생성휴가일수 : "+grantedVcdto.getVcDays()+"<br>");
             messageHelper.setText(body, true);
             javaMailSender.send(message);
         } catch (Exception e){
