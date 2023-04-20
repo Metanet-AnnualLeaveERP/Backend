@@ -49,7 +49,7 @@ public class UsePlanRestController {
         return ResponseEntity.badRequest().body("잘못된 요청입니다.");
     }
 
-    @PostMapping("-list")
+    @PostMapping("/list")
     public ResponseEntity<?> addUsePlanList(@RequestBody List<UsePlanDto> usePlanDtoList) throws Exception {
         if(usePlanService.addUsePlanList(usePlanDtoList)){
             return ResponseEntity.ok().body("사용 계획 추가 완료");

@@ -65,8 +65,8 @@ public class UsePlanServiceImpl implements UsePlanService{
     public boolean addUsePlanList(List<UsePlanDto> usePlanDtoList) throws Exception {
         UsePlanDto usePlanDto;
         int result = 0;
-        for(int i = 0; i < usePlanDtoList.size(); i++){
-            usePlanDto = usePlanDtoList.get(i);
+        for (UsePlanDto planDto : usePlanDtoList) {
+            usePlanDto = planDto;
             LocalDate startDate = usePlanDto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate endDate = usePlanDto.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             long useDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;

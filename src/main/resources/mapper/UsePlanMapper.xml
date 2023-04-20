@@ -118,7 +118,7 @@
                 #{anpDocDto.docId})
     </insert>
 
-    <!-- 여러개 날짜 선택 시 -->
+    <!-- 여러개 날짜 선택 시 고려 -->
     <insert id="insertUsePlanList" parameterType="Map">
         INSERT INTO use_plan (plan_id, start_date, end_date, use_days, doc_id)
         VALUES (PLAN_SQ.nextval,
