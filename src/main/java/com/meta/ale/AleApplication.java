@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import javax.annotation.PostConstruct;
+import java.util.Locale;
 import java.util.TimeZone;
 
 @SpringBootApplication
@@ -17,6 +18,7 @@ public class AleApplication {
 
 	@PostConstruct
 	public void started(){
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/seoul"));
+		Locale.setDefault(Locale.KOREA);
 	}
 }
