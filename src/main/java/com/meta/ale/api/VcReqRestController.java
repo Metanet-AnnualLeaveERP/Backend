@@ -27,7 +27,11 @@ public class VcReqRestController {
     /*휴가 신청 내역 조회*/
     @GetMapping("/vacations")
     public Map<String, Object> vcReqList(@AuthenticationPrincipal UserDto user,
-                                         Criteria cri) {
+                                         @RequestParam String paging, Criteria cri) {
+        if (paging.equals("false")) {
+            cri.setPageNum(1);
+            cri.setAmount(Integer.MAX_VALUE);
+        }
 
         /* ADMIN or EMP 판별
         userId == 0 -> admin */
@@ -38,7 +42,7 @@ public class VcReqRestController {
     @GetMapping("/vacations/{vacation_request_id}")
     public ResponseEntity<Object> vcReqDetail(@PathVariable("vacation_request_id") Long reqId,
                                               @AuthenticationPrincipal UserDto user) {
-        VcReqDto dto = vcReqService.getVcReqCompared(reqId, user.getUserId());
+        VcReqDto dto = vcReqService.getVcReqCompared(reqId, user);
 
         if (dto != null) {
             dto.getEmpDto().setUserDto(null); // userDto
@@ -98,5 +102,11 @@ public class VcReqRestController {
     @GetMapping("/vacations/my-team")
     public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto) {
         return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto));
+    }
+
+    /*부서별 잔여 TO (모든 팀원의 휴가들을 날짜별로 to에서 차감)*/
+    @GetMapping("/vacations/remain-to")
+    public ResponseEntity entireTeamRemainVcTo(@AuthenticationPrincipal UserDto userDto) throws Exception {
+        return ResponseEntity.ok(vcReqService.calcRemainTOByVcReqs(userDto));
     }
 }

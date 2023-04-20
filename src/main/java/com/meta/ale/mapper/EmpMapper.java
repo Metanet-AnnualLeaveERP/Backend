@@ -22,7 +22,7 @@ public interface EmpMapper {
 
     public EmpDto selectEmpByEmpId(Long empId) throws Exception;
 
-    public Integer selectEmpListCnt() throws Exception;
+    public Integer selectEmpListCnt(Map<String, Object> parameterMap) throws Exception;
 
     public List<EmpDto> selectEmpList(Map<String, Object> paramMap) throws Exception;
 

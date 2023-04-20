@@ -38,7 +38,9 @@ class VcReqServiceTest {
 
     @Test
     void getVcReq() {
-        VcReqDto dto = vcReqService.getVcReqCompared(5L, 1L);
+        UserDto user = new UserDto();
+        user.setUserId(1L);
+        VcReqDto dto = vcReqService.getVcReqCompared(5L, user);
         String result;
         result = dto == null ? "접근 실패" : dto.toString();
         System.out.println(result);
@@ -60,7 +62,7 @@ class VcReqServiceTest {
         dto.setEndDate(endDate);
 
 //        dto.setVcType("연차");
-        dto.setReqDays(2L);
+        dto.setReqDays(2.0);
         dto.setComments(null);
         dto.setStatus("자동승인");
         dto.setAprvDate(null);
@@ -95,5 +97,11 @@ class VcReqServiceTest {
         UserDto userDto= userService.getByEmpNum("admin").get();
         vcReqService.approvalVcRequestStatus(userDto,1L,"반려","반려내용~~");
 
+    }
+
+    @Test
+    void calcRemainTOByVcReqs() throws Exception {
+        UserDto userDto = userService.getByEmpNum("emp_2").get();
+        vcReqService.calcRemainTOByVcReqs(userDto);
     }
 }

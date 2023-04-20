@@ -55,14 +55,14 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean deleteGrantedVc(Long vcId) {
         GrantedVcDto gvDto = vcMapper.getGrantedVc(vcId);
-        Long remainDays = gvDto.getRemainDays();
+        Double remainDays = gvDto.getRemainDays();
         EmpDto empDto = gvDto.getEmpDto();
         VcTypeDto typeDto = gvDto.getVcTypeDto();
 
         int result = vcMapper.deleteGrantedVc(vcId);
         if (result != 0) {
             VcTypeTotalDto totalDto = new VcTypeTotalDto();
-            totalDto.setCnt(remainDays);
+            totalDto.setCnt(remainDays.longValue());
             totalDto.setVcTypeDto(typeDto);
             totalDto.setEmpDto(empDto);
             totalMapper.minusVcTypeTotal(totalDto);
@@ -128,11 +128,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         //휴가 타입에 대한 정보 받아오기
         VcTypeDto vcTypeDto = vcTypeService.getVcType("연차");
         // 1년 이상 사람에 대한 연차 계산 후 부여
-        boolean overOneYrList = addEmpOverOneYrList(date, expiredDate, today, vcTypeDto);
+        addEmpOverOneYrList(date, expiredDate, today, vcTypeDto);
         // 1년이 된 사람들에 대한 연차 부여
-        boolean oneYrList = addEmpOneYrList(date, expiredDate, vcTypeDto);
+        addEmpOneYrList(date, expiredDate, vcTypeDto);
         // 1년이 안된 사람들에 대한 연차 계산
-        boolean underOneYrList = addEmpUnderOneYrList(date, expiredDate, vcTypeDto);
+        addEmpUnderOneYrList(date, expiredDate, vcTypeDto);
         return true;
     }
 
@@ -154,30 +154,28 @@ public class GrantedVcServiceImpl implements GrantedVcService {
 
     /* ------------------------- Private Method ------------------------- */
     private void toMessage(EmpDto empDto) {
-        mailService.sendToCEmail(empDto, "<메타넷> 연차휴가 발급 안내",
-                empDto.getName() + "님의 연차 휴가를 발급했습니다." +
-                        "자세한 내용은 홈페이지에서 확인해주시길 바랍니다.");
+        mailService.sendToCEmail(empDto, "<메타넷> 연차휴가 발급 안내", empDto.getName()
+                + "님의 연차 휴가를 발급했습니다.",
+                "자세한 내용은 홈페이지에서 확인해주시길 바랍니다.");
     }
 
     // 1년이 지난 사람들중 오늘 날짜와 1년이 된 사람 대한 연차계산 방법
-    private boolean addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception {
+    private void addEmpOverOneYrList(Date date, Date expiredDate, LocalDate today, VcTypeDto vcTypeDto) throws Exception {
         List<EmpDto> empOverOneYrList = empService.findEmpOverOneYr();
 
         if (empOverOneYrList.size() != 0) {
             for (EmpDto e : empOverOneYrList) {
                 //근속일수 계산
                 long duration = empCalcHireDate(today, e.getHireDate());
-                GrantedVcDto grantedVcDto = new GrantedVcDto(null, date, expiredDate, duration, duration, vcTypeDto, e);
+                GrantedVcDto grantedVcDto = new GrantedVcDto(null, date, expiredDate, duration, (double)duration, vcTypeDto, e);
                 vcMapper.insertAnnualGranted(grantedVcDto);
                 toMessage(e);
             }
-            return true;
         }
-        return false;
     }
 
     // 오늘날로부터 딱 1년인 사람의 연차 부여
-    private boolean addEmpOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
+    private void addEmpOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
 
         List<EmpDto> empOneYrList = empService.findEmpOneYr();
         //1년인 사람에 대한 연차계산 방법
@@ -191,25 +189,22 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                 GrantedVcDto grantedVcDtoToDB = vcMapper.findByEmpIdVcType(grantedVcDto);
 
                 Long vcDays = grantedVcDtoToDB.getVcDays();
-                Long remainDays = grantedVcDtoToDB.getRemainDays();
+                double remainDays = grantedVcDtoToDB.getRemainDays();
                 //휴가가 새롭게 부여되기 때문에 부여일자와 만료일자를 부여된 시점으로 부터 초기화
                 // 1년이 된 사람은 옛날엔 사용갯수에 대해 차감했는데 22년 5월 이후부턴 법적으로
                 // 기존에 대한 연차를 놔두고 15개가 부여되기 때문에 하드코딩으로 처리했음
                 grantedVcDtoToDB.setVcDays(vcDays + 15L);
-                grantedVcDtoToDB.setRemainDays(remainDays + 15L);
+                grantedVcDtoToDB.setRemainDays(remainDays + 15);
                 grantedVcDtoToDB.setGrantedDate(date);
                 grantedVcDtoToDB.setExpiredDate(expiredDate);
                 vcMapper.updateAnnualGranted(grantedVcDtoToDB);
                 toMessage(e);
             }
-            return true;
         }
-        return false;
-
     }
 
     // 오늘날로부터 1년이 안된 사람들 중 한 달 간격인 된 사람들
-    private boolean addEmpUnderOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
+    private void addEmpUnderOneYrList(Date date, Date expiredDate, VcTypeDto vcTypeDto) throws Exception {
 
         // 사원들 중 1년이 안되었으면서 n달이 된 사람들
         List<EmpDto> empUnderOneYrList = empService.findEmpUnderOneYr();
@@ -221,23 +216,21 @@ public class GrantedVcServiceImpl implements GrantedVcService {
                 GrantedVcDto grantedVcDtoToDB = vcMapper.findByEmpIdVcType(grantedVcDto);
                 if (grantedVcDtoToDB != null && grantedVcDtoToDB.getVcId() != null) {
                     Long vcDays = grantedVcDtoToDB.getVcDays();
-                    Long remainDays = grantedVcDtoToDB.getRemainDays();
+                    Double remainDays = grantedVcDtoToDB.getRemainDays();
                     grantedVcDtoToDB.setGrantedDate(date);
                     grantedVcDtoToDB.setExpiredDate(date);
-                    grantedVcDtoToDB.setRemainDays(vcDays + 1L);
+                    grantedVcDtoToDB.setRemainDays((double)vcDays + 1);
                     grantedVcDtoToDB.setRemainDays(remainDays + 1L);
                     grantedVcDtoToDB.setVcTypeDto(vcTypeDto);
                     vcMapper.updateAnnualGranted(grantedVcDtoToDB);
 
                 } else {
-                    grantedVcDto = new GrantedVcDto(null, date, expiredDate, 1L, 1L, vcTypeDto, e);
+                    grantedVcDto = new GrantedVcDto(null, date, expiredDate, 1L, 1.0, vcTypeDto, e);
                     vcMapper.insertAnnualGranted(grantedVcDto);
                 }
                 toMessage(e);
             }
-            return true;
         }
-        return false;
     }
 
     //입사일로부터 현재까지 경력 계산하고 연차 갯수 계산

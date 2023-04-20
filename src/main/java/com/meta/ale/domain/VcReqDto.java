@@ -22,7 +22,7 @@ public class VcReqDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date endDate;
-    private Long reqDays;
+    private Double reqDays;
     private String comments;
     private String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd" )

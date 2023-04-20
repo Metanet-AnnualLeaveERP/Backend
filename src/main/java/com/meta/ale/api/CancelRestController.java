@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CancelRestController {
 
-    private CancelService cancelService;
+    private final CancelService cancelService;
 
     /*휴가 취소 내역 조회*/
     @GetMapping("/vacations/cancel")
@@ -32,7 +32,7 @@ public class CancelRestController {
     @GetMapping("/vacations/cancel/{cancel_id}")
     public ResponseEntity<Object> cancelDetail(@PathVariable("cancel_id") Long cancelId,
                                                @AuthenticationPrincipal UserDto user) {
-        CancelDto dto = cancelService.getCancel(cancelId, user.getUserId());
+        CancelDto dto = cancelService.getCancel(cancelId, user);
 
         if (dto != null) {
             dto.getVcReqDto().getEmpDto().setUserDto(null);
@@ -67,7 +67,7 @@ public class CancelRestController {
     @PutMapping("/manager/vacations/cancel/{cancel_id}")
     public ResponseEntity approvalCancel(@PathVariable("cancel_id") Long cancelId,
                                          @RequestParam("status") String status,
-                                         @RequestParam("comment") String comment) {
+                                         @RequestParam(value = "comment" ,required = false) String comment) {
 
         if (!cancelService.approvalCancel(cancelId, status, comment)) {
             return ResponseEntity.badRequest().body("비정상적인 처리입니다.");

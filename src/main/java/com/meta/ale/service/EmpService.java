@@ -45,4 +45,7 @@ public interface EmpService {
     public EmpDto getEmpByMgrId(Long mgrId);
 
     List<EmpDto> selectListByDeptId(Long deptId);
+
+    /* deptId로 emp count */
+    public Long selectDeptEmpCnt(Long deptId) throws Exception;
 }

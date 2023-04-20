@@ -9,18 +9,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class GrantedVcDto {
-    private Long vcId;
+@AllArgsConstructor
+public class RemainVcTo {
+
     @DateTimeFormat(pattern = "yyyy-MM-dd" )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date grantedDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd" )
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date expiredDate;
-    private Long vcDays;
-    private Double remainDays;
-    private VcTypeDto vcTypeDto;
-    private EmpDto empDto;
+    Date date;
+
+    Long remainTO;
 }

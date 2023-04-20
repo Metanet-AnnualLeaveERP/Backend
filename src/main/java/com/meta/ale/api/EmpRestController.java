@@ -46,7 +46,7 @@ public class EmpRestController {
     }
 
     // 사원 상세 내역 조회
-    @GetMapping("/admin/emp/{emp_id}")
+    @GetMapping("/emp/{emp_id}")
     public EmpDto getEmpInfo(@PathVariable("emp_id") Long empId) throws Exception {
         return empService.getEmpInfo(empId);
     }
@@ -96,4 +96,5 @@ public class EmpRestController {
         EmpDto empDto = empService.findEmpByUserId(userId);
         return ResponseEntity.ok().body(empDto);
     }
+
 }

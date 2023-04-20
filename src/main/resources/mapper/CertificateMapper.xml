@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.meta.ale.mapper.CertificateMapper">
+    <!-- Certificate Mapper -->
+
+    <!--증명서 내역 조회 (페이징 처리)-->
+    <select id="getCertList" resultMap="certMap" parameterType="HashMap">
+        SELECT
+        *
+        FROM (
+        SELECT ROWNUM RN, C.*
+        FROM
+        certificate c
+        JOIN emp e ON c.emp_id = e.emp_id
+        LEFT OUTER JOIN vc_req      v ON c.req_id = v.req_id
+        LEFT OUTER JOIN cancel      ca ON c.cancel_id = ca.cancel_id
+        WHERE
+        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+        <if test="user_id != 0">
+            AND e.user_id = #{userId}
+        </if>
+        )
+        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+    </select>
+
+    <!--증명서 내역 상세 조회-->
+    <select id="getCert" resultMap="certMap" parameterType="Long">
+        SELECT c.*, e.*
+        FROM certificate c JOIN emp e ON c.emp_id = e.emp_id
+        WHERE cert_id = #{certId}
+    </select>
+
+    <!--휴가 확인서 (증명서) 발급 요청-->
+    <insert id="insertCert" parameterType="CertificateDto">
+        INSERT INTO certificate (CERT_ID, ISSUED_DATE, PURPOSE, EMP_ID, REQ_ID, CANCEL_ID)
+        VALUES (CERT_SQ.nextval, SYSDATE, #{purpose}, #{empDto.empId}, #{vcReqDto.reqId, jdbcType=NULL}, #{cancelDto.cancelId, jdbcType=NULL})
+        <selectKey keyProperty="certId" order="AFTER" resultType="long">
+            SELECT CERT_SQ.currval FROM dual
+        </selectKey>
+    </insert>
+
+    <!--증명서 개수 (페이징 처리용)-->
+    <select id="getCertCount" resultType="Long">
+        SELECT
+        COUNT(*)
+        FROM
+        certificate c JOIN emp e ON c.emp_id = e.emp_id
+        <where>
+            <if test="user_id != 0">
+                AND e.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="certMap" type="CertificateDto">
+        <id property="certId" column="cert_id"/>
+        <result property="issuedDate" column="issued_date"/>
+        <result property="purpose" column="purpose"/>
+        <association property="empDto" resultMap="empMap"/>
+        <association property="vcReqDto" resultMap="reqMap"/>
+        <association property="cancelDto" resultMap="cancelMap"/>
+    </resultMap>
+
+    <resultMap id="reqMap" type="VcReqDto">
+        <id property="reqId" column="req_id"/>
+<!--        <result property="reqDate" column="req_date"/>-->
+<!--        <result property="startDate" column="start_date"/>-->
+<!--        <result property="endDate" column="end_date"/>-->
+<!--        <result property="reqDays" column="req_days"/>-->
+<!--        <result property="comments" column="comments"/>-->
+<!--        <result property="deniedComment" column="denied_comment"/>-->
+<!--        <result property="status" column="status"/>-->
+<!--        <result property="aprvDate" column="aprv_date"/>-->
+<!--        <result property="filePath" column="file_path"/>-->
+<!--        <association property="vcTypeDto" resultMap="vcTypeMap"/>-->
+<!--        <association property="empDto" resultMap="empMap"/>-->
+    </resultMap>
+    <resultMap id="cancelMap" type="CancelDto">
+        <id property="cancelId" column="cancel_id"/>
+<!--        <result property="cancelStatus" column="cancel_status"/>-->
+<!--        <result property="cancelReqDate" column="req_date"/>-->
+<!--        <result property="resDate" column="res_date"/>-->
+<!--        <result property="reqComm" column="req_comm"/>-->
+<!--        <result property="resComm" column="res_comm"/>-->
+<!--        <association property="vcReqDto" resultMap="reqMap"/>-->
+    </resultMap>
+    <resultMap type="VcTypeDto" id="vcTypeMap">
+        <id property="typeId" column="type_id"/>
+        <result property="typeName" column="type_name"/>
+        <result property="description" column="description"/>
+    </resultMap>
+    <resultMap id="empMap" type="EmpDto">
+        <id property="empId" column="emp_id"/>
+        <result property="name" column="name"/>
+        <result property="hireDate" column="hire_date"/>
+        <result property="leaveDate" column="leave_date"/>
+        <result property="position" column="position"/>
+        <result property="pEmail" column="p_email"/>
+        <result property="cEmail" column="c_email"/>
+        <result property="tel" column="tel"/>
+        <result property="mgrId" column="mgr_id"/>
+        <association property="userDto" resultMap="userMap"/>
+        <association property="deptDto" resultMap="deptMap"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="UserDto">
+        <id property="userId" column="user_id"/>
+        <result property="role" column="role"/>
+    </resultMap>
+
+    <resultMap id="deptMap" type="DeptDto">
+        <id property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+    </resultMap>
+
+</mapper>

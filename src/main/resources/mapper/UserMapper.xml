@@ -39,7 +39,7 @@
     </update>
 
     <select id="selectByEmpId" resultType="UserDto">
-        select u.*
+        select u.user_id, u.emp_num, u.enabled, u.role
         from users u
         join emp e
         on e.user_id = u.user_id
@@ -56,7 +56,7 @@
     <update id="updateEnabled">
         update users
         set enabled = 0
-        where user_id = #{userId}
+        where emp_num = #{empNum}
     </update>
 
     <delete id="deleteUserByUserId" parameterType="UserDto">

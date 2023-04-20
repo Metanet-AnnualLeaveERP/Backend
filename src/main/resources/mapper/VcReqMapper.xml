@@ -10,8 +10,9 @@
         FROM (
             SELECT
                 ROWNUM RN,
-                v.req_id, v.vc_type, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel, e.mgr_id, e.dept_id
+                v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
+                v.aprv_date,v.file_path, e.emp_id, e.name, e.position, e.p_email,
+                e.c_email, e.tel, e.mgr_id, e.dept_id, vt.*
             FROM
                 vc_req v JOIN emp e ON v.emp_id = e.emp_id
                          JOIN vc_type vt ON v.type_id = vt.type_id
@@ -28,9 +29,10 @@
     <select id="getVcReq" resultMap="reqMap" parameterType="Long">
         SELECT
             v.req_id, v.req_date, v.start_date, v.end_date, v.req_days, v.comments, v.status,
-            v.aprv_date,v.file_path, e.*, vt.*
+            v.aprv_date,v.file_path, e.*, d.dept_name, vt.*
         FROM
             vc_req v JOIN emp e ON v.emp_id = e.emp_id
+                     JOIN dept d ON e.dept_id = d.dept_id
                      JOIN vc_type vt ON v.type_id = vt.type_id
         WHERE
             req_id = #{reqId}
@@ -58,21 +60,28 @@
         *
         FROM (
         SELECT
-        ROWNUM RN, v.*, e.name,e.p_email,e.c_email, e.position,e.hire_date
+             ROWNUM RN, A.*
         FROM
-        vc_req v JOIN emp e ON v.emp_id = e.emp_id
+            (SELECT
+                 v.*,u.EMP_NUM,u.ROLE, e.name,e.p_email,e.c_email, e.position,e.hire_date
+                FROM
+                    vc_req v JOIN emp e ON v.emp_id = e.emp_id
+                    JOIN USERS u ON u.USER_ID = e.USER_ID
+                WHERE
+                    e.leave_date IS NULL
+                    AND u.role NOT IN ('ROLE_ADMIN')
+                <if test="deptId != null">
+                    AND e.dept_id = #{deptId}
+                </if>
+                <if test="keyword != null and !keyword.equals('')">
+                    AND v.STATUS = #{keyword}
+                </if>
+                ORDER BY REQ_DATE ASC
+            ) A
         WHERE
         <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-        AND e.leave_date IS NULL
-        <if test="deptId != null">
-            AND e.dept_id = #{deptId}
-        </if>
-        <if test="keyword != null and !keyword.equals('')">
-            AND v.STATUS = #{keyword}
-        </if>
-
         )
-        <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+        <![CDATA[ WHERE rn > (#{pageNum}-1) * #{amount} ]]>
     </select>
     <!--휴가 신청 상태 변경-->
     <update id="updateVcReqStatus" parameterType="VcReqDto">
@@ -114,16 +123,32 @@
 
     <!--  캘린더용 우리팀 부서의 휴가 뿌리기 위한 것  -->
     <select id="getVcReqByDept" resultMap="reqMap">
-        SELECT  V.*,E.name,E.C_EMAIL,E.POSITION
+        SELECT  V.*,E.name,E.C_EMAIL,E.POSITION, VT.*
         FROM VC_REQ V,
-             EMP E
-        WHERE V.EMP_ID = E.EMP_ID
+             EMP E,
+             VC_TYPE VT
+        WHERE V.EMP_ID = E.EMP_ID AND V.TYPE_ID = VT.TYPE_ID
           AND E.LEAVE_DATE IS NULL
           AND V.STATUS IN ('자동승인', '승인완료')
           AND E.DEPT_ID = (SELECT DEPT_ID
                            FROM EMP E2
                            WHERE E2.USER_ID = #{userId})
     </select>
+
+    <select id="getEntireReqsByTeam" resultMap="reqMap">
+        SELECT  *
+        FROM VC_REQ V,EMP E, VC_TYPE VT
+        WHERE
+            V.TYPE_ID = VT.TYPE_ID AND
+            V.EMP_ID = E.EMP_ID AND
+            START_DATE >= SYSDATE AND
+            STATUS NOT IN ('취소','반려') AND
+            E.DEPT_ID = (SELECT DEPT_ID
+                         FROM EMP E2
+                         WHERE E2.USER_ID =#{userId}
+                        )
+    </select>
+
 
     <resultMap id="reqMap" type="VcReqDto">
         <id property="reqId" column="req_id"/>
@@ -160,14 +185,16 @@
 
     <resultMap id="userMap" type="UserDto">
         <id property="userId" column="user_id" />
-<!--        <result property="empNum" column="emp_num" />-->
+        <result property="empNum" column="emp_num" />
         <result property="role" column="role" />
 
     </resultMap>
 
     <resultMap id="deptMap" type="DeptDto">
         <id property="deptId" column="dept_id" />
+        <result property="deptName" column="dept_name" />
     </resultMap>
+
 
 
 </mapper>
