@@ -110,6 +110,22 @@
     </update>
 
     <insert id="insertUsePlan" parameterType="UsePlanDto">
-        insert into use_plan values (plan_sq.nextval, #{startDate}, #{endDate}, #{useDays}, #{anpDocDto.docId})
+        INSERT INTO use_plan
+        VALUES (plan_sq.nextval,
+                #{startDate},
+                #{endDate},
+                #{useDays},
+                #{anpDocDto.docId})
+    </insert>
+
+    <!-- 여러개 날짜 선택 시 -->
+    <insert id="insertUsePlanList" parameterType="Map">
+        INSERT INTO use_plan (plan_id, start_date, end_date, use_days, doc_id)
+        VALUES (PLAN_SQ.nextval,
+                #{startDate},
+                #{endDate},
+                #{useDays},
+                #{anpDocDto.docId}
+               )
     </insert>
 </mapper>

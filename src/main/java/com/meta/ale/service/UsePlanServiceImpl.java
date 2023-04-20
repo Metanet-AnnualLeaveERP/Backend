@@ -7,11 +7,13 @@ import com.meta.ale.domain.UserDto;
 import com.meta.ale.mapper.UsePlanMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -56,6 +58,23 @@ public class UsePlanServiceImpl implements UsePlanService{
         usePlanDto.setUseDays(useDays.intValue());
 
         return usePlanMapper.insertUsePlan(usePlanDto) > 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean addUsePlanList(List<UsePlanDto> usePlanDtoList) throws Exception {
+        UsePlanDto usePlanDto;
+        int result = 0;
+        for(int i = 0; i < usePlanDtoList.size(); i++){
+            usePlanDto = usePlanDtoList.get(i);
+            LocalDate startDate = usePlanDto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate endDate = usePlanDto.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            long useDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+            usePlanDto.setUseDays((int) useDays);
+            int cnt = usePlanMapper.insertUsePlan(usePlanDto);
+            result += cnt;
+        }
+        return result > 0;
     }
 
     // 페이징 용

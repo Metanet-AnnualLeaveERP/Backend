@@ -57,13 +57,13 @@ public class AnpDocServiceImpl implements AnpDocService {
     }
 
     @Override
-    public Map<String, Object> getListAnpDoc(Criteria criteria) {
+    public Map<String, Object> getListAnpDoc(UserDto userDto,Criteria cri) {
         HashMap<String, Object> dto = new HashMap<>();
-        dto.put("pageNum", criteria.getPageNum());
-        dto.put("amount", criteria.getAmount());
-
+        dto.put("pageNum", cri.getPageNum());
+        dto.put("amount", cri.getAmount());
+        dto.put("userId",userDto.getUserId());
         Map<String, Object> map = new HashMap<>();
-        map.put("paging", new PagenationDTO(criteria, getGrantedVcCount()));
+        map.put("paging", new PagenationDTO(cri, getGrantedVcCount()));
         map.put("anpDocs", anpDocMapper.getListAnpDoc(dto));
         return map;
     }

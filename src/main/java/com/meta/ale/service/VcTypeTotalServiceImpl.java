@@ -40,7 +40,7 @@ public class VcTypeTotalServiceImpl implements VcTypeTotalService {
         EmpDto empDto= empService.findEmpByUserId(userDto.getUserId());
         Long empId = empDto.getEmpId();
         VcTypeDto vcTypeDto = new VcTypeDto();
-        vcTypeDto.setTypeId(1L);
+        vcTypeDto.setTypeId(1L); // 휴가유형이 연차이어야 함! 하나만 들고와야하기때문에.
         VcReqDto vcReqDto = new VcReqDto();
         vcReqDto.setEmpDto(empDto);
         vcReqDto.setVcTypeDto(vcTypeDto);

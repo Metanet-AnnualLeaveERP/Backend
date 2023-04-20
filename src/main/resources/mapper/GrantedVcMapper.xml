@@ -14,32 +14,37 @@
 
     </select>
 
-
+    <!-- 역순정렬 -->
     <select id="getListGrantedVc" resultMap="grantedVc" parameterType="hashMap">
-        SELECT
-            *
+        SELECT *
         FROM (
-                 SELECT
-                     ROWNUM RN,
-                     d.dept_name,
-                     e.emp_id,
-                     e.name,
-                     vt.type_name,
-                     gv.vc_id,
-                     gv.granted_date,
-                     gv.expired_date,
-                     gv.vc_days,
-                     gv.remain_days,
-                     gv.type_id
-                 FROM
-                     granted_vc gv
-                         JOIN emp e ON e.emp_id = gv.emp_id
-                         JOIN vc_type vt ON gv.type_id = vt.type_id
-                         JOIN dept d ON d.dept_id = e.dept_id
-                 WHERE
-        <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
+            SELECT
+                vclist.*,
+                ROWNUM RN
+            FROM (
+                SELECT /*+ INDEX(granted_vc granted_vc_granted_date_idx) */
+                    d.dept_name,
+                    e.emp_id,
+                    e.name,
+                    vt.type_name,
+                    gv.vc_id,
+                    gv.granted_date,
+                    gv.expired_date,
+                    gv.vc_days,
+                    gv.remain_days,
+                    gv.type_id
+                FROM
+                    granted_vc gv
+                    JOIN emp e ON e.emp_id = gv.emp_id
+                    JOIN vc_type vt ON gv.type_id = vt.type_id
+                    JOIN dept d ON d.dept_id = e.dept_id
+                ORDER BY gv.granted_date DESC
+            ) vclist
+            WHERE
+                <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
         )
-    <![CDATA[ WHERE RN > (#{pageNum}-1) * #{amount} ]]>
+        WHERE
+            <![CDATA[ RN > ( #{pageNum}-1) * #{amount}]]>
     </select>
 
     <select id="getListAnnualLeave" resultMap="grantedVc" parameterType="HashMap">
@@ -91,13 +96,14 @@
 
     <insert id="insertGrantedVc" parameterType="GrantedVcDto">
         INSERT INTO granted_vc(vc_id, granted_date, expired_date, vc_days, remain_days, type_id, emp_id)
-            VALUES(vc_sq.nextval,
-          #{grantedDate},
-          #{expiredDate},
-          #{vcDays},
-          #{vcDays},
-          #{vcTypeDto.typeId},
-          #{empDto.empId})
+            VALUES(
+        vc_sq.nextval,
+        sysdate,
+        #{expiredDate},
+        #{vcDays},
+        #{vcDays},
+        #{vcTypeDto.typeId},
+        #{empDto.empId})
     </insert>
 
     <select id="findByEmpIdVcType" resultType="GrantedVcDto">

@@ -43,4 +43,6 @@ public interface EmpService {
 
     /* MgrId로 상사 정보 조회 */
     public EmpDto getEmpByMgrId(Long mgrId);
+
+    List<EmpDto> selectListByDeptId(Long deptId);
 }

@@ -320,4 +320,9 @@ public class EmpServiceImpl implements EmpService {
     public EmpDto getEmpByMgrId(Long mgrId) {
         return empMapper.getEmpByMgrId(mgrId);
     }
+
+    @Override
+    public List<EmpDto> selectListByDeptId(Long deptId) {
+        return empMapper.selectListByDeptId(deptId);
+    }
 }

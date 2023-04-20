@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -79,6 +80,13 @@ public class EmpRestController {
     public ResponseEntity managerInfo(@PathVariable(value = "mgr_id") Long mgrId) {
         EmpDto empDto = empService.getEmpByMgrId(mgrId);
         return ResponseEntity.ok().body(empDto);
+    }
+
+    //부서정보로 Emp 조회
+    @GetMapping("/admin/dept-emp-info/{deptId}")
+    public List<EmpDto> selectEmpListByDeptId(@PathVariable(value = "deptId") Long deptId){
+//        List<EmpDto> empList = empService.selectListByDeptId(deptId);
+        return empService.selectListByDeptId(deptId);
     }
 
     // userId로 emp 정보 리턴
