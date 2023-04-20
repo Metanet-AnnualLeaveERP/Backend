@@ -116,7 +116,6 @@ public class UserRestController {
         }
     }
 
-    // 이거하고 가입시에 p_email 해줘야함.
     @GetMapping("/user/check")
     public String checkPwd(@RequestParam String email) throws Exception {
         if (userService.checkEmail(email)) {
