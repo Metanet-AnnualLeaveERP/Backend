@@ -55,7 +55,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean deleteGrantedVc(Long vcId) {
         GrantedVcDto gvDto = vcMapper.getGrantedVc(vcId);
+        if (gvDto == null) {
+            return false;
+        }
         Double remainDays = gvDto.getRemainDays();
+
         EmpDto empDto = gvDto.getEmpDto();
         VcTypeDto typeDto = gvDto.getVcTypeDto();
 

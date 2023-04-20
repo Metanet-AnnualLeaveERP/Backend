@@ -59,13 +59,15 @@ public class VcReqServiceImpl implements VcReqService {
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
         String role = userDto.getRole();
         Long currUserId = userDto.getUserId();
-        System.out.println(userDto);
-        System.out.println(role);
-        System.out.println(role.equals("ROLE_MGR"));
+
         if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")){
             return dto;
         }
+        if (dto == null)
+            return null;
         EmpDto dbEmp = dto.getEmpDto();
+        if (dbEmp == null)
+            return null;
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
     }
