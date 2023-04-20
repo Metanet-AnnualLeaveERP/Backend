@@ -1,6 +1,7 @@
 package com.meta.ale.api;
 
 import com.meta.ale.domain.Criteria;
+import com.meta.ale.domain.GrantedVcDto;
 import com.meta.ale.domain.UsePlanDto;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.service.UsePlanService;
@@ -55,5 +56,10 @@ public class UsePlanRestController {
             return ResponseEntity.ok().body("사용 계획 추가 완료");
         }
         return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+    }
+
+    @GetMapping("/datelist/{docId}")
+    public List<UsePlanDto> selectUserPlanListByDocId(@PathVariable("docId") Long docId){
+        return usePlanService.selectUserPlanListByDocId(docId);
     }
 }

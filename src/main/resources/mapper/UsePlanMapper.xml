@@ -128,4 +128,12 @@
                 #{anpDocDto.docId}
                )
     </insert>
+
+    <select id="selectUserPlanListByDocId" resultMap="usePlanMap">
+        select *
+        from use_plan p
+                 join anp_doc d
+                      on p.doc_id = d.doc_id
+        where d.doc_id = #{docId}
+    </select>
 </mapper>
