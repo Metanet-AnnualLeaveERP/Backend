@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
         String position = empDto.getPosition();
         DeptDto deptInfoDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName());
         Long deptId = deptInfoDto.getDeptId();
-        if (position.equals("사원")) {
+        if (position.equals("팀원")) {
             if (userMapper.updateEnabled(userDto) == 0) {
                 return false;
             }

@@ -106,7 +106,7 @@ public class EmpServiceImpl implements EmpService {
                     return true;
             }
             return true;
-        } else if (position.equals("사원")) {
+        } else if (position.equals("팀원")) {
             userDto.setRole("ROLE_EMP");
             if (userMapper.insertUser(userDto) == 0) {
                 return false;
@@ -214,7 +214,7 @@ public class EmpServiceImpl implements EmpService {
                 }
             }
             return true;
-        } else if (position.equals("사원")) {
+        } else if (position.equals("팀원")) {
             userDto.setRole("ROLE_EMP");
             if (userMapper.updateRole(userDto) == 0) {
                 return false;

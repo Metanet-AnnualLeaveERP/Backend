@@ -35,7 +35,7 @@ public class VcReqRestController {
 
         /* ADMIN or EMP 판별
         userId == 0 -> admin */
-            return vcReqService.getVcReqList(cri, user.getUserId());
+        return vcReqService.getVcReqList(cri, user);
     }
 
     /*휴가 신청 내역 상세 조회*/
