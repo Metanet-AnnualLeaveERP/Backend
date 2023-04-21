@@ -32,7 +32,8 @@ public interface EmpMapper {
 
     public Integer updateLeaveDate(EmpDto empDto);
 
-    public Integer selectDuplicatedEmail(String email);
+    //비밀번호 찾기위해 empNum과 email 넘겨받음.
+    public EmpDto selectDuplicatedEmail(Map<String,Object> map);
 
     //근속 년수가 1년 초과인 사람 조회
     public List<EmpDto> findEmpOverOneYrList();

@@ -218,10 +218,12 @@
         emp_id = #{empId}
     </update>
 
-    <select id="selectDuplicatedEmail" resultType="Integer">
-        select count(*)
-        from emp
-        where p_email = #{email}
+    <select id="selectDuplicatedEmail" resultMap="empMap" parameterType="HashMap">
+        select e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel , u.*
+        from emp e, users u
+        where e.user_id = u.user_id
+          and e.p_email = #{email}
+          and u.emp_num = #{empNum}
     </select>
 
     <!--상사 정보-->
