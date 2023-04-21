@@ -40,6 +40,7 @@ public class VcReqServiceImpl implements VcReqService {
     @Override
     public Map<String, Object> getVcReqList(Criteria cri, UserDto user) {
         // Mapper에 들어갈 파라미터 map으로 변환
+        System.out.println(user);
         Long userId = user.getUserId();
         HashMap<String, Object> vo = new HashMap();
         vo.put("pageNum", cri.getPageNum());
