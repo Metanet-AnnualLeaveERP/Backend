@@ -12,7 +12,7 @@ import java.util.Map;
 public interface VcReqService {
 
     /*휴가 신청 내역*/
-    public Map<String, Object> getVcReqList(Criteria cri, Long userId);
+    public Map<String, Object> getVcReqList(Criteria cri, UserDto user);
 
     /*휴가 신청 내역 상세 (user id 비교)*/
     public VcReqDto getVcReqCompared(Long reqId, UserDto userDto);

@@ -29,7 +29,9 @@ class VcReqServiceTest {
     @Test
     void getVcReqList() {
         Criteria cri = new Criteria();
-        Map<String, Object> map = vcReqService.getVcReqList(cri, 1L);
+        UserDto user = new UserDto();
+        user.setUserId(1L);
+        Map<String, Object> map = vcReqService.getVcReqList(cri, user);
 
         for (Map.Entry<String, Object> entrySet : map.entrySet()) {
             System.out.println(entrySet.getKey() + " : " + entrySet.getValue());
