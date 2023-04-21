@@ -102,9 +102,13 @@ public class EmpServiceImpl implements EmpService {
 
                 if (empMapper.updateEmpList(paramMap) == 0)
                     return false;
-                else
+                else{
+
+                    createMail(empDto,userDto,pwd);
                     return true;
+                }
             }
+            createMail(empDto,userDto,pwd);
             return true;
         } else if (position.equals("팀원")) {
             userDto.setRole("ROLE_EMP");
@@ -116,18 +120,12 @@ public class EmpServiceImpl implements EmpService {
             empDto.setDeptDto(deptDto);
             empDto.setMgrId(deptMgrId);
             if (empMapper.insertEmp(empDto) == 1) {
+                createMail(empDto,userDto,pwd);
                 return true;
             } else {
                 return false;
             }
         }
-        StringBuffer sb = new StringBuffer();
-        sb.append("가입 완료했습니다.\n" + "아이디" + userDto.getEmpNum() + "\n비밀번호 : " + pwd + " 입니다.\n");
-        sb.append("로그인 후 비밀번호를 변경해주세요.");
-        sb.append("이상입니다.");
-        mailService.sendToPEmail(empDto, "<Metanet> 인사팀_ 계정 생성 완료되었습니다."
-                , "메타넷에 입사하신 것을 환영합니다."
-                , sb.toString());
         return false;
     }
 
@@ -360,5 +358,16 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public List<EmpDto> selectListByDeptId(Long deptId) {
         return empMapper.selectListByDeptId(deptId);
+    }
+
+    private void createMail(EmpDto empDto,UserDto userDto,String pwd){
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("가입 완료했습니다.\n" + "아이디" + userDto.getEmpNum() + "\n비밀번호 : " + pwd + " 입니다.\n");
+        sb.append("로그인 후 비밀번호를 변경해주세요.");
+        sb.append("이상입니다.");
+        mailService.sendToPEmail(empDto, "<Metanet> 인사팀_ 계정 생성 완료되었습니다."
+                , "메타넷에 입사하신 것을 환영합니다."
+                , sb.toString());
     }
 }

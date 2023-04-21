@@ -41,6 +41,7 @@ public class CancelServiceImpl implements CancelService {
     public CancelDto getCancel(Long cancelId, UserDto userDto) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         CancelDto dto = cancelMapper.getCancel(cancelId);
+        System.out.println(userDto);
         Long currUserId = userDto.getUserId();
         String role = userDto.getRole();
         if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")) {
