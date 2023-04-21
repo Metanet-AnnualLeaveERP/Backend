@@ -9,6 +9,8 @@ import com.meta.ale.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final EmpMapper empMapper;
     private final DeptMapper deptMapper;
+    private final MailService mailService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 //        return userMapper.selectByEmpNum(username)
@@ -75,38 +79,28 @@ public class UserServiceImpl implements UserService {
 
     // 중복이메일 체크
     @Override
-    public boolean checkEmail(String email) throws Exception {
-        if (empMapper.selectDuplicatedEmail(email) > 0) {
+    public boolean checkEmail(String email, String empNum) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("email", email);
+        map.put("empNum", empNum);
+        EmpDto empDto = empMapper.selectDuplicatedEmail(map);
+        BCryptPasswordEncoder bCryptPasswordEncoder= new BCryptPasswordEncoder();
+        if (empDto != null && empDto.getPEmail() != null) {
+            UserDto user = empDto.getUserDto();
+            String pwd = empDto.getUserDto().getUsername() + "" + empDto.getEmpId();
+            String encodingPwd = bCryptPasswordEncoder.encode(pwd);
+
+            user.setPwd(encodingPwd);
+            System.out.println(user);
+            userMapper.updatePwd(user);
+            StringBuilder sb = new StringBuilder();
+            sb.append("비밀번호 : ");
+            sb.append(pwd + "입니다.\n");
+            sb.append("로그인 후 패스워드를 변경해주세요.");
+            mailService.sendToPEmail(empDto, "<메타넷>비밀번호 찾기", "비밀번호 찾기 ",
+                    sb.toString());
             return true;
         }
         return false;
     }
-
-//    private UserDetails createUserDetails(UserDto userDto) {
-//        return User.builder()
-//                .username(userDto.getEmpNum())
-//                .password(passwordEncoder.encode(userDto.getPassword()))
-//                .roles(userDto.getRole())
-//                .build();
-//    }
-
-
-//    //1. 로그인 요청으로 들어온 memberId, password를 기반으로 Authentication 객체를 생성
-//    //2. authenticate() 메서드를 통해 요청된 user에 대한 검증이 진행
-//    //3. 검증이 정상적으로 통과되었다면 인증된 Authentication 객체를 기반으로 JWT 토큰을 생성
-//    @Override
-//    public TokenDto login(String empNum, String pwd) {
-//        // 1. Login ID/PW를 기반으로 Authentication 객체 생성
-//        // 이 때 authentication은 인증 여부를 확인하는 authenticated 값이 false
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(empNum, pwd);
-//
-//        // 2. 실제 검증(사용자 비밀번호 체크)이 이루어지는 부분
-//        // authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//
-//        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-//        TokenDto tokenDto = jwtTokenProvider.generateToken(authentication);
-//
-//        return tokenDto;
-//    }
 }

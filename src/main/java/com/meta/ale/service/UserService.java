@@ -13,5 +13,5 @@ public interface UserService extends UserDetailsService {
 
     public boolean modifyEnabled(UserDto userDto, EmpDto empDto) throws Exception;
 
-    public boolean checkEmail(String email) throws Exception;
+    public boolean checkEmail(String email,String empNum) throws Exception;
 }

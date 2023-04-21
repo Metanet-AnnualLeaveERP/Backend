@@ -118,10 +118,10 @@ public class UserRestController {
 
     // 이거하고 가입시에 p_email 해줘야함.
     @GetMapping("/user/check")
-    public String checkPwd(@RequestParam String email) throws Exception {
-        if (userService.checkEmail(email)) {
-            return "duplicated";
-        }
-        return "ok";
+    public String checkPwd(@RequestParam("email") String email, @RequestParam("empNum") String empNum) throws Exception {
+        if(userService.checkEmail(email,empNum)){
+                return "이메일 발송을 완료했습니다.";
+        };
+        return "사원번호와 이메일이 일치하지 않습니다.";
     }
 }
