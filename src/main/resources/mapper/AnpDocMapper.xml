@@ -2,22 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.meta.ale.mapper.AnpDocMapper">
 
-    <select id="getListAnpDoc" resultType="AnpDocDto" parameterType="HashMap">
+    <!-- 문서발생일자 기준 역순정렬 -->
+    <select id="getListAnpDoc" resultMap="anpDocMap" parameterType="HashMap">
         SELECT *
-        FROM (
-            SELECT  ROWNUM RN, ad.*
-            FROM    anp_doc ad
-            WHERE
-                <![CDATA[ ROWNUM <= #{pageNum} * #{amount} ]]>
-             )
-        <![CDATA[
-        WHERE RN > (#{pageNum} - 1) * #{amount}
-        ]]>
+        FROM
+            (SELECT anplist.*, ROWNUM RN
+            FROM
+                (SELECT /*+ INDEX(anp_doc anp_doc_occur_date) */
+                anp.doc_id, anp.total_anv, anp.used_anv, anp.remain_anv, anp.occur_date, anp.anv_occur_date,
+                anp.emp_id, e.name,
+                CASE WHEN plan.doc_id IS NOT NULL THEN 1 ELSE 0 END AS plan
+                FROM anp_doc anp
+                JOIN emp e ON anp.emp_id = e.emp_id
+                LEFT JOIN  USE_PLAN plan ON anp.doc_id = plan.doc_id
+                <if test="userId != 0">
+                WHERE e.user_id = #{userId}
+                </if>
+                ORDER BY anp.occur_date DESC) anplist
+      <![CDATA[ WHERE ROWNUM <= #{pageNum} * #{amount} ) ]]>
+<![CDATA[ WHERE RN > ( #{pageNum} - 1 ) * #{amount} ]]>
     </select>
 
-    <select id="getAnpDoc" resultType="AnpDocDto">
-        SELECT *
-        FROM anp_doc
+    <!-- 촉진문서에 필요한 것-->
+    <select id="getAnpDoc" resultMap="anpDocMap">
+        SELECT anp.*, e.*, u.role, d.dept_name
+        FROM anp_doc anp
+            JOIN emp e ON e.emp_id = anp.emp_id
+            JOIN users u ON e.user_id = u.user_id
+            JOIN dept d ON e.dept_id = d.dept_id
         WHERE doc_id = #{docId}
     </select>
 
@@ -53,5 +65,38 @@
         )
     </insert>
 
+    <resultMap id="anpDocMap" type="AnpDocDto">
+        <id property="docId"               column="doc_id"/>
+        <result property="totalAnv"        column="total_anv"/>
+        <result property="remainAnv"         column="remain_anv"/>
+        <result property="occurDate"       column="occur_date"/>
+        <result property="anvOccurDate"   column="anv_occur_date"/>
+        <result property="plan"           column="plan"/>
+        <association property="empDto"      resultMap="empMap"/>
+    </resultMap>
 
+    <resultMap id="empMap" type="EmpDto">
+        <id property="empId"                column="emp_id" />
+        <result property="name"             column="name" />
+        <result property="hireDate"         column="hire_date" />
+        <result property="leaveDate"        column="leave_date" />
+        <result property="position"         column="position" />
+        <result property="pEmail"           column="p_email" />
+        <result property="cEmail"           column="c_email" />
+        <result property="tel"              column="tel" />
+        <result property="mgrId"            column="mgr_id" />
+        <association property="userDto"     resultMap="userMap" />
+        <association property="deptDto"     resultMap="deptMap" />
+    </resultMap>
+
+    <resultMap id="userMap" type="UserDto">
+        <id property="userId" column="user_id" />
+        <!--        <result property="empNum" column="emp_num" />-->
+        <result property="role" column="role" />
+    </resultMap>
+
+    <resultMap id="deptMap"                 type="DeptDto">
+        <id property="deptId"               column="dept_id" />
+        <result property="deptName"         column="dept_name"/>
+    </resultMap>
 </mapper>

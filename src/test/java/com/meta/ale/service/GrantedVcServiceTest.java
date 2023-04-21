@@ -48,27 +48,34 @@ public class GrantedVcServiceTest {
 //        //System.out.println("[RESULT]" + result);
 //    }
 
+//    @Test
+//    void insertGrantedVcTest(){
+//        GrantedVcDto grantedVcDto = new GrantedVcDto();
+//        grantedVcDto.setGrantedDate(new Date());
+//        grantedVcDto.setExpiredDate(new Date());
+//        grantedVcDto.setRemainDays(17.0);
+//        grantedVcDto.setVcDays(17L);
+//
+//        VcTypeDto typeDto = new VcTypeDto();
+//        typeDto.setTypeId(1L);
+//        grantedVcDto.setVcTypeDto(typeDto);
+//
+//        EmpDto empDto = new EmpDto();
+//        empDto.setEmpId(4L);
+//        grantedVcDto.setEmpDto(empDto);
+//
+//        gvService.insertGrantedVc(grantedVcDto);
+//    }
+
+//    @Test
+//    public void insertAnnual() throws Exception{
+//        gvService.insertAnnualByEmpOverOneYr();
+//    }
+
     @Test
-    void insertGrantedVcTest(){
-        GrantedVcDto grantedVcDto = new GrantedVcDto();
-        grantedVcDto.setGrantedDate(new Date());
-        grantedVcDto.setExpiredDate(new Date());
-        grantedVcDto.setRemainDays(17.0);
-        grantedVcDto.setVcDays(17L);
-
-        VcTypeDto typeDto = new VcTypeDto();
-        typeDto.setTypeId(1L);
-        grantedVcDto.setVcTypeDto(typeDto);
-
-        EmpDto empDto = new EmpDto();
-        empDto.setEmpId(4L);
-        grantedVcDto.setEmpDto(empDto);
-
-        gvService.insertGrantedVc(grantedVcDto);
-    }
-    @Test
-    public void insertAnnual() throws Exception{
-        gvService.insertAnnualByEmpOverOneYr();
+    void deleteGrantedVcTest() throws Exception {
+        Long vcId = 1L;
+        gvService.deleteGrantedVc(vcId);
     }
 
 

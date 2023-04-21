@@ -21,6 +21,7 @@ public class GrantedVcRestController {
     /* 임의휴가생성 */
     @PostMapping("granted")
     public ResponseEntity<String> insertGrantedVc(@RequestBody GrantedVcDto grantedVcDto) {
+        System.out.println(grantedVcDto);
         try {
             boolean result = grantedVcService.insertGrantedVc(grantedVcDto);
             if (result) {
@@ -35,8 +36,8 @@ public class GrantedVcRestController {
 
     /* 임의휴가내역 전체조회 */
     @GetMapping("granted")
-    public Map<String, Object> getListGrantedVc(Criteria criteria) {
-        return grantedVcService.getListGrantedVc(criteria);
+    public Map<String, Object> getListGrantedVc(Criteria cri) {
+        return grantedVcService.getListGrantedVc(cri);
     }
 
     /* 임의휴가내역 상세조회 */
