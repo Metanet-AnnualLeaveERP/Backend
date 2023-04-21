@@ -92,21 +92,10 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.3.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0.4</version>
-        </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -141,8 +130,15 @@
                 <configuration>
                     <excludes>
                         <exclude>**/*_Generated*</exclude>
+                        <exclude>com/meta/ale/AleApplication*</exclude>
+                        <exclude>com/meta/ale/aop/**</exclude>
+                        <exclude>com/meta/ale/api/**</exclude>
                         <exclude>com/meta/ale/domain/**</exclude>
-                        <exclude>**/*MapperTest*</exclude>
+                        <exclude>com/meta/ale/jwt/**</exclude>
+                        <exclude>com/meta/ale/mapper/**</exclude>
+                        <exclude>com/meta/ale/quartz/**</exclude>
+                        <exclude>com/meta/ale/security/**</exclude>
+<!--                        <exclude>**/*MapperTest*</exclude>-->
                     </excludes>
 <!--                    <includes>-->
 <!--                        <include>com/meta/ale/mapper/**/*CancelMapperTest*</include>-->

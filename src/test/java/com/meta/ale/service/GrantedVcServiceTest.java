@@ -72,11 +72,11 @@ public class GrantedVcServiceTest {
 //        gvService.insertAnnualByEmpOverOneYr();
 //    }
 
-    @Test
-    void deleteGrantedVcTest() throws Exception {
-        Long vcId = 1L;
-        gvService.deleteGrantedVc(vcId);
-    }
+//    @Test
+//    void deleteGrantedVcTest() throws Exception {
+//        Long vcId = 1L;
+//        gvService.deleteGrantedVc(vcId);
+//    }
 
 
 

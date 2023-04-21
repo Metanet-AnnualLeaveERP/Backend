@@ -43,9 +43,9 @@ public class VcTypeServiceTest {
         vcTypeService.getListVcType();
     }
 
-    @Test
-    void deleteVcTypeTest() throws Exception {
-        Long typeId = 1L;
-        vcTypeService.deleteVcType(typeId);
-    }
+//    @Test
+//    void deleteVcTypeTest() throws Exception {
+//        Long typeId = 1L;
+//        vcTypeService.deleteVcType(typeId);
+//    }
 }

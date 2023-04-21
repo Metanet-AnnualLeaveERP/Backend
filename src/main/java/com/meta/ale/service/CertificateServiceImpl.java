@@ -42,10 +42,7 @@ public class CertificateServiceImpl implements CertificateService {
             return null;
         }
         EmpDto dbEmp = dto.getEmpDto();
-        if (dbEmp == null) {
-            return null;
-        }
-        System.out.println(dbEmp);
+
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
     }
