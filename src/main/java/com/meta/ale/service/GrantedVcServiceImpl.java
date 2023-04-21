@@ -155,6 +155,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         return vcMapper.findByEmpIdVcTypeAndExpiredDate(vcReqDto);
     }
 
+    @Override //연차촉진문서함에서 empId 로 연차정보 찾아서 추가할 때 사용
+    public GrantedVcDto getAnnualLeaveByEmpId(Long empId) {
+        return vcMapper.getAnnualLeaveByEmpId(empId);
+    }
+
 
     /* ------------------------- Private Method ------------------------- */
     private void toMessage(EmpDto empDto) {

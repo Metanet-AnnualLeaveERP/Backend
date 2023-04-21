@@ -49,6 +49,16 @@ public class GrantedVcRestController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다");
     }
+    /* empId 로 연차내역 조회 */
+    //연차촉진문서함에서 empId 로 연차정보 찾아서 추가할 때 사용
+    @GetMapping("granted-annual/{empId}")
+    public ResponseEntity<Object> getAnnualLeaveByEmpId(@PathVariable("empId") Long empId) {
+        GrantedVcDto gvDto = grantedVcService.getAnnualLeaveByEmpId(empId);
+        if (empId != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(gvDto);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다");
+    }
 
     /* 임의휴가내역 삭제 */
     @DeleteMapping("granted/{vcId}")
@@ -66,9 +76,7 @@ public class GrantedVcRestController {
     @PutMapping("/granted/{vcId}")
     public ResponseEntity<String> updateGrantedVc(@PathVariable("vcId") Long vcId,
                                                   @RequestBody GrantedVcDto gvDto) {
-
         gvDto.setVcId(vcId);
-
         return null;
     }
 }

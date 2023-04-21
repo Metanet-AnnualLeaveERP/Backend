@@ -165,6 +165,17 @@
         DELETE FROM granted_vc WHERE vc_id = #{vcId}
     </delete>
 
+    <select id="getAnnualLeaveByEmpId" resultMap="grantedVc" parameterType="Long">
+        SElECT e.*, gv.*, vt.*, d.*, u.role
+        FROM granted_vc gv
+                 JOIN emp e ON e.emp_id = gv.emp_id
+                 JOIN vc_type vt ON gv.type_id = vt.type_id
+                 JOIN dept d ON d.dept_id = e.dept_id
+                 JOIN users u on e.user_id = u.user_id
+        WHERE vt.type_id = 1
+          AND e.emp_id=#{empId}
+    </select>
+
     <!-- paging -->
     <select id="getGrantedVcCount" resultType="Long">
         SELECT COUNT(*)
