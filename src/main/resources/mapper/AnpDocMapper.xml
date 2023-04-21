@@ -59,7 +59,7 @@
         #{totalAnv},
         #{usedAnv},
         #{remainAnv},
-        #{occurDate},
+        SYSDATE,
         #{anvOccurDate},
         #{empDto.empId}
         )

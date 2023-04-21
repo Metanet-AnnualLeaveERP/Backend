@@ -25,5 +25,8 @@ public interface GrantedVcService {
 
     // 올해 부여된 연차 부여를 찾기 위한 서비스
     GrantedVcDto findByExpiredDateAndEmpIdAndTypeId(VcReqDto vcReqDto);
+    
+    //연차촉진문서함에서 empId 로 연차정보 찾아서 추가할 때 사용
+    GrantedVcDto getAnnualLeaveByEmpId(Long empId);
 
 }

@@ -31,5 +31,5 @@ public interface GrantedVcMapper {
 
     List<GrantedVcDto> getListAnnualLeave(HashMap<String, Object> hashMap);
 
-
+    GrantedVcDto getAnnualLeaveByEmpId(Long empId);
 }
