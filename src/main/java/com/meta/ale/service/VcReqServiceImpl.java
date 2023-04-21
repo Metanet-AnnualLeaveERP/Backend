@@ -38,13 +38,13 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*휴가 신청 내역 조회*/
     @Override
-    public Map<String, Object> getVcReqList(Criteria cri, Long userId) {
+    public Map<String, Object> getVcReqList(Criteria cri, UserDto user) {
         // Mapper에 들어갈 파라미터 map으로 변환
-        HashMap<String, Object> vo = new HashMap<String, Object>();
+        Long userId = user.getUserId();
+        HashMap<String, Object> vo = new HashMap();
         vo.put("pageNum", cri.getPageNum());
         vo.put("amount", cri.getAmount());
         vo.put("userId", userId);
-
         // 페이징 처리를 위해 map으로 데이터 리턴
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("paging", new PagenationDTO(cri, getVcReqCount(userId)));
@@ -59,13 +59,15 @@ public class VcReqServiceImpl implements VcReqService {
         VcReqDto dto = vcReqMapper.getVcReq(reqId);
         String role = userDto.getRole();
         Long currUserId = userDto.getUserId();
-        System.out.println(userDto);
-        System.out.println(role);
-        System.out.println(role.equals("ROLE_MGR"));
+
         if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")){
             return dto;
         }
+        if (dto == null)
+            return null;
         EmpDto dbEmp = dto.getEmpDto();
+        if (dbEmp == null)
+            return null;
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
     }

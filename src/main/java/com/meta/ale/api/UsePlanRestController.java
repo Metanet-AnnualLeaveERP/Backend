@@ -1,14 +1,17 @@
 package com.meta.ale.api;
 
 import com.meta.ale.domain.Criteria;
+import com.meta.ale.domain.GrantedVcDto;
 import com.meta.ale.domain.UsePlanDto;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.service.UsePlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -47,4 +50,16 @@ public class UsePlanRestController {
         return ResponseEntity.badRequest().body("잘못된 요청입니다.");
     }
 
+    @PostMapping("/list")
+    public ResponseEntity<?> addUsePlanList(@RequestBody List<UsePlanDto> usePlanDtoList) throws Exception {
+        if(usePlanService.addUsePlanList(usePlanDtoList)){
+            return ResponseEntity.ok().body("사용 계획 추가 완료");
+        }
+        return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+    }
+
+    @GetMapping("/datelist/{docId}")
+    public List<UsePlanDto> selectUserPlanListByDocId(@PathVariable("docId") Long docId){
+        return usePlanService.selectUserPlanListByDocId(docId);
+    }
 }

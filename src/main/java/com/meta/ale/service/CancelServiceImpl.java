@@ -1,5 +1,6 @@
 package com.meta.ale.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meta.ale.domain.*;
 import com.meta.ale.mapper.CancelMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ public class CancelServiceImpl implements CancelService {
     private final CancelMapper cancelMapper;
 
     private final VcReqService vcReqService;
-
     private final EmpService empService;
     private final VcTypeTotalService totalService;
     private final GrantedVcService gvService;
@@ -38,12 +38,12 @@ public class CancelServiceImpl implements CancelService {
 
     /*휴가 취소 내역 상세 조회*/
     @Override
-    public CancelDto getCancel(Long cancelId,UserDto userDto) {
+    public CancelDto getCancel(Long cancelId, UserDto userDto) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         CancelDto dto = cancelMapper.getCancel(cancelId);
         Long currUserId = userDto.getUserId();
         String role = userDto.getRole();
-        if(role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")){
+        if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")) {
             return dto;
         }
         if (dto != null && dto.getVcReqDto() != null) {
@@ -58,27 +58,48 @@ public class CancelServiceImpl implements CancelService {
     /*휴가 취소*/
     @Override
     @Transactional
-    public void createCancel(CancelDto dto, Long reqId) {
-        /*자동 취소 시 차감일을 다시 부여해야 한다 ... 로직 추가하기 */
-        // 휴가 요청을 찾아 cancel DTO에 셋 해준다
-        VcReqDto req = vcReqService.getVcReq(reqId);
-        dto.setVcReqDto(req);
+    public void createCancel(CancelDto cancelDto, Long reqId) {
+        VcReqDto vcReqDto = vcReqService.getVcReq(reqId);
+        System.out.println(vcReqDto);
 
         // 현재 날짜와 휴가 요청의 시작일을 비교한다.
         Date sysdate = new Date(); // 현재일
-        int compare = req.getStartDate().compareTo(sysdate);
+        int compare = vcReqDto.getStartDate().compareTo(sysdate);
 
-        // 시작일이 현재일 이전이라면
+        // 시작일이 현재일 이전이라면 (아직 안 지남)
         if (compare > 0) {
-            dto.setCancelStatus("자동취소");
+            cancelDto.setCancelStatus("자동취소");
+            /*자동 취소 시 차감일 복구 */
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Long> vcType = new ArrayList();
+            vcType.add(1L); // 연차
+            vcType.add(2L); // 오전반차
+            vcType.add(3L); // 오후반차
+            // 연차 / 반차가 아닌 경우
+            if (!vcType.contains(vcReqDto.getVcTypeDto().getTypeId())) {
+                VcTypeTotalDto totalDto = totalService.getVcTotalByTypeAndEmpId(vcReqDto);
+                totalDto.setCnt((long) (totalDto.getCnt() + vcReqDto.getReqDays()));
+                totalService.updateVcTypeTotalByTotalId(totalDto);
+            } else {
+                // 반차가 들어올 수도 있어서 연차로 변환
+                vcReqDto.getEmpDto().setUserDto(null);
+                VcReqDto newVcReqDto = objectMapper.convertValue(vcReqDto, VcReqDto.class);
+                newVcReqDto.getVcTypeDto().setTypeId(1L);
+                // 올해에 대한 연차 정보 조회
+                GrantedVcDto gvDto = gvService.findByExpiredDateAndEmpIdAndTypeId(newVcReqDto);
+                // 신청일만큼 Granted_Vc Table의 RemainDays를 복구
+                gvDto.setRemainDays(gvDto.getRemainDays() + vcReqDto.getReqDays());
+                gvService.updateAnnualCnt(gvDto);
+            }
         } // 시작일이 현재일이거나 이후라면 (지났다면)
         else if (compare == 0 || compare < 0) {
-            dto.setCancelStatus("대기중");
+            cancelDto.setCancelStatus("대기중");
         }
-        req.setStatus("취소");
+        vcReqDto.setStatus("취소");
+        cancelDto.setVcReqDto(vcReqDto);
 
-        vcReqService.updateVcReqStatus(req); // 해당 휴가 요청의 상태를 '취소'로 변경
-        cancelMapper.insertCancel(dto); // 휴가 취소 테이블에 추가
+        vcReqService.updateVcReqStatus(vcReqDto); // 해당 휴가 요청의 상태를 '취소'로 변경
+        cancelMapper.insertCancel(cancelDto); // 휴가 취소 테이블에 추가
     }
 
     /*휴가취소 승인 / 휴가취소 반려*/

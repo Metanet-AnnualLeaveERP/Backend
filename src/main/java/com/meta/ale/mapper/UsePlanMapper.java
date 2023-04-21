@@ -18,4 +18,6 @@ public interface UsePlanMapper {
     public Integer updateUsePlan(UsePlanDto usePlanDto) throws Exception;
 
     public Integer insertUsePlan(UsePlanDto usePlanDto) throws Exception;
+
+    List<UsePlanDto> selectUserPlanListByDocId(Long docId);
 }

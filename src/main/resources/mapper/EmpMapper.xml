@@ -111,12 +111,6 @@
         where position = '팀장' and dept_id = #{deptId}
     </select>
 
-    <select id="selectListByDeptId">
-        select *
-        from emp
-        where dept_id = #{deptId}
-    </select>
-
     <update id="updateEmpList" parameterType="hashMap">
         update emp
         set mgr_id = #{mgrId, jdbcType=NULL}
@@ -238,5 +232,11 @@
         FROM emp e
         WHERE emp_id = #{mgrId}
         AND leave_date IS NULL
+    </select>
+
+    <select id="selectListByDeptId" resultMap="empMap" parameterType="Long" >
+        select e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel
+        from emp e
+        where dept_id = #{deptId}
     </select>
 </mapper>

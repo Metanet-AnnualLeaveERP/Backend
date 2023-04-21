@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -94,7 +95,6 @@ public class UserRestController {
                     .map(RefreshTokenDto::getUserDto)
                     .map(userDto -> {
                         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDto);
-
                         return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                                 .body("Token is refreshed successfully!");
@@ -116,7 +116,6 @@ public class UserRestController {
         }
     }
 
-    // 이거하고 가입시에 p_email 해줘야함.
     @GetMapping("/user/check")
     public String checkPwd(@RequestParam("email") String email, @RequestParam("empNum") String empNum) throws Exception {
         if(userService.checkEmail(email,empNum)){

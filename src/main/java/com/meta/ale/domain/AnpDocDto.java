@@ -24,6 +24,9 @@ public class AnpDocDto {
     private Date anvOccurDate; // 연차생성시점
     private EmpDto empDto;
 
+    // 연차사용계획서 존재여부 판단용
+    private Integer plan;
+
     public void setAll(EmpDto empDto, int totalAnv, Date occurDate, int remainAnv, int usedAnv, Date anvOccurDate) {
         this.totalAnv =totalAnv;
         this.usedAnv =usedAnv;

@@ -29,7 +29,9 @@ class VcReqServiceTest {
     @Test
     void getVcReqList() {
         Criteria cri = new Criteria();
-        Map<String, Object> map = vcReqService.getVcReqList(cri, 1L);
+        UserDto user = new UserDto();
+        user.setUserId(1L);
+        Map<String, Object> map = vcReqService.getVcReqList(cri, user);
 
         for (Map.Entry<String, Object> entrySet : map.entrySet()) {
             System.out.println(entrySet.getKey() + " : " + entrySet.getValue());
@@ -38,9 +40,14 @@ class VcReqServiceTest {
 
     @Test
     void getVcReq() {
-        UserDto user = new UserDto();
-        user.setUserId(1L);
-        VcReqDto dto = vcReqService.getVcReqCompared(5L, user);
+
+        UserDto userDto = new UserDto();
+        userDto.setUserId(17L);
+        userDto.setEmpNum("2222");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        VcReqDto dto = vcReqService.getVcReqCompared(5L, userDto);
         String result;
         result = dto == null ? "접근 실패" : dto.toString();
         System.out.println(result);
@@ -48,40 +55,79 @@ class VcReqServiceTest {
     }
 
     @Test
-    void createVcReq() {
-        VcReqDto dto = new VcReqDto();
+    void teamApprovalList() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(17L);
+        userDto.setEmpNum("2222");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
 
-        // 시작일
-        Date startDate = new Date();
-        startDate.setDate(startDate.getDate() + 3);
-        dto.setStartDate(startDate);
+        Criteria criteria = new Criteria();
+        criteria.setPageNum(1);
+        criteria.setAmount(10);
+        criteria.setKeyword("테스트");
 
-        // 종료일
-        Date endDate = new Date();
-        endDate.setDate((dto.getStartDate().getDate()) + 1);
-        dto.setEndDate(endDate);
-
-//        dto.setVcType("연차");
-        dto.setReqDays(2.0);
-        dto.setComments(null);
-        dto.setStatus("자동승인");
-        dto.setAprvDate(null);
-        dto.setFilePath(null);
-
-        // emp
-        EmpDto emp = new EmpDto();
-        emp.setEmpId(2L);
-        dto.setEmpDto(emp);
-
-//        vcReqService.createVcReq(dto);
+        vcReqService.getApprovalVcRequestList(userDto, criteria);
     }
 
     @Test
-    void updateVcReqStatus() {
-        VcReqDto dto = vcReqMapper.getVcReq(2L);
-        dto.setStatus("취소");
-        System.out.println(vcReqService.updateVcReqStatus(dto));
+    void myTeamVacationTest() throws Exception{
+        UserDto userDto = new UserDto();
+        userDto.setUserId(17L);
+        userDto.setEmpNum("2222");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        vcReqService.findMyTeamVacation(userDto);
     }
+
+    @Test
+    void entireTeamRemainVcToTest() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(17L);
+        userDto.setEmpNum("2222");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        vcReqService.calcRemainTOByVcReqs(userDto);
+    }
+
+
+//    @Test
+//    void createVcReq() {
+//        VcReqDto dto = new VcReqDto();
+//
+//        // 시작일
+//        Date startDate = new Date();
+//        startDate.setDate(startDate.getDate() + 3);
+//        dto.setStartDate(startDate);
+//
+//        // 종료일
+//        Date endDate = new Date();
+//        endDate.setDate((dto.getStartDate().getDate()) + 1);
+//        dto.setEndDate(endDate);
+//
+////        dto.setVcType("연차");
+//        dto.setReqDays(2.0);
+//        dto.setComments(null);
+//        dto.setStatus("자동승인");
+//        dto.setAprvDate(null);
+//        dto.setFilePath(null);
+//
+//        // emp
+//        EmpDto emp = new EmpDto();
+//        emp.setEmpId(2L);
+//        dto.setEmpDto(emp);
+//
+////        vcReqService.createVcReq(dto);
+//    }
+
+//    @Test
+//    void updateVcReqStatus() {
+//        VcReqDto dto = vcReqMapper.getVcReq(2L);
+//        dto.setStatus("취소");
+//        System.out.println(vcReqService.updateVcReqStatus(dto));
+//    }
 
 
 //    @Test
@@ -92,16 +138,5 @@ class VcReqServiceTest {
 ////        cri.setKeyword("취소");
 //        vcReqService.getApprovalVcRequestList(userDto.get(), cri);
 
-    @Test
-    void approvalVcRequestStatus() throws Exception{
-        UserDto userDto= userService.getByEmpNum("admin").get();
-        vcReqService.approvalVcRequestStatus(userDto,1L,"반려","반려내용~~");
 
-    }
-
-    @Test
-    void calcRemainTOByVcReqs() throws Exception {
-        UserDto userDto = userService.getByEmpNum("emp_2").get();
-        vcReqService.calcRemainTOByVcReqs(userDto);
-    }
 }
