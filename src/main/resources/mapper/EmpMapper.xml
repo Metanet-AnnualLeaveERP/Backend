@@ -60,10 +60,11 @@
           AND LEAVE_DATE IS NULL
     </select>
 
-    <select id="findEmpOverTwoYrLeaveDate" resultType="EmpDto">
-        SELECT *
-        FROM EMP
+    <select id="findEmpOverTwoYrLeaveDate" resultMap="empMap">
+        SELECT u.*
+        FROM EMP e , USERS u
         WHERE LEAVE_DATE IS NOT NULL
+          AND e.user_id = u.user_id
           AND (TO_CHAR(LEAVE_DATE) = TO_CHAR(SYSDATE - 730))
     </select>
 

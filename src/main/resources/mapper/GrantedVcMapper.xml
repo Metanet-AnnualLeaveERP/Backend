@@ -112,7 +112,10 @@
 
     <update id="updateAnnualGranted" parameterType="GrantedVcDto" >
         UPDATE GRANTED_VC
-        SET GRANTED_DATE = #{grantedDate},
+        SET
+            <if test="grantedDate != null">
+                GRANTED_DATE = #{grantedDate},
+            </if>
             <if test="expiredDate != null">
             EXPIRED_DATE = #{expiredDate},
             </if>

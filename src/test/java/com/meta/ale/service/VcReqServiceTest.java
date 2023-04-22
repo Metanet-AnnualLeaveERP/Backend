@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -20,14 +21,8 @@ class VcReqServiceTest {
     @Autowired
     VcReqService vcReqService;
 
-    @Autowired
-    VcReqMapper vcReqMapper;
-
-    @Autowired
-    UserService userService;
-
     @Test
-    void getVcReqList() {
+    void getVcReqListTest() {
         Criteria cri = new Criteria();
         UserDto user = new UserDto();
         user.setUserId(1L);
@@ -38,20 +33,70 @@ class VcReqServiceTest {
         }
     }
 
+    // role admin
     @Test
-    void getVcReq() {
-
+    void getVcReqComparedTest() throws Exception {
         UserDto userDto = new UserDto();
-        userDto.setUserId(17L);
-        userDto.setEmpNum("2222");
-        userDto.setEnabled(1L);
+        userDto.setUserId(5L);
+        userDto.setRole("ROLE_ADMIN");
+
+        Long reqId = 1L;
+
+        vcReqService.getVcReqCompared(reqId, userDto);
+    }
+
+    // role mgr
+    @Test
+    void getVcReqComparedTest2() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(5L);
+        userDto.setRole("ROLE_MGR");
+
+        Long reqId = 1L;
+
+        vcReqService.getVcReqCompared(reqId, userDto);
+    }
+
+    // dto == null
+    @Test
+    void getVcReqComparedTest3() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(5L);
         userDto.setRole("ROLE_EMP");
 
-        VcReqDto dto = vcReqService.getVcReqCompared(5L, userDto);
-        String result;
-        result = dto == null ? "접근 실패" : dto.toString();
-        System.out.println(result);
-//        System.out.println("휴가 요청 하나)" + dto.toString());
+        Long reqId = 500L;
+
+        vcReqService.getVcReqCompared(reqId, userDto);
+    }
+
+    // currUserId == dbUserId ? dto : null;에서 dto
+    @Test
+    void getVcReqComparedTest4() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(42L);
+        userDto.setRole("ROLE_EMP");
+
+        Long reqId = 1L;
+
+        vcReqService.getVcReqCompared(reqId, userDto);
+    }
+
+    // currUserId == dbUserId ? dto : null;에서 null
+    @Test
+    void getVcReqComparedTest5() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(43L);
+        userDto.setRole("ROLE_EMP");
+
+        Long reqId = 1L;
+
+        vcReqService.getVcReqCompared(reqId, userDto);
+    }
+
+    @Test
+    void getVcReqTest() throws Exception {
+        Long reqId = 1L;
+        vcReqService.getVcReq(reqId);
     }
 
     @Test
@@ -92,6 +137,115 @@ class VcReqServiceTest {
         vcReqService.calcRemainTOByVcReqs(userDto);
     }
 
+    @Test
+    void updateVcReqStatusTest() throws Exception {
+        VcReqDto vcReqDto = new VcReqDto();
+
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+        Date testDate = date.parse("2023-04-20");
+
+        vcReqDto.setReqId(1L);
+        vcReqDto.setStatus("취소");
+        vcReqDto.setAprvDate(testDate);
+        vcReqDto.setDeniedComments("테스트");
+
+        vcReqService.updateVcReqStatus(vcReqDto);
+    }
+
+    // vcReq.getReqId() == null
+    @Test
+    void approvalVcRequestStatusTest() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(17L);
+        userDto.setEmpNum("2222");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        Long reqId = 500L;
+        String status = "승인";
+        String comment = "테스트";
+
+        vcReqService.approvalVcRequestStatus(userDto, reqId, status, comment);
+    }
+
+    // 승인
+    @Test
+    void approvalVcRequestStatusTest2() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(42L);
+        userDto.setEmpNum("1234");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        Long reqId = 1L;
+        String status = "승인";
+        String comment = "테스트";
+
+        vcReqService.approvalVcRequestStatus(userDto, reqId, status, comment);
+    }
+
+    // 반려
+    @Test
+    void approvalVcRequestStatusTest3() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(42L);
+        userDto.setEmpNum("1234");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        Long reqId = 1L;
+        String status = "반려";
+        String comment = "테스트";
+
+        vcReqService.approvalVcRequestStatus(userDto, reqId, status, comment);
+    }
+
+    // 반려
+    @Test
+    void approvalVcRequestStatusTest4() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(42L);
+        userDto.setEmpNum("1234");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        Long reqId = 1L;
+        String status = "테스트";
+        String comment = "테스트";
+
+        vcReqService.approvalVcRequestStatus(userDto, reqId, status, comment);
+    }
+
+    // if (role.equals("ROLE_MGR"))
+    @Test
+    void getApprovalVcRequestListTest() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(81L);
+        userDto.setEmpNum("2121003");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_MGR");
+
+        Criteria criteria = new Criteria();
+        criteria.setPageNum(1);
+        criteria.setAmount(10);
+        criteria.setKeyword("");
+        vcReqService.getApprovalVcRequestList(userDto, criteria);
+    }
+
+    @Test
+    void getApprovalVcRequestListTest2() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(42L);
+        userDto.setEmpNum("1234");
+        userDto.setEnabled(1L);
+        userDto.setRole("ROLE_EMP");
+
+        Criteria criteria = new Criteria();
+        criteria.setPageNum(1);
+        criteria.setAmount(10);
+        criteria.setKeyword("");
+        vcReqService.getApprovalVcRequestList(userDto, criteria);
+    }
 
 //    @Test
 //    void createVcReq() {
