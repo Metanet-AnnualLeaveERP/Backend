@@ -138,6 +138,7 @@
                         <exclude>com/meta/ale/mapper/**</exclude>
                         <exclude>com/meta/ale/quartz/**</exclude>
                         <exclude>com/meta/ale/security/**</exclude>
+                        <exclude>com/meta/ale/config/**</exclude>
 <!--                        <exclude>**/*MapperTest*</exclude>-->
                     </excludes>
 <!--                    <includes>-->
