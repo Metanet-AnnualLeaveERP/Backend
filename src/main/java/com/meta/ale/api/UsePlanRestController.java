@@ -5,6 +5,8 @@ import com.meta.ale.domain.GrantedVcDto;
 import com.meta.ale.domain.UsePlanDto;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.service.UsePlanService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,11 +19,13 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/useplan")
+@Api(tags = "연차사용계획서",description = "연차 사용계획서 관련 api")
 public class UsePlanRestController {
 
     private final UsePlanService usePlanService;
 
     @GetMapping
+    @ApiOperation("연차사용")
     public Map<String, Object> getUsePlanList(@RequestParam(required = false, defaultValue = "all") String keyword,
                                               @AuthenticationPrincipal UserDto userDto,
                                               Criteria criteria) throws Exception {
