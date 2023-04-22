@@ -1,6 +1,8 @@
 package com.meta.ale.api;
 
 import com.meta.ale.service.FileService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -19,11 +21,13 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "파일(업로드,다운로드)" ,description = "파일 관련 api")
 public class FileRestController {
 
     private final FileService fileService;
 
     @PostMapping("/files/upload")
+    @ApiOperation("파일 업로드 api ")
     public ResponseEntity<Map<String, Object>> uploadFile(MultipartFile[] uploadFiles) throws IOException {
         System.out.println("---------------------- 파일 업로드 api 호출 -----------------------");
         System.out.println("uploadFiles 컨트롤러로 넘어온 개수 = " + uploadFiles.length);
@@ -43,6 +47,7 @@ public class FileRestController {
     }
 
     @PostMapping("/files/download")
+    @ApiOperation("파일 다운로드 api")
     public ResponseEntity download(@RequestBody String filePath) throws IOException {
         System.out.println("============파일 다운로드 api===========");
         System.out.println("filePath 인코딩 된 상태로 들어온 것 : " + filePath);

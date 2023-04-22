@@ -2,6 +2,8 @@ package com.meta.ale.api;
 
 import com.meta.ale.domain.VcTypeDto;
 import com.meta.ale.service.VcTypeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequestMapping("/admin")
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "휴가유형관리", description = "휴가 유형관리 관련 api")
 public class VcTypeRestController {
 
 
@@ -21,6 +24,7 @@ public class VcTypeRestController {
 
     /* 휴가 유형 추가 */
     @PostMapping("/vacations/type")
+    @ApiOperation("휴가 유형 추가 api")
     public ResponseEntity<String> insertVcType(@RequestBody VcTypeDto vcType) {
         try {
             vcTypeService.insertVcType(vcType);
@@ -32,6 +36,7 @@ public class VcTypeRestController {
 
     /* 휴가 유형 조회 */
     @GetMapping("/vacations/type")
+    @ApiOperation("휴가 유형 조회 api")
     public ResponseEntity<List<VcTypeDto>> getListVcType(){
         List<VcTypeDto> vcTypeList = vcTypeService.getListVcType();
         return new ResponseEntity<>(vcTypeList, HttpStatus.OK);
@@ -40,6 +45,7 @@ public class VcTypeRestController {
 
     /* 휴가 유형 수정 */
     @PutMapping("/vacations/type/{typeId}")
+    @ApiOperation("휴가 유형 수정 api")
     public ResponseEntity<String> updateVcType(
             @PathVariable("typeId") Long typeId, @RequestBody VcTypeDto vcTypeDto){
         vcTypeDto.setTypeId(typeId);
@@ -53,6 +59,7 @@ public class VcTypeRestController {
 
     /* 휴가 유형 삭제 */
     @DeleteMapping("/vacations/type/{typeId}")
+    @ApiOperation("휴가 유형 삭제 api")
     public ResponseEntity<String> deleteVcType(@PathVariable("typeId") Long typeId){
         boolean result = vcTypeService.deleteVcType(typeId);
         if(result){
