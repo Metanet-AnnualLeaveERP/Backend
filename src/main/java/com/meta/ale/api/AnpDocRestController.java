@@ -31,7 +31,10 @@ public class AnpDocRestController {
 
     // 연차사용요청서 전체조회 //
     @GetMapping("/annual-promote")
-    public Map<String, Object> getListAnpDoc(@AuthenticationPrincipal UserDto userDto, Criteria cri) {
+    public Map<String, Object> getListAnpDoc(@AuthenticationPrincipal UserDto userDto,
+                                             @RequestParam(required= false,
+                                             defaultValue = "all") String keyword,
+                                             Criteria cri) throws Exception {
         return anpDocService.getListAnpDoc(userDto,cri);
     }
 

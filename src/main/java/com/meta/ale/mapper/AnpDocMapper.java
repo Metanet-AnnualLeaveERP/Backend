@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface AnpDocMapper {
@@ -16,7 +17,7 @@ public interface AnpDocMapper {
     List<AnpDocDto> getListAnpDoc(HashMap<String, Object> hashMap);
 
     /* 연차촉진문서 개수 가져오기(Paging) */
-    Long getAnpDocCount();
+    Long getAnpDocCount(Map<String, Object> dto);
 
     /* 연차촉진문서 삭제 */
     int deleteAnpDoc(Long docId);
