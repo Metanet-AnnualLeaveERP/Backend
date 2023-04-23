@@ -36,6 +36,19 @@
                     JOIN emp e ON e.emp_id = gv.emp_id
                     JOIN vc_type vt ON gv.type_id = vt.type_id
                     JOIN dept d ON d.dept_id = e.dept_id
+                <where>
+                    <trim suffixOverrides="and" >
+                    <if test="deptId != null and !(deptId eq '') ">
+                        d.DEPT_ID = #{deptId} and
+                    </if>
+                    <if test="userName !=null and !(userName eq '') ">
+                        e.name = #{userName} and
+                    </if>
+                    <if test="typeId != null and !(typeId eq '')">
+                        vt.TYPE_ID =#{typeId} and
+                    </if>
+                    </trim>
+                </where>
                 ORDER BY gv.granted_date DESC
             ) vclist
             WHERE
@@ -179,7 +192,24 @@
     <!-- paging -->
     <select id="getGrantedVcCount" resultType="Long">
         SELECT COUNT(*)
-        FROM granted_vc
+        FROM
+        granted_vc gv
+        JOIN emp e ON e.emp_id = gv.emp_id
+        JOIN vc_type vt ON gv.type_id = vt.type_id
+        JOIN dept d ON d.dept_id = e.dept_id
+        <where>
+            <trim suffixOverrides="and" >
+                <if test="deptId != null and !(deptId eq '') and deptId != 10000">
+                    d.DEPT_ID = #{deptId} and
+                </if>
+                <if test="userName !=null and !(userName eq '') ">
+                    e.name = #{userName} and
+                </if>
+                <if test="typeId != null and !(typeId eq '')">
+                    vt.TYPE_ID =#{typeId} and
+                </if>
+            </trim>
+        </where>
     </select>
 
     <resultMap type="GrantedVcDto" id="grantedVc">
