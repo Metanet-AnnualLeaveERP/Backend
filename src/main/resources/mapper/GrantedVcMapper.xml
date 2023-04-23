@@ -231,9 +231,7 @@
         <result property="typeName"         column="type_name" />
         <result property="description"      column="description" />
         <result property="pto"              column="pto" />
-        <result property="maxGrantedDate"   column="max_granted_date" />
-        <result property="startEnableDate"  column="start_enable_date" />
-        <result property="endEnableDate"    column="end_enable_date" />
+        <result property="maxGrantedDays"   column="max_granted_days" />
         <result property="creationDate"     column="creation_date" />
         <result property="updateDate"       column="update_date" />
     </resultMap>
