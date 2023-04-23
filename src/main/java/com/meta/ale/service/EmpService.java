@@ -50,4 +50,5 @@ public interface EmpService {
     public Long selectDeptEmpCnt(Long deptId) throws Exception;
 
 
+    List<EmpDto> selectEmpListByDeptIdAndExistsAnnualLeave(Long deptId);
 }

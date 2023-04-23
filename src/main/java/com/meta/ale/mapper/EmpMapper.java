@@ -53,4 +53,6 @@ public interface EmpMapper {
     public EmpDto getEmpByMgrId(Long mgrId);
 
     List<EmpDto> selectListByDeptId(Long deptId);
+
+    List<EmpDto> selectEmpListByDeptIdAndExistsAnnualLeave(Long deptId);
 }
