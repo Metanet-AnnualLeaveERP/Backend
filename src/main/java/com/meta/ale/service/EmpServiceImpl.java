@@ -64,8 +64,8 @@ public class EmpServiceImpl implements EmpService {
     @Override
     @Transactional
     public boolean register(UserDto userDto, EmpDto empDto) throws Exception {
-        userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
         String pwd = userDto.getPwd();
+        userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
         DeptDto deptDto = deptMapper.selectByDeptName(empDto.getDeptDto().getDeptName()); // 부서정보
         Long deptMgrId = empMapper.selectDeptMgr(deptDto.getDeptId()); // 팀장아이디
         String position = empDto.getPosition();
@@ -75,7 +75,7 @@ public class EmpServiceImpl implements EmpService {
         userDto.setEmpNum(empNum);
 
         // 회사 이메일
-        String cEmail = empNum + "gmail.com";
+        String cEmail = empNum + "@gmail.com";
         empDto.setCEmail(cEmail);
 
         if (position.equals("팀장")) {
