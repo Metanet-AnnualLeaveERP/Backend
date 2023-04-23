@@ -19,10 +19,6 @@ public class VcTypeDto {
 
     private Long maxGrantedDays; // 최대부여가능일자
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd") //안씀
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date startEnableDate;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date creationDate;

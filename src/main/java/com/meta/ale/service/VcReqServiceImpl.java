@@ -14,8 +14,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
-
-import static com.meta.ale.service.EmpServiceImpl.getDatesBetweenTwoDates;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,8 +66,6 @@ public class VcReqServiceImpl implements VcReqService {
         if (dto == null)
             return null;
         EmpDto dbEmp = dto.getEmpDto();
-        if (dbEmp == null)
-            return null;
         Long dbUserId = dbEmp.getUserDto().getUserId();
         return currUserId == dbUserId ? dto : null;
     }
@@ -125,7 +122,7 @@ public class VcReqServiceImpl implements VcReqService {
     public boolean approvalVcRequestStatus(UserDto userDto, Long vcReqId, String status, String comment) {
         VcReqDto vcReq = vcReqMapper.getVcReq(vcReqId);
         Date date = new Date();
-        if (vcReq.getReqId() == null) {
+        if (vcReq == null) {
             return false;
         }
         //상태변경
@@ -140,12 +137,14 @@ public class VcReqServiceImpl implements VcReqService {
             cnt += vcReq.getReqDays().longValue();
             vcTotal.setCnt(cnt);
             totalService.updateVcTypeTotalByTotalId(vcTotal);
+            mailService.sendToCEmail(vcReq.getEmpDto(), "<MetaNet>휴가가 반려 처리되었습니다.", "휴가신청이 반려 되었습니다.", "자사 홈페이지를 통해 확인해주시면 감사하겠습니다.");
         }
-        if (status.equals("승인")) {
+        else if (status.equals("승인")) {
             mailService.sendToCEmail(vcReq.getEmpDto(), "<MetaNet>휴가를 정상 처리하였습니다.", "휴가신청이 승인되었습니다.", "자사 홈페이지를 통해 확인해주시면 감사하겠습니다.");
+        } else {
+            return false;
         }
         return true;
-
     }
 
     /*휴가 결재 내역 조회*/
@@ -165,7 +164,6 @@ public class VcReqServiceImpl implements VcReqService {
         vo.put("pageNum", cri.getPageNum());
         vo.put("amount", cri.getAmount());
         vo.put("keyword", cri.getKeyword());
-        System.out.println(managerDeptId);
         vo.put("deptId", managerDeptId);
 
         // 페이징 처리를 위한 전체 count 조회
@@ -304,5 +302,10 @@ public class VcReqServiceImpl implements VcReqService {
         return vcReqMapper.getEntireReqsByTeam(userDto);
     }
 
+    /*LocalDate 클래스의 datesUntil 메소드를 이용해 시작일부터 종료일까지의 날짜를 반환*/
+    private List<LocalDate> getDatesBetweenTwoDates(LocalDate startDate, LocalDate endDate) {
+        return startDate.datesUntil(endDate)
+                .collect(Collectors.toList());
+    }
 
 }

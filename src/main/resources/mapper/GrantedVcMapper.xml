@@ -112,7 +112,10 @@
 
     <update id="updateAnnualGranted" parameterType="GrantedVcDto" >
         UPDATE GRANTED_VC
-        SET GRANTED_DATE = #{grantedDate},
+        SET
+            <if test="grantedDate != null">
+                GRANTED_DATE = #{grantedDate},
+            </if>
             <if test="expiredDate != null">
             EXPIRED_DATE = #{expiredDate},
             </if>
@@ -131,7 +134,7 @@
         WHERE v.emp_id = e.emp_id
           AND e.leave_date IS NULL
           AND v.TYPE_ID = #{typeId}
-          AND TO_CHAR(v.expired_date,'YY/MM/DD') = TO_CHAR(ADD_MONTHS(SYSDATE-1,3),'YY/MM/DD')
+          AND TO_CHAR(v.expired_date,'YY/MM/DD') = TO_CHAR(ADD_MONTHS(SYSDATE,3),'YY/MM/DD')
           AND REMAIN_DAYS != 0
 
     </select>
