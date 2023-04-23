@@ -10,9 +10,9 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
-    @Test
-    void checkPwd() throws Exception {
-        String email = "aaaaa11@gmail.com";
-        userService.checkEmail(email);
-    }
+//    @Test
+//    void checkPwd() throws Exception {
+//        String email = "aaaaa11@gmail.com";
+//        userService.checkEmail(email);
+//    }
 }

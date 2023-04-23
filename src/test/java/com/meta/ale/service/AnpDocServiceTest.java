@@ -2,6 +2,7 @@ package com.meta.ale.service;
 
 import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.PagenationDTO;
+import com.meta.ale.domain.UserDto;
 import com.meta.ale.mapper.AnpDocMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,31 @@ public class AnpDocServiceTest {
     @Autowired
     private AnpDocService anpDocService;
 
+    @Autowired
+    private AnpDocMapper mapper;
 //    @Test
 //    void getListAnpDocTest() throws Exception {
 //
-//        Criteria criteria = new Criteria();
-//        criteria.setPageNum(1);
-//        criteria.setAmount(10);
+//        Criteria cri = new Criteria();
+//        cri.setPageNum(1);
+//        cri.setAmount(10);
+//        cri.setKeyword("이름");
+//        HashMap<String, Object> dto = new HashMap<>();
+//        dto.put("pageNum", cri.getPageNum());
+//        dto.put("amount", cri.getAmount());
 //
-//        anpDocService.getListAnpDoc(criteria);
+//        UserDto userDto = new UserDto();
+//        userDto.setUserId(0L);
+//        userDto.setRole("ROLE_ADMIN");
+//
+//        String keyWordName = cri.getKeyword();
+//        dto.put("keyWordName", keyWordName);
+//
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("paging", new PagenationDTO(cri, 10));
+//        map.put("anpDocs",mapper.getListAnpDoc(dto));
+//        System.out.println(anpDocService.getListAnpDoc(userDto, cri));
+//        ;
 //    }
 
     @Test
