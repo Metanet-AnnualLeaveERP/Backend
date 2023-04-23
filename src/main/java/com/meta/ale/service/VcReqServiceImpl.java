@@ -81,6 +81,8 @@ public class VcReqServiceImpl implements VcReqService {
     @Override
     @Transactional
     public void createVcReq(VcReqDto dto, MultipartFile[] uploadFiles) throws Exception {
+        dto.setStartDate(new Date(dto.getStartDate().getTime()+(24 * 60 * 60 * 1000L)));
+        dto.setEndDate(new Date(dto.getEndDate().getTime()+(24 * 60 * 60 * 1000L)));
         //메소드로 빼둠
         dto.setFilePath(fileUpload(uploadFiles));
         dto.setAprvDate(null);
