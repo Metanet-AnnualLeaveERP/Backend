@@ -240,4 +240,10 @@
         from emp e
         where dept_id = #{deptId}
     </select>
+
+    <select id="selectEmpListByDeptIdAndExistsAnnualLeave" resultMap="empMap">
+        SELECT  e.emp_id, e.name, e.position, e.p_email, e.c_email, e.tel FROM EMP e , GRANTED_VC GV
+        WHERE  e.EMP_ID = GV.EMP_ID AND
+               GV.TYPE_ID = 1 AND e.DEPT_ID = #{deptId}
+    </select>
 </mapper>

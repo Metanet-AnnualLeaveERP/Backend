@@ -338,6 +338,11 @@ public class EmpServiceImpl implements EmpService {
     }
 
     @Override
+    public List<EmpDto> selectEmpListByDeptIdAndExistsAnnualLeave(Long deptId) {
+        return empMapper.selectEmpListByDeptIdAndExistsAnnualLeave(deptId);
+    }
+
+    @Override
     public List<EmpDto> selectListByDeptId(Long deptId) {
         return empMapper.selectListByDeptId(deptId);
     }
@@ -352,4 +357,6 @@ public class EmpServiceImpl implements EmpService {
                 , "메타넷에 입사하신 것을 환영합니다."
                 , sb.toString());
     }
+
+
 }
