@@ -51,7 +51,7 @@ public class MailService {
         sb.append("<meta http-equiv='Content-Type' content='text/html'; charset=euc-kr>");
         sb.append("<h1>" + title + "</h1><br>");
         sb.append("<h3>안녕하세요 메타넷 입니다.</h3><br>");
-        sb.append("<div>" + text + "</div>");
+        sb.append("<div style='width:600px; height:2000px'>" + text + "</div>");
         sb.append("<h4>감사합니다.</h4>");
         sb.append("<div>메타넷 디지털 : 인사팀</div>");
         sb.append("</body></html>");
