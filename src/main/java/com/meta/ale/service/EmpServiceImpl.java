@@ -55,7 +55,6 @@ public class EmpServiceImpl implements EmpService {
         List<EmpDto> empLeaveTwoYrList = empMapper.findEmpOverTwoYrLeaveDate();
         if (empLeaveTwoYrList.size() != 0) {
             for (EmpDto e : empLeaveTwoYrList) {
-
                 userMapper.deleteUserByUserId(e.getUserDto());
             }
         }
@@ -102,9 +101,13 @@ public class EmpServiceImpl implements EmpService {
 
                 if (empMapper.updateEmpList(paramMap) == 0)
                     return false;
-                else
+                else{
+
+                    createMail(empDto,userDto,pwd);
                     return true;
+                }
             }
+            createMail(empDto,userDto,pwd);
             return true;
         } else if (position.equals("팀원")) {
             userDto.setRole("ROLE_EMP");
@@ -116,18 +119,12 @@ public class EmpServiceImpl implements EmpService {
             empDto.setDeptDto(deptDto);
             empDto.setMgrId(deptMgrId);
             if (empMapper.insertEmp(empDto) == 1) {
+                createMail(empDto,userDto,pwd);
                 return true;
             } else {
                 return false;
             }
         }
-        StringBuffer sb = new StringBuffer();
-        sb.append("가입 완료했습니다.\n" + "아이디" + userDto.getEmpNum() + "\n비밀번호 : " + pwd + " 입니다.\n");
-        sb.append("로그인 후 비밀번호를 변경해주세요.");
-        sb.append("이상입니다.");
-        mailService.sendToPEmail(empDto, "<Metanet> 인사팀_ 계정 생성 완료되었습니다."
-                , "메타넷에 입사하신 것을 환영합니다."
-                , sb.toString());
         return false;
     }
 
@@ -206,10 +203,7 @@ public class EmpServiceImpl implements EmpService {
                         Map<String, Object> paramMap = new HashMap<>();
                         paramMap.put("deptId", newDeptDto.getDeptId());
                         paramMap.put("mgrId", empDto.getEmpId());
-                        if (empMapper.updateEmpList(paramMap) == 0)
-                            return false;
-                        else
-                            return true;
+                        empMapper.updateEmpList(paramMap);
                     }
                 }
             }
@@ -222,9 +216,8 @@ public class EmpServiceImpl implements EmpService {
             empDto.setUserDto(userDto);
             empDto.setDeptDto(newDeptDto);
             empDto.setMgrId(newDeptMgrId);
-            if (empMapper.updateEmp(empDto) == 0) {
-                return false;
-            } // 사원에서 사원이면 여기서 끝남 (부서, mgrId, )
+            empMapper.updateEmp(empDto); // 사원에서 사원이면 여기서 끝남 (부서, mgrId, )
+
             if (!originPosition.equals(position)) { // 팀장에서 사원 (사원에서 사원이 아닐 경우)
                 // 부서가 바뀌었다면
                 if (newDeptDto.getDeptId() == originDeptDto.getDeptId()) { // 새로운 부서가 기존 부서랑 같을 때
@@ -294,15 +287,10 @@ public class EmpServiceImpl implements EmpService {
         userDto.setUserId(userMapper.selectByEmpId(empDto.getEmpId()).getUserId());
         if (!userDto.getPwd().equals("")) {
             userDto.setPwd(passwordEncoder.encode(userDto.getPwd()));
-            if (userMapper.updatePwd(userDto) <= 0) {
-                return false;
-            }
+            userMapper.updatePwd(userDto);
         }
 
-        if (empMapper.updateEmpInfo(empDto) > 0) {
-            return true;
-        }
-        return false;
+        return empMapper.updateEmpInfo(empDto) == 1;
     }
 
     // 페이징용
@@ -349,15 +337,19 @@ public class EmpServiceImpl implements EmpService {
         return empMapper.selectDeptEmpCnt(deptId);
     }
 
-    /*LocalDate 클래스의 datesUntil 메소드를 이용해 시작일부터 종료일까지의 날짜를 반환*/
-    public static List<LocalDate> getDatesBetweenTwoDates(LocalDate startDate, LocalDate endDate) {
-        return startDate.datesUntil(endDate)
-                .collect(Collectors.toList());
-    }
-
-
     @Override
     public List<EmpDto> selectListByDeptId(Long deptId) {
         return empMapper.selectListByDeptId(deptId);
+    }
+
+    private void createMail(EmpDto empDto,UserDto userDto,String pwd){
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("가입 완료했습니다.\n" + "아이디" + userDto.getEmpNum() + "\n비밀번호 : " + pwd + " 입니다.\n");
+        sb.append("로그인 후 비밀번호를 변경해주세요.");
+        sb.append("이상입니다.");
+        mailService.sendToPEmail(empDto, "<Metanet> 인사팀_ 계정 생성 완료되었습니다."
+                , "메타넷에 입사하신 것을 환영합니다."
+                , sb.toString());
     }
 }

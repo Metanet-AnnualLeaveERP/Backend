@@ -43,8 +43,6 @@ public class AnpDocServiceImpl implements AnpDocService {
 
             }
 
-        } else {
-            System.out.println("연차촉진 날릴 사람 없음.");
         }
     }
 

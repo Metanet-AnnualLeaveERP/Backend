@@ -78,17 +78,14 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         EmpDto empDto = gvDto.getEmpDto();
         VcTypeDto typeDto = gvDto.getVcTypeDto();
 
-        int result = vcMapper.deleteGrantedVc(vcId);
-        if (result != 0) {
-            VcTypeTotalDto totalDto = new VcTypeTotalDto();
-            totalDto.setCnt(remainDays.longValue());
-            totalDto.setVcTypeDto(typeDto);
-            totalDto.setEmpDto(empDto);
-            totalMapper.minusVcTypeTotal(totalDto);
-            return true;
-        } else {
-            return false;
-        }
+        vcMapper.deleteGrantedVc(vcId);
+
+        VcTypeTotalDto totalDto = new VcTypeTotalDto();
+        totalDto.setCnt(remainDays.longValue());
+        totalDto.setVcTypeDto(typeDto);
+        totalDto.setEmpDto(empDto);
+        totalMapper.minusVcTypeTotal(totalDto);
+        return true;
 
     }
 
@@ -97,7 +94,8 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean insertGrantedVc(GrantedVcDto grantedVc) {
         try {
-            int result = vcMapper.insertGrantedVc(grantedVc);
+            vcMapper.insertGrantedVc(grantedVc);
+
             Long typeId = grantedVc.getVcTypeDto().getTypeId();
             VcTypeDto typeDto = vcTypeMapper.findVcTypeDtoByTypeId(typeId);
             grantedVc.setVcTypeDto(typeDto);
@@ -124,11 +122,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
             vcTypeTotal.setEmpDto(empDto);
 
             totalMapper.plusVcTypeTotal(vcTypeTotal);
-            return result != 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+        return true;
     }
 
     /*

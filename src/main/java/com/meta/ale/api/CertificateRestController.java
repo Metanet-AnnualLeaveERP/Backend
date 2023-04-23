@@ -5,6 +5,8 @@ import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.service.CertificateService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,14 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "증명서 내역 서비스",description = "증명서 발급 내역 및 발급 관련 서비스")
 public class CertificateRestController {
 
     private final CertificateService certificateService;
 
     /*증명서 내역 조회 (페이징 처리)*/
     @GetMapping("/certificates")
+    @ApiOperation("발급된 증명서 조회 api")
     public Map<String, Object> certificateList(@AuthenticationPrincipal UserDto user, Criteria cri) {
         /* ADMIN or EMP 판별
         userId == 0 -> admin */
@@ -31,6 +35,7 @@ public class CertificateRestController {
 
     /*증명서 내역 상세 조회*/
     @GetMapping("/certificates/{certificates_id}")
+    @ApiOperation("발급된 증명서 상세 조회 api")
     public ResponseEntity<Object> certificateDetail(@PathVariable("certificates_id") Long certId,
                                                     @AuthenticationPrincipal UserDto user) {
         CertificateDto dto = certificateService.getCertCompared(certId, user.getUserId());
@@ -45,6 +50,7 @@ public class CertificateRestController {
 
     /*휴가 확인서 (증명서) 발급 요청*/
     @PostMapping("/certificates")
+    @ApiOperation("증명서 발급(생성) api ")
     public ResponseEntity createCertificate(@RequestBody CertificateDto dto) {
         certificateService.createCert(dto);
 

@@ -41,12 +41,13 @@ public class CancelServiceImpl implements CancelService {
     public CancelDto getCancel(Long cancelId, UserDto userDto) {
         // 현재 로그인한 userId와 reqId로 가져온 휴가 신청의 userId가 동일하지 않으면 null 반환
         CancelDto dto = cancelMapper.getCancel(cancelId);
+        System.out.println(userDto);
         Long currUserId = userDto.getUserId();
         String role = userDto.getRole();
         if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MGR")) {
             return dto;
         }
-        if (dto != null && dto.getVcReqDto() != null) {
+        if (dto != null) {
 
             EmpDto dbEmp = dto.getVcReqDto().getEmpDto();
             Long dbUserId = dbEmp.getUserDto().getUserId();
@@ -60,13 +61,12 @@ public class CancelServiceImpl implements CancelService {
     @Transactional
     public void createCancel(CancelDto cancelDto, Long reqId) {
         VcReqDto vcReqDto = vcReqService.getVcReq(reqId);
-        System.out.println(vcReqDto);
 
         // 현재 날짜와 휴가 요청의 시작일을 비교한다.
         Date sysdate = new Date(); // 현재일
         int compare = vcReqDto.getStartDate().compareTo(sysdate);
 
-        // 시작일이 현재일 이전이라면 (아직 안 지남)
+        // 시작일이 현재일 이후이라면 (아직 안 지남)
         if (compare > 0) {
             cancelDto.setCancelStatus("자동취소");
             /*자동 취소 시 차감일 복구 */
@@ -107,7 +107,7 @@ public class CancelServiceImpl implements CancelService {
     @Transactional
     public boolean approvalCancel(Long cancelId, String status, String comment) {
         CancelDto cancelDto = cancelMapper.getCancel(cancelId);
-        if ((status == null || status.equals("")) || cancelDto.getCancelId() == null) {
+        if ((status.equals("")) || cancelDto == null) {
             return false;
         }
         cancelDto.setCancelStatus(status);
@@ -117,8 +117,9 @@ public class CancelServiceImpl implements CancelService {
         VcReqDto vcReqDto = cancelDto.getVcReqDto();
         Long typeId = vcReqDto.getVcTypeDto().getTypeId();
         List<Long> types = new ArrayList<>();
-        types.add(1L);
-        types.add(2L);
+        types.add(1L); // 연차
+        types.add(2L); // 오전반차
+        types.add(3L); // 오후반차
         if (status.equals("승인")) {
             if (types.contains(typeId)) {
                 typeId = 1L;

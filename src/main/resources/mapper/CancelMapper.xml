@@ -54,6 +54,9 @@
         <if test="resDate != null">
             ,res_date =#{resDate}
         </if>
+        <if test="resComm != null">
+            ,res_comm = #{resComm}
+        </if>
         WHERE cancel_id = #{cancelId}
     </update>
 

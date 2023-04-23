@@ -39,21 +39,13 @@ public class VcTypeServiceImpl implements VcTypeService{
     /* 휴가유형 수정 */
     @Override
     public boolean updateVcType(VcTypeDto vcTypeDto) {
-        int result = vcTypeMapper.updateVcType(vcTypeDto);
-        if(result == 0){
-            return false;
-        }
-        return result == 1;
+        return vcTypeMapper.updateVcType(vcTypeDto) > 0;
     }
 
     /* 휴가유형 삭제 */
     @Override
     public boolean deleteVcType(Long typeId) {
-        int result = vcTypeMapper.deleteVcType(typeId);
-        if(result == 0){
-            return false;
-        }
-        return result == 1;
+        return vcTypeMapper.deleteVcType(typeId) > 0;
     }
 
     @Override

@@ -71,10 +71,6 @@ public class JwtUtils {
         try {
             System.out.println("토큰 유효 검사");
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            //eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMTExIiwiaWF0IjoxNjgxMjc5NTg5LCJleHAiOjE2ODEyNz
-            // k2NDl9.7PuH2sd5XFvQo0_JPYimvrwBsiy8NRzv2UF1
-
-            // u5xQUuBgT0IrbbEeNk1NZqLRnHZWwbNz4AjnmzkU8KqwRFEWGg
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());

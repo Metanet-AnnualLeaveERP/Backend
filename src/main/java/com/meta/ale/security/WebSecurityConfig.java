@@ -86,7 +86,9 @@ public class WebSecurityConfig {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/manager/**").hasAnyRole("MGR", "ADMIN")
                 .antMatchers("/emp/**").hasAnyRole("EMP", "MGR", "ADMIN")
-                .antMatchers("/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/v3/**").permitAll()
                 .anyRequest().authenticated();
         // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
 //        http.headers().frameOptions().sameOrigin();
