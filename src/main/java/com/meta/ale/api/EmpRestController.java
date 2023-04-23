@@ -108,4 +108,9 @@ public class EmpRestController {
         return ResponseEntity.ok().body(empDto);
     }
 
+    @GetMapping("/admin/dept-emp-info/annual/{deptId}")
+    public List<EmpDto> selectEmpListByDeptIdAndExistsAnnualLeave(@PathVariable(value = "deptId") Long deptId){
+        return empService.selectEmpListByDeptIdAndExistsAnnualLeave(deptId);
+
+    }
 }

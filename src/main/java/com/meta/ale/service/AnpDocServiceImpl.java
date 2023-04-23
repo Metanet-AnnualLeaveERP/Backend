@@ -43,8 +43,6 @@ public class AnpDocServiceImpl implements AnpDocService {
 
             }
 
-        } else {
-            System.out.println("연차촉진 날릴 사람 없음.");
         }
     }
 
@@ -58,12 +56,15 @@ public class AnpDocServiceImpl implements AnpDocService {
 
     @Override
     public Map<String, Object> getListAnpDoc(UserDto userDto,Criteria cri) {
+        String keyWordName = cri.getKeyword();
         HashMap<String, Object> dto = new HashMap<>();
         dto.put("pageNum", cri.getPageNum());
         dto.put("amount", cri.getAmount());
         dto.put("userId",userDto.getUserId());
+        dto.put("keyWordName", keyWordName);
+
         Map<String, Object> map = new HashMap<>();
-        map.put("paging", new PagenationDTO(cri, getGrantedVcCount()));
+        map.put("paging", new PagenationDTO(cri, getGrantedVcCount(dto)));
         map.put("anpDocs", anpDocMapper.getListAnpDoc(dto));
         return map;
     }
@@ -80,8 +81,8 @@ public class AnpDocServiceImpl implements AnpDocService {
         return anpDocMapper.getAnpDoc(docId);
     }
 
-    private int getGrantedVcCount(){
-        return anpDocMapper.getAnpDocCount().intValue();
+    private int getGrantedVcCount(Map<String, Object> dto){
+        return anpDocMapper.getAnpDocCount(dto).intValue();
     }
 
 

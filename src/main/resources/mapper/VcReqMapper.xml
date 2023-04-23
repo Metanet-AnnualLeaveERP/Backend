@@ -134,6 +134,7 @@
           AND E.DEPT_ID = (SELECT DEPT_ID
                            FROM EMP E2
                            WHERE E2.USER_ID = #{userId})
+          AND E.user_id != #{userId}
     </select>
 
     <select id="getEntireReqsByTeam" resultMap="reqMap">
@@ -146,8 +147,7 @@
             STATUS NOT IN ('취소','반려') AND
             E.DEPT_ID = (SELECT DEPT_ID
                          FROM EMP E2
-                         WHERE E2.USER_ID =#{userId}
-                        )
+                         WHERE E2.USER_ID =#{userId})
     </select>
 
 

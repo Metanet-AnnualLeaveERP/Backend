@@ -36,6 +36,19 @@
                     JOIN emp e ON e.emp_id = gv.emp_id
                     JOIN vc_type vt ON gv.type_id = vt.type_id
                     JOIN dept d ON d.dept_id = e.dept_id
+                <where>
+                    <trim suffixOverrides="and" >
+                    <if test="deptId != null and !(deptId eq '') ">
+                        d.DEPT_ID = #{deptId} and
+                    </if>
+                    <if test="userName !=null and !(userName eq '') ">
+                        e.name = #{userName} and
+                    </if>
+                    <if test="typeId != null and !(typeId eq '')">
+                        vt.TYPE_ID =#{typeId} and
+                    </if>
+                    </trim>
+                </where>
                 ORDER BY gv.granted_date DESC
             ) vclist
             WHERE
@@ -112,7 +125,10 @@
 
     <update id="updateAnnualGranted" parameterType="GrantedVcDto" >
         UPDATE GRANTED_VC
-        SET GRANTED_DATE = #{grantedDate},
+        SET
+            <if test="grantedDate != null">
+                GRANTED_DATE = #{grantedDate},
+            </if>
             <if test="expiredDate != null">
             EXPIRED_DATE = #{expiredDate},
             </if>
@@ -131,7 +147,7 @@
         WHERE v.emp_id = e.emp_id
           AND e.leave_date IS NULL
           AND v.TYPE_ID = #{typeId}
-          AND TO_CHAR(v.expired_date,'YY/MM/DD') = TO_CHAR(ADD_MONTHS(SYSDATE-1,3),'YY/MM/DD')
+          AND TO_CHAR(v.expired_date,'YY/MM/DD') = TO_CHAR(ADD_MONTHS(SYSDATE,3),'YY/MM/DD')
           AND REMAIN_DAYS != 0
 
     </select>
@@ -179,7 +195,24 @@
     <!-- paging -->
     <select id="getGrantedVcCount" resultType="Long">
         SELECT COUNT(*)
-        FROM granted_vc
+        FROM
+        granted_vc gv
+        JOIN emp e ON e.emp_id = gv.emp_id
+        JOIN vc_type vt ON gv.type_id = vt.type_id
+        JOIN dept d ON d.dept_id = e.dept_id
+        <where>
+            <trim suffixOverrides="and" >
+                <if test="deptId != null and !(deptId eq '') and deptId != 10000">
+                    d.DEPT_ID = #{deptId} and
+                </if>
+                <if test="userName !=null and !(userName eq '') ">
+                    e.name = #{userName} and
+                </if>
+                <if test="typeId != null and !(typeId eq '')">
+                    vt.TYPE_ID =#{typeId} and
+                </if>
+            </trim>
+        </where>
     </select>
 
     <resultMap type="GrantedVcDto" id="grantedVc">
@@ -198,9 +231,7 @@
         <result property="typeName"         column="type_name" />
         <result property="description"      column="description" />
         <result property="pto"              column="pto" />
-        <result property="maxGrantedDate"   column="max_granted_date" />
-        <result property="startEnableDate"  column="start_enable_date" />
-        <result property="endEnableDate"    column="end_enable_date" />
+        <result property="maxGrantedDays"   column="max_granted_days" />
         <result property="creationDate"     column="creation_date" />
         <result property="updateDate"       column="update_date" />
     </resultMap>

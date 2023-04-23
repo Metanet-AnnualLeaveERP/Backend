@@ -12,11 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 @Service
@@ -37,7 +33,26 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         HashMap<String, Object> dto = new HashMap<>();
         dto.put("pageNum", cri.getPageNum());
         dto.put("amount", cri.getAmount());
+        dto.put("deptId",null);
+        dto.put("typeId",null);
+        dto.put("useName",null);
+        String[] str= cri.getKeyword().split(",");
+        cri.getKeyword().split(",");
 
+        for(int i =0; i<str.length; i++ ){
+            System.out.println(str[i]);
+            switch (i){
+                case 0:
+                    dto.put("deptId",str[0]);
+                    break;
+                case 1:
+                    dto.put("typeId",str[1]);
+                    break;
+                case 2:
+                    dto.put("userName",str[2]);
+                    break;
+            }
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("paging", new PagenationDTO(cri, getGrantedVcCount()));
         map.put("grantedVcs", vcMapper.getListGrantedVc(dto));
@@ -63,17 +78,14 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         EmpDto empDto = gvDto.getEmpDto();
         VcTypeDto typeDto = gvDto.getVcTypeDto();
 
-        int result = vcMapper.deleteGrantedVc(vcId);
-        if (result != 0) {
-            VcTypeTotalDto totalDto = new VcTypeTotalDto();
-            totalDto.setCnt(remainDays.longValue());
-            totalDto.setVcTypeDto(typeDto);
-            totalDto.setEmpDto(empDto);
-            totalMapper.minusVcTypeTotal(totalDto);
-            return true;
-        } else {
-            return false;
-        }
+        vcMapper.deleteGrantedVc(vcId);
+
+        VcTypeTotalDto totalDto = new VcTypeTotalDto();
+        totalDto.setCnt(remainDays.longValue());
+        totalDto.setVcTypeDto(typeDto);
+        totalDto.setEmpDto(empDto);
+        totalMapper.minusVcTypeTotal(totalDto);
+        return true;
 
     }
 
@@ -82,7 +94,8 @@ public class GrantedVcServiceImpl implements GrantedVcService {
     @Transactional
     public boolean insertGrantedVc(GrantedVcDto grantedVc) {
         try {
-            int result = vcMapper.insertGrantedVc(grantedVc);
+            vcMapper.insertGrantedVc(grantedVc);
+
             Long typeId = grantedVc.getVcTypeDto().getTypeId();
             VcTypeDto typeDto = vcTypeMapper.findVcTypeDtoByTypeId(typeId);
             grantedVc.setVcTypeDto(typeDto);
@@ -109,11 +122,11 @@ public class GrantedVcServiceImpl implements GrantedVcService {
             vcTypeTotal.setEmpDto(empDto);
 
             totalMapper.plusVcTypeTotal(vcTypeTotal);
-            return result != 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+        return true;
     }
 
     /*
