@@ -187,9 +187,10 @@ public class VcReqServiceImpl implements VcReqService {
     /*휴가 신청 일자별로 잔여 TO 계산*/
     @Override
     public List<RemainVcTo> calcRemainTOByVcReqs(UserDto userDto) throws Exception {
+        System.out.println("--------잔여 TO 계산 서비스 호출-------");
         Long calcTO = deptService.calculateVcToByDept(userDto.getUserId());
         List<VcReqDto> vcReqDtoList = getEntireReqsByTeam(userDto);
-
+        vcReqDtoList.forEach(vcReqDto -> System.out.println(vcReqDto.toString()));
         List<LocalDate> dates = new ArrayList<>();
         List<Long> finalTO = new ArrayList<>();
 
@@ -198,6 +199,8 @@ public class VcReqServiceImpl implements VcReqService {
             // Date 객체를 LocalDate로 변환
             LocalDate startDate = vcReqDto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate endDate = vcReqDto.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            System.out.println("startDate : "+startDate.toString());
+            System.out.println("endDate : "+endDate.toString());
 
             List<LocalDate> dateBetweenTwoDates = new ArrayList<>(getDatesBetweenTwoDates(startDate, endDate));
             List<Long> calcVcTO = new ArrayList<>();
@@ -306,7 +309,7 @@ public class VcReqServiceImpl implements VcReqService {
 
     /*LocalDate 클래스의 datesUntil 메소드를 이용해 시작일부터 종료일까지의 날짜를 반환*/
     private List<LocalDate> getDatesBetweenTwoDates(LocalDate startDate, LocalDate endDate) {
-        return startDate.datesUntil(endDate)
+        return startDate.datesUntil(endDate.plusDays(1))
                 .collect(Collectors.toList());
     }
 
