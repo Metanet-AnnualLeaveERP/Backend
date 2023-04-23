@@ -12,11 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 @Service
@@ -37,7 +33,26 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         HashMap<String, Object> dto = new HashMap<>();
         dto.put("pageNum", cri.getPageNum());
         dto.put("amount", cri.getAmount());
+        dto.put("deptId",null);
+        dto.put("typeId",null);
+        dto.put("useName",null);
+        String[] str= cri.getKeyword().split(",");
+        cri.getKeyword().split(",");
 
+        for(int i =0; i<str.length; i++ ){
+            System.out.println(str[i]);
+            switch (i){
+                case 0:
+                    dto.put("deptId",str[0]);
+                    break;
+                case 1:
+                    dto.put("typeId",str[1]);
+                    break;
+                case 2:
+                    dto.put("userName",str[2]);
+                    break;
+            }
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("paging", new PagenationDTO(cri, getGrantedVcCount()));
         map.put("grantedVcs", vcMapper.getListGrantedVc(dto));

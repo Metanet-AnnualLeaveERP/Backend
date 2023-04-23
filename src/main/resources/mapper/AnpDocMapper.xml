@@ -15,8 +15,12 @@
                 FROM anp_doc anp
                 JOIN emp e ON anp.emp_id = e.emp_id
                 LEFT JOIN  USE_PLAN plan ON anp.doc_id = plan.doc_id
+                WHERE 1=1
                 <if test="userId != 0">
-                WHERE e.user_id = #{userId}
+                    AND e.user_id = #{userId}
+                </if>
+                <if test="keyWordName != '이름'">
+                    AND e.name = #{keyWordName}
                 </if>
                 ORDER BY anp.occur_date DESC) anplist
       <![CDATA[ WHERE ROWNUM <= #{pageNum} * #{amount} ) ]]>
@@ -37,9 +41,17 @@
         DELETE FROM anp_doc WHERE doc_id = #{docId}
     </delete>
     <!-- paging -->
-    <select id="getAnpDocCount" resultType="Long">
+    <select id="getAnpDocCount" resultType="Long" parameterType="HashMap">
         SELECT COUNT(*)
-        FROM anp_doc
+        FROM anp_doc anp
+            JOIN emp e ON anp.emp_id = e.emp_id
+        WHERE 1=1
+        <if test="userId != 0">
+            AND e.user_id = #{userId}
+        </if>
+        <if test="keyWordName != '이름'">
+            AND e.name = #{keyWordName}
+        </if>
     </select>
 
     <insert id="insertAnpDocMapper">

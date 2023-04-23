@@ -276,7 +276,6 @@ public class EmpServiceImpl implements EmpService {
         Map<String, Object> res = new HashMap<>();
         res.put("paging", new PagenationDTO(criteria, getEmpCnt(paramMap)));
         res.put("empList", empMapper.selectEmpList(paramMap));
-
         return res;
     }
 
