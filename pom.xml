@@ -139,11 +139,10 @@
                         <exclude>com/meta/ale/quartz/**</exclude>
                         <exclude>com/meta/ale/security/**</exclude>
                         <exclude>com/meta/ale/config/**</exclude>
-<!--                        <exclude>**/*MapperTest*</exclude>-->
+                        <exclude>com/meta/ale/service/FileService*</exclude>
+                        <exclude>com/meta/ale/service/UserService*</exclude>
+                        <exclude>com/meta/ale/service/RefreshTokenService*</exclude>
                     </excludes>
-<!--                    <includes>-->
-<!--                        <include>com/meta/ale/mapper/**/*CancelMapperTest*</include>-->
-<!--                    </includes>-->
                 </configuration>
                 <executions>
                     <execution>
