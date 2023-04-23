@@ -16,14 +16,14 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@Api(tags = {"연차 사용 요청서"},description = "연차사용 요청서에 대한 서비스")
+@Api(tags = {"연차 사용 요청서"},description = "연차사용 요청서 api")
 public class AnpDocRestController {
 
 
     private final AnpDocService anpDocService;
 
     // 연차사용요청서 추가 //
-    @ApiOperation(value = "연차사용요청서 추가")
+    @ApiOperation(value = "연차사용요청서 추가 api")
     @PostMapping("/annual-promote")
     public void insertAnpDoc(@RequestBody AnpDocDto anpDocDto) {
         try {
@@ -35,14 +35,14 @@ public class AnpDocRestController {
 
     // 연차사용요청서 전체조회 //
     @GetMapping("/annual-promote")
-    @ApiOperation(value = "연차사용요청서 전체 조회")
+    @ApiOperation(value = "연차사용요청서 전체 조회 api")
     public Map<String, Object> getListAnpDoc(@AuthenticationPrincipal UserDto userDto, Criteria cri) {
         return anpDocService.getListAnpDoc(userDto,cri);
     }
 
     // 사용요청서 삭제 //
     @DeleteMapping("/annual-promote/{docId}")
-    @ApiOperation(value = "연차사용요청서 삭제")
+    @ApiOperation(value = "연차사용요청서 삭제 api ")
     public ResponseEntity<String> deleteAnpDoc(@PathVariable("docId") Long docId) {
         boolean result = anpDocService.deleteAnpDoc(docId);
         if (result) {
@@ -54,7 +54,7 @@ public class AnpDocRestController {
 
     // 상세조회 //
     @GetMapping("/annual-promote/{docId}")
-    @ApiOperation(value = "연차사용요청서 상세 조회")
+    @ApiOperation(value = "연차사용요청서 상세 조회 api")
     public AnpDocDto getAnpDoc(@PathVariable("docId") Long docId) {
         return anpDocService.getAnpDoc(docId);
     }

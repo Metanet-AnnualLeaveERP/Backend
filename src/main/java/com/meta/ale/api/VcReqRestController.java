@@ -4,6 +4,8 @@ import com.meta.ale.domain.Criteria;
 import com.meta.ale.domain.UserDto;
 import com.meta.ale.domain.VcReqDto;
 import com.meta.ale.service.VcReqService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,12 +22,14 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags ="휴가 신청" , description = "휴가 신청 관련 api")
 public class VcReqRestController {
 
     private final VcReqService vcReqService;
 
     /*휴가 신청 내역 조회*/
     @GetMapping("/vacations")
+    @ApiOperation("휴가 신청내역 조회 api")
     public Map<String, Object> vcReqList(@AuthenticationPrincipal UserDto user,
                                          @RequestParam String paging, Criteria cri) {
         if (paging.equals("false")) {
@@ -40,6 +44,7 @@ public class VcReqRestController {
 
     /*휴가 신청 내역 상세 조회*/
     @GetMapping("/vacations/{vacation_request_id}")
+    @ApiOperation("휴가 신청 상세 조회 api")
     public ResponseEntity<Object> vcReqDetail(@PathVariable("vacation_request_id") Long reqId,
                                               @AuthenticationPrincipal UserDto user) {
         VcReqDto dto = vcReqService.getVcReqCompared(reqId, user);
@@ -54,6 +59,7 @@ public class VcReqRestController {
 
     /*휴가 신청*/
     @PostMapping(value = "/emp/vacations", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ApiOperation("휴가신청 api")
     public ResponseEntity createVcReq(@RequestPart(value = "request") VcReqDto dto,
                                       @RequestPart(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
                                       @AuthenticationPrincipal UserDto user) throws IOException {
@@ -79,6 +85,7 @@ public class VcReqRestController {
 
     /*휴가 결재(승인/반려)*/
     @PutMapping("/manager/vacations/confirm/{vacation_request_id}")
+    @ApiOperation("휴가 결재 처리 api")
     public ResponseEntity approvalVcReq(@AuthenticationPrincipal UserDto userDto,
                                         @PathVariable("vacation_request_id") Long vcReqId,
                                         @RequestParam("status") String status,
@@ -92,6 +99,7 @@ public class VcReqRestController {
 
     /*휴가 결재 내역 조회*/
     @GetMapping("/manager/vacations/approval")
+    @ApiOperation("휴가 결재 내역 조회 api")
     public ResponseEntity teamApprovalList(Criteria cri,@AuthenticationPrincipal UserDto userDto) {
         Map<String, Object> result = vcReqService.getApprovalVcRequestList(userDto, cri);
 
@@ -100,12 +108,14 @@ public class VcReqRestController {
 
     /*팀원 휴가 승인내역 조회 (캘린더용) */
     @GetMapping("/vacations/my-team")
+    @ApiOperation("팀원 휴가 승인 내역 조회 api")
     public ResponseEntity myTeamVacation(@AuthenticationPrincipal UserDto userDto) {
         return ResponseEntity.ok(vcReqService.findMyTeamVacation(userDto));
     }
 
     /*부서별 잔여 TO (모든 팀원의 휴가들을 날짜별로 to에서 차감)*/
     @GetMapping("/vacations/remain-to")
+    @ApiOperation("부서별 잔여 TO api")
     public ResponseEntity entireTeamRemainVcTo(@AuthenticationPrincipal UserDto userDto) throws Exception {
         return ResponseEntity.ok(vcReqService.calcRemainTOByVcReqs(userDto));
     }
