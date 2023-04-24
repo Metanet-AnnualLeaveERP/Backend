@@ -39,7 +39,6 @@ public class VcReqServiceImpl implements VcReqService {
     @Override
     public Map<String, Object> getVcReqList(Criteria cri, UserDto user) {
         // Mapper에 들어갈 파라미터 map으로 변환
-        System.out.println(user);
         Long userId = user.getUserId();
         HashMap<String, Object> vo = new HashMap();
         vo.put("pageNum", cri.getPageNum());
@@ -187,20 +186,15 @@ public class VcReqServiceImpl implements VcReqService {
     /*휴가 신청 일자별로 잔여 TO 계산*/
     @Override
     public List<RemainVcTo> calcRemainTOByVcReqs(UserDto userDto) throws Exception {
-        System.out.println("--------잔여 TO 계산 서비스 호출-------");
         Long calcTO = deptService.calculateVcToByDept(userDto.getUserId());
         List<VcReqDto> vcReqDtoList = getEntireReqsByTeam(userDto);
-        vcReqDtoList.forEach(vcReqDto -> System.out.println(vcReqDto.toString()));
         List<LocalDate> dates = new ArrayList<>();
         List<Long> finalTO = new ArrayList<>();
 
-        System.out.println("========날짜와 TO 배열 계산========");
         for (VcReqDto vcReqDto : vcReqDtoList) {
             // Date 객체를 LocalDate로 변환
             LocalDate startDate = vcReqDto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate endDate = vcReqDto.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            System.out.println("startDate : "+startDate.toString());
-            System.out.println("endDate : "+endDate.toString());
 
             List<LocalDate> dateBetweenTwoDates = new ArrayList<>(getDatesBetweenTwoDates(startDate, endDate));
             List<Long> calcVcTO = new ArrayList<>();
@@ -214,15 +208,9 @@ public class VcReqServiceImpl implements VcReqService {
                     calcVcTO.add(calcTO);
                 }
             }
-            System.out.print(dateBetweenTwoDates.toString() + " ");
-            System.out.println();
-            System.out.print(calcVcTO.toString() + " ");
-            System.out.println();
-
             /* vcReq의 시작일부터 종료일까지 To를 하나씩 차감하는 로직.
              * if dates.contains(날짜) == false -> dates.add , caclTos.add()
              *   else dates.contains(날짜) == true -> index를 구하고 calcTos 해당 index의 값을 -1 한다 */
-            System.out.println("========vcReqDto 안의 날짜 하나마다 to 계산하는 반복문 실행========");
 
             /* 두 날짜 사이의 수가 0인 경우 ( 휴가 1일 사용 시 )
              * forEach문을 돌리지 않고 바로 add 해 준다 */
@@ -250,11 +238,6 @@ public class VcReqServiceImpl implements VcReqService {
                 }
             }
         }
-        System.out.println("========모든 반복문 계산 끝========");
-        System.out.println("최종 날짜 배열 -> " + dates.toString());
-        System.out.println("최종 TO 배열 -> " + finalTO.toString());
-
-        System.out.println("======== remainToDtoList 가공 =======");
         List<RemainVcTo> remainVcToList = new ArrayList<>();
         for (int i = 0; i < dates.size(); i++) {
             // LocalDate 객체를 ZonedDateTime 객체로 변환
@@ -263,7 +246,6 @@ public class VcReqServiceImpl implements VcReqService {
             Date date = Date.from(zonedDateTime.toInstant());
             remainVcToList.add(new RemainVcTo(date, finalTO.get(i)));
         }
-        remainVcToList.forEach(remainVcTo -> System.out.println(remainVcTo.toString()));
         return remainVcToList;
     }
 
@@ -285,7 +267,6 @@ public class VcReqServiceImpl implements VcReqService {
     private String fileUpload(MultipartFile[] uploadFiles) throws IOException {
         Path filePath = null;
         if (uploadFiles == null || uploadFiles.length == 0) {
-            System.out.println(" 파일 업로드 안 했음");
             filePath = null;
         } else {
             // 파일 업로드 요청이 있는 경우 파일 업로드 서비스 호출

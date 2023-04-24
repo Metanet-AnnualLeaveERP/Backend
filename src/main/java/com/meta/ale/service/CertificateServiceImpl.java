@@ -31,7 +31,6 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public CertificateDto getCertCompared(Long certId, Long currUserId) {
-        System.out.println("getCertCompared service");
         // getVcReqCompared와 동일 로직
         CertificateDto dto = certificateMapper.getCert(certId);
         // 관리자면

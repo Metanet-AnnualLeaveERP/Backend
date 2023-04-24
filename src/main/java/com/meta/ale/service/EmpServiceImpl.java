@@ -259,9 +259,7 @@ public class EmpServiceImpl implements EmpService {
     @Transactional
     public Map<String, Object> getEmpList(Criteria criteria) throws Exception {
         String[] keyWordList = criteria.getKeyword().split(",");
-        for (String s:keyWordList) {
-            System.out.println(s);
-        }
+
         String keyWordDept = keyWordList[0];
         String keyWordName = keyWordList[1];
         String keyWordActive = keyWordList[2];

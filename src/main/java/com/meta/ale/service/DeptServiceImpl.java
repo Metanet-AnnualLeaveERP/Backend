@@ -55,8 +55,6 @@ public class DeptServiceImpl implements DeptService{
         DeptDto deptDto = empDto.getDeptDto();
         Double vcTo = deptDto.getVcTo() / 100.0;
         Long calcTO = (long) Math.ceil(empCnt * vcTo); // 계산된 잔여 TO
-        System.out.println("calcTo: " + calcTO);
-
         return calcTO;
     }
 }
