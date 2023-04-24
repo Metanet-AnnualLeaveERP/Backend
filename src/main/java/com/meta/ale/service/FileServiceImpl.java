@@ -25,11 +25,8 @@ public class FileServiceImpl implements FileService {
     /*파일 저장*/
     @Override
     public Path upload(MultipartFile uploadFile) {
-        System.out.println("----------- file Service upload method ----------");
-
         String originalName = uploadFile.getOriginalFilename();
         String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-        System.out.println("fileName = " + fileName);
 
         // 날짜 폴더 생성
         String folderPath = makeFolder();
@@ -60,9 +57,6 @@ public class FileServiceImpl implements FileService {
         }
 
         // 저장 경로 리턴
-        System.out.println("파일 저장 경로 = " + savePath);
-        System.out.println("최종 파일 네임 = " + saveName);
-
         return savePath;
     }
 
@@ -71,8 +65,6 @@ public class FileServiceImpl implements FileService {
     /*---------------------------------------------------*/
     @Override
     public Path uploadZip(MultipartFile[] uploadFiles) throws IOException {
-        System.out.println("----------- file Service ZIP 폴더 upload method ----------");
-
         // 날짜 폴더 생성
         String folderPath = makeFolder();
 
@@ -86,7 +78,6 @@ public class FileServiceImpl implements FileService {
         // 저장할 파일 이름 중간에 "_"를 이용하여 구분
         String zipPath = uploadPath + File.separator + folderPath + File.separator + zipName;
         Path savePath = Paths.get(zipPath);
-        System.out.println("zip 파일 경로 = " + savePath);
 
         // Zip파일을 저장할 FileOutputStream과 ZipOutputStream을 생성합니다.
         // zip 파일 경로 및 파일명 설정
@@ -95,7 +86,6 @@ public class FileServiceImpl implements FileService {
         for (MultipartFile uploadFile : uploadFiles) {
             String originalName = uploadFile.getOriginalFilename();
             String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-            System.out.println("fileName = " + fileName);
 
             File file = multipartToFile(uploadFile, fileName);
             FileInputStream in = new FileInputStream(file);

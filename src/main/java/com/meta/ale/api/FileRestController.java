@@ -29,9 +29,6 @@ public class FileRestController {
     @PostMapping("/files/upload")
     @ApiOperation("파일 업로드 api ")
     public ResponseEntity<Map<String, Object>> uploadFile(MultipartFile[] uploadFiles) throws IOException {
-        System.out.println("---------------------- 파일 업로드 api 호출 -----------------------");
-        System.out.println("uploadFiles 컨트롤러로 넘어온 개수 = " + uploadFiles.length);
-
         Path filePath = null;
 
         if (uploadFiles.length > 1) {
@@ -49,9 +46,6 @@ public class FileRestController {
     @PostMapping("/files/download")
     @ApiOperation("파일 다운로드 api")
     public ResponseEntity download(@RequestBody String filePath) throws IOException {
-        System.out.println("============파일 다운로드 api===========");
-        System.out.println("filePath 인코딩 된 상태로 들어온 것 : " + filePath);
-
         String decodedPath = URLDecoder.decode(filePath, "UTF-8");
         // 파일 경로에서 마지막에 있는 패딩 문자 제거
         if (decodedPath.endsWith("=")) {
@@ -59,21 +53,15 @@ public class FileRestController {
         }
 
         // 디코딩된 파일 경로를 콘솔에 출력
-        System.out.println("Decoded File Path: " + decodedPath);
-
         Path path = Paths.get(decodedPath);
-        System.out.println("final path : " + path);
         String fileName = decodedPath.split("\\\\")[3];
-        System.out.println("file name : " + fileName);
 
         Resource resource = null;
         try {
             resource = new UrlResource(path.toUri());
 
         } catch (Exception e) {
-            System.out.println("여기 에러");
             return ResponseEntity.badRequest().body("잘못된 요청입니다.");
-//        e.printStackTrace();
         }
 
         return ResponseEntity.ok()

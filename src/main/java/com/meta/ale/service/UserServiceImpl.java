@@ -91,7 +91,6 @@ public class UserServiceImpl implements UserService {
             String encodingPwd = bCryptPasswordEncoder.encode(pwd);
 
             user.setPwd(encodingPwd);
-            System.out.println(user);
             userMapper.updatePwd(user);
             StringBuilder sb = new StringBuilder();
             sb.append("비밀번호 : ");

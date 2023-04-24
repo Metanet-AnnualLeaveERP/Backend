@@ -40,7 +40,6 @@ public class GrantedVcServiceImpl implements GrantedVcService {
         cri.getKeyword().split(",");
 
         for(int i =0; i<str.length; i++ ){
-            System.out.println(str[i]);
             switch (i){
                 case 0:
                     dto.put("deptId",str[0]);
